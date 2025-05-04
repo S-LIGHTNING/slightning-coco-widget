@@ -5,7 +5,7 @@ const types: Types = {
     info: {
         title: "测试错误",
         icon: "icon-widget-radio",
-        category: "SLIGHTNING CoCo 控件框架 测试",
+        category: "测试 SCW",
         version: "1.0.0",
         url: {
             homepage: "",
