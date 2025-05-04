@@ -1,0 +1,46 @@
+{
+  "title": "html2canvas",
+  "name": "@types/html2canvas",
+  "description": "Screenshots with JavaScript",
+  "main": "dist/html2canvas.js",
+  "module": "dist/html2canvas.esm.js",
+  "typings": "dist/types/index.d.ts",
+  "browser": "dist/html2canvas.js",
+  "version": "1.4.1",
+  "author": {
+    "name": "Niklas von Hertzen",
+    "email": "niklasvh@gmail.com",
+    "url": "https://hertzen.com"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:niklasvh/html2canvas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/niklasvh/html2canvas/issues"
+  },
+  "scripts": {
+    "prebuild": "rimraf dist/ && rimraf build/ && mkdirp dist && mkdirp build",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts && npm run build:create-reftest-list && npm run build:testrunner && npm run build:minify",
+    "build:testrunner": "rollup -c tests/rollup.config.ts",
+    "build:minify": "uglifyjs --compress --comments /^!/ -o dist/html2canvas.min.js --mangle -- dist/html2canvas.js",
+    "build:reftest-result-list": "ts-node scripts/create-reftest-result-list.ts",
+    "build:create-reftest-list": "ts-node scripts/create-reftest-list.ts tests/reftests/ignore.txt build/reftests.ts",
+    "build:reftest-preview": "webpack --config www/webpack.config.js",
+    "release": "standard-version",
+    "format": "prettier --write \"{src,www/src,tests,scripts}/**/*.ts\"",
+    "lint": "eslint src/**/*.ts --max-warnings 0",
+    "test": "npm run lint && npm run unittest && npm run karma",
+    "unittest": "jest",
+    "reftests-diff": "mkdirp tmp/snapshots && jest --roots=tests --testMatch=**/reftest-diff.ts",
+    "karma": "ts-node tests/karma",
+    "watch": "rollup -c rollup.config.ts -w",
+    "watch:unittest": "mocha --require ts-node/register --watch-extensions ts -w src/**/__tests__/*.ts",
+    "start": "ts-node tests/server --port=8080 --cors=8081"
+  },
+  "homepage": "https://html2canvas.hertzen.com",
+  "license": "MIT"
+}

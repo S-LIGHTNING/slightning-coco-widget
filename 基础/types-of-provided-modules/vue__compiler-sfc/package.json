@@ -1,0 +1,50 @@
+{
+  "name": "@types/vue__compiler-sfc",
+  "version": "3.5.13",
+  "description": "@vue/compiler-sfc",
+  "main": "dist/compiler-sfc.cjs.js",
+  "module": "dist/compiler-sfc.esm-browser.js",
+  "types": "dist/compiler-sfc.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/compiler-sfc.d.ts",
+      "node": "./dist/compiler-sfc.cjs.js",
+      "module": "./dist/compiler-sfc.esm-browser.js",
+      "import": "./dist/compiler-sfc.esm-browser.js",
+      "require": "./dist/compiler-sfc.cjs.js"
+    },
+    "./*": "./*"
+  },
+  "buildOptions": {
+    "name": "VueCompilerSFC",
+    "formats": [
+      "cjs",
+      "esm-browser"
+    ],
+    "prod": false,
+    "enableNonBrowserBranches": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vuejs/core.git",
+    "directory": "packages/compiler-sfc"
+  },
+  "keywords": [
+    "vue"
+  ],
+  "author": "Evan You",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vuejs/core/issues"
+  },
+  "homepage": "https://github.com/vuejs/core/tree/main/packages/compiler-sfc#readme",
+  "dependencies": {
+    "@types/vue__compiler-core": "file:../vue__compiler-core",
+    "@types/vue__shared": "file:../vue__shared",
+    "@types/vue__compiler-dom": "file:../vue__compiler-dom",
+    "@types/vue__compiler-ssr": "file:../vue__compiler-ssr"
+  }
+}

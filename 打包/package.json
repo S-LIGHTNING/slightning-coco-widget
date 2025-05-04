@@ -1,0 +1,58 @@
+{
+  "name": "slightning-coco-widget--webpack",
+  "version": "2.0.0-alpha",
+  "exports": {
+    ".": "./dist/index.js",
+    "./config": "./dist/config.js",
+    "./bypass/xml-http-request": "./dist/bypass/xml-http-request.js",
+    "./bypass/xml-http-request-upload": "./dist/bypass/xml-http-request-upload.js",
+    "./bypass/xml-http-request-event-target": "./dist/bypass/xml-http-request-event-target.js",
+    "./bypass/fetch": "./dist/bypass/fetch.js",
+    "./bypass/web-socket": "./dist/bypass/web-socket.js",
+    "./bypass/web-socket-error": "./dist/bypass/web-socket-error.js",
+    "./bypass/web-socket-stream": "./dist/bypass/web-socket-stream.js",
+    "./loader/bypass-restrictions-loader": "./dist/loader/bypass-restrictions-loader.js"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "readme.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "cleandir ./dist && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "SLIGHTNING",
+  "license": "Apache-2.0",
+  "description": "SLIGHTNING 的 CoCo 控件框架 —— webpack 相关工具。",
+  "keywords": [
+    "CoCo 自定义控件",
+    "slightning",
+    "coco-widget",
+    "coco",
+    "codemao",
+    "bcm",
+    "编程猫"
+  ],
+  "peerDependencies": {
+    "@babel/generator": "*",
+    "@babel/parser": "*",
+    "@babel/traverse": "*",
+    "webpack": "*"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.0.0",
+    "@types/babel__generator": "^7.0.0",
+    "@types/babel__traverse": "^7.0.0",
+    "clean-dir": "^1.0.3",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

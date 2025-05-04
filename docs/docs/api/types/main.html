@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-api/types/main" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.7.0">
+<title data-rh="true">主体 | SLIGHTNING CoCo 控件框架文档</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://s-lightning.github.io/slightning-coco-widget/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://s-lightning.github.io/slightning-coco-widget/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://s-lightning.github.io/slightning-coco-widget/docs/api/types/main"><meta data-rh="true" property="og:locale" content="zh_CN"><meta data-rh="true" name="docusaurus_locale" content="zh-CN"><meta data-rh="true" name="docsearch:language" content="zh-CN"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="主体 | SLIGHTNING CoCo 控件框架文档"><meta data-rh="true" name="description" content="Types"><meta data-rh="true" property="og:description" content="Types"><link data-rh="true" rel="icon" href="/slightning-coco-widget/static/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://s-lightning.github.io/slightning-coco-widget/docs/api/types/main"><link data-rh="true" rel="alternate" href="https://s-lightning.github.io/slightning-coco-widget/docs/api/types/main" hreflang="zh-CN"><link data-rh="true" rel="alternate" href="https://s-lightning.github.io/slightning-coco-widget/docs/api/types/main" hreflang="x-default"><link rel="stylesheet" href="/slightning-coco-widget/assets/css/styles.ed53157f.css">
+<script src="/slightning-coco-widget/assets/js/runtime~main.b01a1ad8.js" defer="defer"></script>
+<script src="/slightning-coco-widget/assets/js/main.ecc256cd.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const n=new URLSearchParams(window.location.search).entries();for(var[t,e]of n)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="跳到主要内容"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">跳到主要内容</a></div><nav aria-label="主导航" class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="切换导航栏" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/slightning-coco-widget/"><div class="navbar__logo"><img src="/slightning-coco-widget/img/logo.svg" alt="Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/slightning-coco-widget/img/logo.svg" alt="Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">SCW 文档</b></a><a class="navbar__item navbar__link" href="/slightning-coco-widget/docs/introduction/overview">介绍</a><a class="navbar__item navbar__link" href="/slightning-coco-widget/docs/fast-start/before-start">快速开始</a><a class="navbar__item navbar__link" href="/slightning-coco-widget/docs/example/promise">示例</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/slightning-coco-widget/docs/api/types">API</a><a class="navbar__item navbar__link" href="/slightning-coco-widget/docs/error/test">错误处理</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/S-LIGHTNING/slightning-coco-widget" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_nPIU"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="切换浅色/暗黑模式（当前为浅色模式）" aria-label="切换浅色/暗黑模式（当前为浅色模式）" aria-live="polite" aria-pressed="false"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="回到顶部" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="文档侧边栏" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" href="/slightning-coco-widget/docs/api/types">控件类型定义</a><button aria-label="折叠侧边栏分类 &#x27;控件类型定义&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/slightning-coco-widget/docs/api/types/main">主体</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/slightning-coco-widget/docs/api/types/property">属性</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/slightning-coco-widget/docs/api/types/method">方法</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/slightning-coco-widget/docs/api/types/event">事件</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/slightning-coco-widget/docs/api/types/block-options">积木选项</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/slightning-coco-widget/docs/api/types/type">类型</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/slightning-coco-widget/docs/api/types/color">颜色</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/slightning-coco-widget/docs/api/widget">控件实体定义</a><button aria-label="展开侧边栏分类 &#x27;控件实体定义&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/slightning-coco-widget/docs/api/export">控件导出</a><button aria-label="展开侧边栏分类 &#x27;控件导出&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="页面路径"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="主页面" class="breadcrumbs__link" href="/slightning-coco-widget/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/slightning-coco-widget/docs/api/types"><span itemprop="name">控件类型定义</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">主体</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>主体</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="types">Types<a href="#types" class="hash-link" aria-label="Types的直接链接" title="Types的直接链接">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="typestype">Types.type<a href="#typestype" class="hash-link" aria-label="Types.type的直接链接" title="Types.type的直接链接">​</a></h3>
+<p>类型：<code>string</code></p>
+<p>描述：全局唯一控件类型。</p>
+<p>命名规范：仅由大写英文字母加下划线组成。</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfo">Types.info<a href="#typesinfo" class="hash-link" aria-label="Types.info 的直接链接" title="Types.info的直接链接">​</a></h3>
+<p>类型：<code>object</code></p>
+<p>描述：控件信息。</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfotitle">Types.info.title<a href="#typesinfotitle" class="hash-link" aria-label="Types.info.title的直接链接" title="Types.info.title的直接链接">​</a></h4>
+<p>类型：<code>string</code></p>
+<p>描述：控件名称。</p>
+<p>会在编辑器显示。</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfoicon">Types.info.icon<a href="#typesinfoicon" class="hash-link" aria-label="Types.info.icon的直接链接" title="Types.info.icon的直接链接">​</a></h4>
+<p>类型：<code>string</code></p>
+<p>描述：控件图标链接。</p>
+<p>控件图标会在编辑器显示。</p>
+<p>一般使用 SVG。</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfocategory">Types.info.category?<a href="#typesinfocategory" class="hash-link" aria-label="Types.info.category?的直接链接" title="Types.info.category?的直接链接">​</a></h4>
+<p>类型：<code>string</code></p>
+<p>描述：控件分类。</p>
+<p><strong>仅在 Creation Project 中生效，CoCo 不支持该特性。</strong></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfoversion">Types.info.version?<a href="#typesinfoversion" class="hash-link" aria-label="Types.info.version?的直接链接" title="Types.info.version?的直接链接">​</a></h4>
+<p>类型：<code>string</code></p>
+<p>描述：控件版本。</p>
+<p>推荐使用语义化版本：<a href="https://semver.org/lang/zh-CN/%E3%80%82" target="_blank" rel="noopener noreferrer">https://semver.org/lang/zh-CN/。</a></p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfourl">Types.info.url?<a href="#typesinfourl" class="hash-link" aria-label="Types.info.url?的直接链接" title="Types.info.url?的直接链接">​</a></h4>
+<p>类型：<code>object</code></p>
+<p>描述：控件链接。</p>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfourlhomepage">Types.info.url.homepage?<a href="#typesinfourlhomepage" class="hash-link" aria-label="Types.info.url.homepage?的直接链接" title="Types.info.url.homepage?的直接链接">​</a></h5>
+<p>类型：<code>string</code></p>
+<p>描述：控件主页链接。</p>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfourldocs">Types.info.url.docs?<a href="#typesinfourldocs" class="hash-link" aria-label="Types.info.url.docs?的直接链接" title="Types.info.url.docs?的直接链接">​</a></h5>
+<p>类型：<code>string</code></p>
+<p>描述：控件文档链接。</p>
+<p>设置后可在控件属性面板下方点击“如何使用？”跳转到文档。</p>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfourlrepository">Types.info.url.repository?<a href="#typesinfourlrepository" class="hash-link" aria-label="Types.info.url.repository?的直接链接" title="Types.info.url.repository?的直接链接">​</a></h5>
+<p>类型：<code>string</code></p>
+<p>描述：控件代码仓库链接。</p>
+<h5 class="anchor anchorWithStickyNavbar_LWe7" id="typesinfourlbugreport">Types.info.url.bugReport?<a href="#typesinfourlbugreport" class="hash-link" aria-label="Types.info.url.bugReport?的直接链接" title="Types.info.url.bugReport?的直接链接">​</a></h5>
+<p>类型：<code>string</code></p>
+<p>描述：控件问题报告链接。</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="typesoptions">Types.options<a href="#typesoptions" class="hash-link" aria-label="Types.options的直接链接" title="Types.options的直接链接">​</a></h3>
+<p>类型：<code>object</code></p>
+<p>描述：控件选项。</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesoptionsvisible">Types.options.visible<a href="#typesoptionsvisible" class="hash-link" aria-label="Types.options.visible的直接链接" title="Types.options.visible的直接链接">​</a></h4>
+<p>类型：<code>boolean</code></p>
+<p>描述：是否是可见控件。</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesoptionsglobal">Types.options.global<a href="#typesoptionsglobal" class="hash-link" aria-label="Types.options.global的直接链接" title="Types.options.global的直接链接">​</a></h4>
+<p>类型：<code>boolean</code></p>
+<p>描述：是否是全局控件。</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesoptionsstatic">Types.options.static?<a href="#typesoptionsstatic" class="hash-link" aria-label="Types.options.static?的直接链接" title="Types.options.static?的直接链接">​</a></h4>
+<p>类型：<code>boolean</code></p>
+<p>描述：是否是静态控件。</p>
+<p><strong>仅在 Creation Project 中生效，CoCo 不支持该特性。</strong></p>
+<p>默认值：<code>false</code></p>
+<p>静态控件特性：</p>
+<ul>
+<li>引入后会自动添加到作品内，不会显示在控件栏；</li>
+<li>属性相关积木将不会添加“设置 [控件名]”或“获取 [控件名]”前缀；</li>
+<li>事件积木 将不会添加“当 [控件名]”前缀。</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesoptionsplatforms">Types.options.platforms?<a href="#typesoptionsplatforms" class="hash-link" aria-label="Types.options.platforms?的直接链接" title="Types.options.platforms?的直接链接">​</a></h4>
+<p>类型：<code>Platforms</code></p>
+<p>描述：控件的可用平台。</p>
+<h4 class="anchor anchorWithStickyNavbar_LWe7" id="typesoptionsany">Types.options.any?<a href="#typesoptionsany" class="hash-link" aria-label="Types.options.any?的直接链接" title="Types.options.any?的直接链接">​</a></h4>
+<p>类型：<code>boolean</code></p>
+<p>描述：是否生成任意控件积木。</p>
+<p><strong>仅在 CoCo 中生效，Creation Project 不支持该特性。</strong></p>
+<p>默认值：<code>false</code></p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="typesproperties">Types.properties<a href="#typesproperties" class="hash-link" aria-label="Types.properties的直接链接" title="Types.properties的直接链接">​</a></h3>
+<p>类型：<code>(PropertyGroup | PropertyTypes)[]</code></p>
+<p>描述：控件属性。</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="typesmethods">Types.methods<a href="#typesmethods" class="hash-link" aria-label="Types.methods的直接链接" title="Types.methods的直接链接">​</a></h3>
+<p>类型：<code>(MethodGroup | MethodTypes)[]</code></p>
+<p>描述：控件方法。</p>
+<h3 class="anchor anchorWithStickyNavbar_LWe7" id="typesevents">Types.events<a href="#typesevents" class="hash-link" aria-label="Types.events的直接链接" title="Types.events的直接链接">​</a></h3>
+<p>类型：<code>EventTypes[]</code></p>
+<p>描述：控件事件。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="platforms">Platforms<a href="#platforms" class="hash-link" aria-label="Platforms的直接链接" title="Platforms的直接链接">​</a></h2>
+<p>类型：<code>PlatformEnum[]</code></p>
+<p>描述：控件的可用平台。</p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="platformenum">PlatformEnum<a href="#platformenum" class="hash-link" aria-label="PlatformEnum的直接链接" title="PlatformEnum的直接链接">​</a></h2>
+<p>枚举类型：</p>
+<ul>
+<li><code>WEB</code>：网页（编辑器、h5 预览、社区分享）。</li>
+<li><code>ANDROID</code>：安卓手机端。</li>
+<li><code>IOS</code>：iOS 端（iPhone，iPad 等）。</li>
+</ul></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col"><a href="https://github.com/S-LIGHTNING/slightning-coco-widget/edit/main/文档/docs/api/types/main.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>编辑此页</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="文件选项卡"><a class="pagination-nav__link pagination-nav__link--prev" href="/slightning-coco-widget/docs/api/types"><div class="pagination-nav__sublabel">上一页</div><div class="pagination-nav__label">控件类型定义</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/slightning-coco-widget/docs/api/types/property"><div class="pagination-nav__sublabel">下一页</div><div class="pagination-nav__label">属性</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#typestype" class="table-of-contents__link toc-highlight">Types.type</a></li><li><a href="#typesinfo" class="table-of-contents__link toc-highlight">Types.info</a></li><li><a href="#typesoptions" class="table-of-contents__link toc-highlight">Types.options</a></li><li><a href="#typesproperties" class="table-of-contents__link toc-highlight">Types.properties</a></li><li><a href="#typesmethods" class="table-of-contents__link toc-highlight">Types.methods</a></li><li><a href="#typesevents" class="table-of-contents__link toc-highlight">Types.events</a></li></ul></li><li><a href="#platforms" class="table-of-contents__link toc-highlight">Platforms</a></li><li><a href="#platformenum" class="table-of-contents__link toc-highlight">PlatformEnum</a></li></ul></div></div></div></div></main></div></div></div></div>
+</body>
+</html>

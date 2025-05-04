@@ -1,0 +1,79 @@
+{
+  "name": "slightning-coco-widget",
+  "version": "2.0.0-alpha",
+  "main": "dist/src/index.js",
+  "module": "dist/src/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/src/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./for-coco": {
+      "default": "./dist/src/for-coco",
+      "types": "./dist/types/for-coco"
+    },
+    "./for-creation-project": {
+      "default": "./dist/src/for-creation-project",
+      "types": "./dist/types/for-creation-project"
+    },
+    "./coco": {
+      "default": "./dist/src/coco",
+      "types": "./dist/types/coco"
+    },
+    "./creation-project": {
+      "default": "./dist/src/creation-project",
+      "types": "./dist/types/creation-project"
+    }
+  },
+  "files": [
+    "types-of-provided-modules",
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "cleandir ./dist && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "SLIGHTNING",
+  "license": "Apache-2.0",
+  "description": "SLIGHTNING 的 CoCo 控件框架。",
+  "keywords": [
+    "CoCo 自定义控件",
+    "slightning",
+    "coco-widget",
+    "coco",
+    "codemao",
+    "bcm",
+    "编程猫"
+  ],
+  "dependencies": {
+    "@slightning/anything-to-string": "^1.0.0",
+    "@types/ant-design__icons-vue": "file:types-of-provided-modules/ant-design__icons-vue",
+    "@types/antd-mobile": "file:types-of-provided-modules/antd-mobile",
+    "@types/axios-0.21.1": "file:types-of-provided-modules/axios/0.21.1",
+    "@types/axios-1.7.4": "file:types-of-provided-modules/axios/1.7.4",
+    "@types/color": "^3.0.0",
+    "@types/crypto-js": "^4.0.0",
+    "@types/html2canvas": "file:types-of-provided-modules/html2canvas",
+    "@types/lodash": "^4.0.0",
+    "@types/qrcode": "^1.0.0",
+    "@types/react": "^18.0.0",
+    "@types/vikadata__vika": "file:types-of-provided-modules/vikadata__vika",
+    "@types/vue": "file:types-of-provided-modules/vue",
+    "@types/websocket": "^1.0.0"
+  },
+  "devDependencies": {
+    "clean-dir": "^1.0.0",
+    "typescript": "^5.0.0"
+  },
+  "sideEffects": [
+    "./dist/src/slightning/index.js"
+  ]
+}

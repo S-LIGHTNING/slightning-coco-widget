@@ -1,0 +1,68 @@
+{
+  "name": "@types/vikadata__vika",
+  "version": "1.4.1",
+  "description": "维格表官方 JavaScript SDK",
+  "main": "./es/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "build": "yarn clean && tsc -p tsconfig.build.json && webpack",
+    "release": "standard-version",
+    "clean": "rm -rf ./es/*",
+    "lint": "eslint lib/",
+    "prepublish": "yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vikadata/vika.js.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "vikadata",
+    "vika js sdk"
+  ],
+  "author": "vikadata",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vikadata/vika.js/issues"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "eslint"
+    }
+  },
+  "standard-version": {
+    "path": ".",
+    "skip": {
+      "tag": true
+    },
+    "releaseCommitMessageFormat": "chore(vika.js): {{currentTag}}"
+  },
+  "lint-staged": {
+    "packages/*/src/**/!(*system_config|strings).{js,ts,tsx}": "tslint"
+  },
+  "homepage": "https://github.com/vikadata/vika.js#readme",
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "testRegex": ".(spec|test).ts$",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "moduleDirectories": [
+      "node_modules"
+    ],
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "@types/axios-0.21.1": "file:../axios/0.21.1",
+    "@types/form-data": "file:../form-data"
+  }
+}

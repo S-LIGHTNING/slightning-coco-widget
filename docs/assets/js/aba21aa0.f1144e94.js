@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkslightning_coco_widget_document=self.webpackChunkslightning_coco_widget_document||[]).push([[742],{7093:e=>{e.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"default"}')}}]);

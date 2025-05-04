@@ -1,0 +1,42 @@
+{
+  "name": "@types/ant-design__icons-vue",
+  "version": "7.0.1",
+  "main": "./lib/index.js",
+  "module": "./es/index.js",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ant-design/ant-design-icons/tree/master/packages/icons-vue"
+  },
+  "contributors": [
+    "tangjinzhou <415800467@qq.com>"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "clean": "./scripts/cleanup.sh",
+    "start": "vc-tools run server",
+    "lint": "eslint src/ --ext .tsx,.ts",
+    "compile": "vc-tools run compile",
+    "test": "cross-env NODE_ENV=test jest --config .jest.js",
+    "prepublishOnly": "npm run lint && npm run generate && npm run compile && npm run test",
+    "generate": "rimraf src/icons && TS_NODE_PROJECT=scripts/tsconfig.json node -r ts-node/register scripts/generate.ts --target=icon",
+    "postcompile": "npm run clean && TS_NODE_PROJECT=scripts/tsconfig.json node -r ts-node/register scripts/generate.ts --target=entry",
+    "ci": "npm run lint && npm run compile && npm run test"
+  },
+  "peerDependencies": {
+    "vue": ">=3.0.3"
+  },
+  "dependencies": {
+    "@types/ant-design__colors": "file:../ant-design__colors",
+    "@types/ant-design__icons-svg": "file:../ant-design__icons-svg"
+  },
+  "config": {
+    "port": 9528,
+    "entry": {
+      "index": [
+        "./src/index.ts"
+      ]
+    }
+  },
+  "description": "Ant Design Icons for Vue"
+}

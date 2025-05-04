@@ -1,0 +1,42 @@
+{
+  "name": "@types/ant-design__icons-svg",
+  "version": "4.4.2",
+  "sideEffects": false,
+  "description": "Abstract nodes for ant design icons.",
+  "contributors": [
+    "HeskeyBaozi <hezhiyu233@foxmail.com>"
+  ],
+  "homepage": "https://github.com/ant-design/ant-design-icons/",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "files": [
+    "lib",
+    "es",
+    "inline-svg",
+    "inline-namespaced-svg"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ant-design/ant-design-icons.git"
+  },
+  "scripts": {
+    "g": "npm run generate",
+    "generate": "cross-env NODE_ENV=production gulp --require ts-node/register/transpile-only",
+    "type-check": "tsc --noEmit",
+    "build:es": "tsc --project tsconfig.build.json --module esnext --outDir es",
+    "build:lib": "tsc --project tsconfig.build.json --module commonjs --outDir lib",
+    "build": "cross-env NODE_ENV=production && npm run build:es && npm run build:lib",
+    "test": "cross-env NODE_ENV=test && npm run test:unit",
+    "test:unit": "jest",
+    "prepublishOnly": "npm run test && npm run g && npm run build && npm run type-check && npm run digest",
+    "digest": "node scripts/digest.js"
+  },
+  "bugs": {
+    "url": "https://github.com/ant-design/ant-design-icons/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

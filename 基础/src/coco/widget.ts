@@ -1,0 +1,84 @@
+import type * as axios from "axios-0.21.1"
+import type * as Vika from "@vikadata/vika"
+import type * as Lodash from "lodash"
+import type * as CryptoJS from "crypto-js"
+import type * as QRCode from "qrcode"
+import type * as Color from "color"
+import type * as WebSocket from "websocket"
+import type * as AntdMobile from "antd-mobile"
+import type * as html2canvas from "html2canvas"
+
+import type { ReactNode } from "react"
+
+export type Utils = {
+
+    /**
+     * 判断宿主是否为客户端
+     *
+     * @returns 打包后的 App 中返回 true，其它场景下返回 false
+     */
+    isNative(): boolean
+
+    /**
+     * 通过文件名获取素材库中对应文件的链接
+     *
+     * @param fileName 素材库中该素材的文件名
+     *
+     * @returns 素材库中对应文件的链接
+     */
+    getWidgetImageUrl(fileName: string): string
+}
+
+declare function __slightning_coco_widget_require__(moduleName: "utils"): Utils | undefined
+declare function __slightning_coco_widget_require__(moduleName: "vika"): typeof Vika | undefined
+declare function __slightning_coco_widget_require__(moduleName: "axios"): typeof axios | undefined
+declare function __slightning_coco_widget_require__(moduleName: "lodash"): typeof Lodash | undefined
+declare function __slightning_coco_widget_require__(moduleName: "crypto-js"): typeof CryptoJS | undefined
+declare function __slightning_coco_widget_require__(moduleName: "qrcode"): typeof QRCode | undefined
+declare function __slightning_coco_widget_require__(moduleName: "color"): typeof Color | undefined
+declare function __slightning_coco_widget_require__(moduleName: "http"): any | undefined
+declare function __slightning_coco_widget_require__(moduleName: "websocket"): typeof WebSocket | undefined
+declare function __slightning_coco_widget_require__(moduleName: "pedometer"): any | undefined
+declare function __slightning_coco_widget_require__(moduleName: "brightness"): any | undefined
+declare function __slightning_coco_widget_require__(moduleName: "stepper"): any | undefined
+declare function __slightning_coco_widget_require__(moduleName: "antd-mobile"): typeof AntdMobile | undefined
+declare function __slightning_coco_widget_require__(moduleName: "html2canvas"): typeof html2canvas | undefined
+
+export const widgetRequire: typeof __slightning_coco_widget_require__ = __slightning_coco_widget_require__
+
+export interface Widget {
+    widgetLog(this: this, message: string): void
+    widgetWarn(this: this, message: string): void
+    widgetError(this: this, message: string): void
+    setProps(this: this, props: object): void
+    emit(this: this, key: string, ...args: unknown[]): void
+}
+
+declare class InvisibleWidget implements Widget {
+    public constructor(props: Record<string, any>)
+    public widgetLog(this: this, message: string): void
+    public widgetWarn(this: this, message: string): void
+    public widgetError(this: this, message: string): void
+    public setProps(this: this, props: object): void
+    public emit(this: this, key: string, ...args: unknown[]): void
+}
+
+declare class VisibleWidget implements Widget {
+    public constructor(props: Record<string, any>)
+    public widgetLog(this: this, message: string): void
+    public widgetWarn(this: this, message: string): void
+    public widgetError(this: this, message: string): void
+    public setProps(this: this, props: object): void
+    public emit(this: this, key: string, ...args: unknown[]): void
+    public render(this: this): ReactNode
+}
+
+const __InvisibleWidget: typeof InvisibleWidget = InvisibleWidget
+type __InvisibleWidget = InvisibleWidget
+const __VisibleWidget: typeof VisibleWidget = VisibleWidget
+type __VisibleWidget = VisibleWidget
+
+export {
+    __InvisibleWidget as InvisibleWidget,
+    __VisibleWidget as VisibleWidget
+}
