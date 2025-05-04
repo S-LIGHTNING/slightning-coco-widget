@@ -5,11 +5,10 @@ import { Widget } from "../widget"
 
 export function transformMethodsCallbackFunctionsToCodeBlocks(types: Types, widget: Widget): [Types, Widget] {
     const argumentsTransformersMap: Record<string, ((arg: unknown) => unknown)[]> =
-        methodsTransformCallbackFunctionsToCodeBlocks(types.methods, types)
+        methodsTransformCallbackFunctionsToCodeBlocks(types.methods, types, widget)
     return [types, new Proxy(widget, {
         construct(target: Widget, argArray: any[], newTarget: Function): object {
-            const widget: any = Reflect.construct(target, argArray, newTarget)
-            return new Proxy(widget, {
+            return new Proxy(Reflect.construct(target, argArray, newTarget), {
                 get(target: any, p: string | symbol, receiver: any): any {
                     const originalFunction: unknown = Reflect.get(target, p, receiver)
                     if (typeof p == "string" && p in argumentsTransformersMap && typeof originalFunction == "function") {
@@ -21,7 +20,7 @@ export function transformMethodsCallbackFunctionsToCodeBlocks(types: Types, widg
                                     if (transformer == undefined) {
                                         continue
                                     }
-                                    argArray[i] = transformer.call(target, argArray[i])
+                                    argArray[i] = transformer.call(thisArg, argArray[i])
                                 }
                                 return Reflect.apply(target, thisArg, argArray)
                             }
@@ -36,7 +35,8 @@ export function transformMethodsCallbackFunctionsToCodeBlocks(types: Types, widg
 
 function methodsTransformCallbackFunctionsToCodeBlocks(
     methods: MethodsTypes,
-    types: Types
+    types: Types,
+    widget: Widget
 ): Record<string, ((arg: unknown) => unknown)[]> {
     const argumentsTransformersMap: Record<string, ((arg: unknown) => unknown)[]> = {}
     for (let i: number = 0; i <= methods.length; i++) {
@@ -45,11 +45,11 @@ function methodsTransformCallbackFunctionsToCodeBlocks(
             continue
         }
         if ("contents" in method) {
-            Object.assign(argumentsTransformersMap, methodsTransformCallbackFunctionsToCodeBlocks(method.contents, types))
+            Object.assign(argumentsTransformersMap, methodsTransformCallbackFunctionsToCodeBlocks(method.contents, types, widget))
             continue
         }
         const map: ((arg: unknown) => unknown)[] | null =
-            methodTransformCallbackFunctionsToCodeBlocks(method, methods, i)
+            methodTransformCallbackFunctionsToCodeBlocks(method, methods, i, widget)
         if (map != null) {
             argumentsTransformersMap[method.key] = map
         }
@@ -60,7 +60,8 @@ function methodsTransformCallbackFunctionsToCodeBlocks(
 function methodTransformCallbackFunctionsToCodeBlocks(
     method: MethodTypes,
     methods: MethodsTypes,
-    index: number
+    index: number,
+    widget: Widget
 ): ((arg: unknown) => unknown)[] | null {
     const argumentsTransformers: ((arg: unknown) => unknown)[] = []
     for (let i: number = 0; i < method.block.length; i++) {
@@ -149,12 +150,14 @@ function methodTransformCallbackFunctionsToCodeBlocks(
                     resolve(result: unknown): void {
                         if (callData.state == "undone") {
                             callData.state = "resolved"
+                            callData.value = result
                             promiseResolve?.(result)
                         }
                     },
                     reject(reason: unknown): void {
                         if (callData.state == "undone") {
                             callData.state = "rejected"
+                            callData.value = reason
                             promiseReject?.(reason)
                         }
                     }
@@ -191,6 +194,9 @@ function methodTransformCallbackFunctionsToCodeBlocks(
                 ],
                 returns: new VoidType()
             })
+            widget.prototype[`${key}Throw`] = function (callData: callData, exception: unknown): void {
+                callData.reject(exception)
+            }
         }
         if (type.returns != null) {
             if (type.returns instanceof VoidType) {
@@ -206,6 +212,9 @@ function methodTransformCallbackFunctionsToCodeBlocks(
                     ],
                     returns: new VoidType()
                 })
+                widget.prototype[`${key}Return`] = function (callData: callData): void {
+                    callData.resolve(undefined)
+                }
             } else {
                 methods.splice(index + 1, 0, {
                     key: `${key}Return`,
@@ -223,6 +232,9 @@ function methodTransformCallbackFunctionsToCodeBlocks(
                     ],
                     returns: new VoidType()
                 })
+                widget.prototype[`${key}Return`] = function (callData: callData, returnValue: unknown): void {
+                    callData.resolve(returnValue)
+                }
             }
         }
     }
