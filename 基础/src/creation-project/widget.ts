@@ -1,11 +1,3 @@
-import type * as CryptoJS from "crypto-js"
-import type * as axios from "axios-1.7.4"
-import type * as Vue from "vue"
-import type * as AntDesign_IconsVue from "@ant-design/icons-vue"
-import type * as Vika from "@vikadata/vika"
-import type * as Lodash from "lodash"
-import type * as html2canvas from "html2canvas"
-
 export type Utils = {
 
     /**
@@ -50,13 +42,13 @@ export type Utils = {
 }
 
 declare function __slightning_coco_widget_require__(moduleName: "cp_utils"): Utils
-declare function __slightning_coco_widget_require__(moduleName: "crypto-js"): typeof CryptoJS
-declare function __slightning_coco_widget_require__(moduleName: "axios"): typeof axios
-declare function __slightning_coco_widget_require__(moduleName: "vue"): typeof Vue
-declare function __slightning_coco_widget_require__(moduleName: "@ant-design/icons-vue"): typeof AntDesign_IconsVue
-declare function __slightning_coco_widget_require__(moduleName: "vika"): typeof Vika
-declare function __slightning_coco_widget_require__(moduleName: "lodash"): typeof Lodash
-declare function __slightning_coco_widget_require__(moduleName: "html2canvas"): typeof html2canvas
+declare function __slightning_coco_widget_require__(moduleName: "crypto-js"): typeof import("crypto-js")
+declare function __slightning_coco_widget_require__(moduleName: "axios"): typeof import("axios-1.7.4")
+declare function __slightning_coco_widget_require__(moduleName: "vue"): typeof import("vue")
+declare function __slightning_coco_widget_require__(moduleName: "@ant-design/icons-vue"): typeof import("@ant-design/icons-vue")
+declare function __slightning_coco_widget_require__(moduleName: "vika"): typeof import("@vikadata/vika")
+declare function __slightning_coco_widget_require__(moduleName: "lodash"): typeof import("lodash")
+declare function __slightning_coco_widget_require__(moduleName: "html2canvas"): typeof import("html2canvas")
 
 export const widgetRequire: typeof __slightning_coco_widget_require__ = __slightning_coco_widget_require__
 

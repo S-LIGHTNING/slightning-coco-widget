@@ -1,13 +1,3 @@
-import type * as axios from "axios-0.21.1"
-import type * as Vika from "@vikadata/vika"
-import type * as Lodash from "lodash"
-import type * as CryptoJS from "crypto-js"
-import type * as QRCode from "qrcode"
-import type * as Color from "color"
-import type * as WebSocket from "websocket"
-import type * as AntdMobile from "antd-mobile"
-import type * as html2canvas from "html2canvas"
-
 import type { ReactNode } from "react"
 
 export type Utils = {
@@ -30,19 +20,19 @@ export type Utils = {
 }
 
 declare function __slightning_coco_widget_require__(moduleName: "utils"): Utils | undefined
-declare function __slightning_coco_widget_require__(moduleName: "vika"): typeof Vika | undefined
-declare function __slightning_coco_widget_require__(moduleName: "axios"): typeof axios | undefined
-declare function __slightning_coco_widget_require__(moduleName: "lodash"): typeof Lodash | undefined
-declare function __slightning_coco_widget_require__(moduleName: "crypto-js"): typeof CryptoJS | undefined
-declare function __slightning_coco_widget_require__(moduleName: "qrcode"): typeof QRCode | undefined
-declare function __slightning_coco_widget_require__(moduleName: "color"): typeof Color | undefined
+declare function __slightning_coco_widget_require__(moduleName: "vika"): typeof import("@vikadata/vika") | undefined
+declare function __slightning_coco_widget_require__(moduleName: "axios"): typeof import("axios-0.21.1") | undefined
+declare function __slightning_coco_widget_require__(moduleName: "lodash"): typeof import("lodash") | undefined
+declare function __slightning_coco_widget_require__(moduleName: "crypto-js"): typeof import("crypto-js") | undefined
+declare function __slightning_coco_widget_require__(moduleName: "qrcode"): typeof import("qrcode") | undefined
+declare function __slightning_coco_widget_require__(moduleName: "color"): typeof import("color") | undefined
 declare function __slightning_coco_widget_require__(moduleName: "http"): any | undefined
 declare function __slightning_coco_widget_require__(moduleName: "websocket"): typeof WebSocket | undefined
 declare function __slightning_coco_widget_require__(moduleName: "pedometer"): any | undefined
 declare function __slightning_coco_widget_require__(moduleName: "brightness"): any | undefined
 declare function __slightning_coco_widget_require__(moduleName: "stepper"): any | undefined
-declare function __slightning_coco_widget_require__(moduleName: "antd-mobile"): typeof AntdMobile | undefined
-declare function __slightning_coco_widget_require__(moduleName: "html2canvas"): typeof html2canvas | undefined
+declare function __slightning_coco_widget_require__(moduleName: "antd-mobile"): typeof import("antd-mobile") | undefined
+declare function __slightning_coco_widget_require__(moduleName: "html2canvas"): typeof import("html2canvas") | undefined
 
 export const widgetRequire: typeof __slightning_coco_widget_require__ = __slightning_coco_widget_require__
 
