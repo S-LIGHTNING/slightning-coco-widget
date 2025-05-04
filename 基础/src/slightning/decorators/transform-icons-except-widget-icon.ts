@@ -1,6 +1,5 @@
-import { MethodsTypes, PropertiesTypes, Types } from "../types"
+import { BUILD_IN_ICON_URL_MAP, MethodsTypes, PropertiesTypes, Types } from "../types"
 import { Widget } from "../widget"
-import { ICON_URL_MAP } from "./transform-icons"
 
 export function transformIconsExceptWidgetIcon(types: Types, widget: Widget): [Types, Widget] {
     typesTransformIcons(types)
@@ -45,6 +44,6 @@ function methodsTypesTransformIcon(methods: MethodsTypes): void {
 
 function transformIcon(object: { icon?: string | null | undefined }): void {
     if (object.icon != null) {
-        object.icon = ICON_URL_MAP[object.icon] ?? object.icon
+        object.icon = BUILD_IN_ICON_URL_MAP[object.icon] ?? object.icon
     }
 }

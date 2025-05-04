@@ -6,8 +6,7 @@ export function transformMethodsThrows(types: Types, widget: Widget): [Types, Wi
     const methodToBeProxy: Set<string> = methodsTransformThrows(types.methods, widget)
     return [types, new Proxy(widget, {
         construct(target: Widget, argArray: any[], newTarget: Function): object {
-            const widget: any = Reflect.construct(target, argArray, newTarget)
-            return new Proxy(widget, {
+            return new Proxy(Reflect.construct(target, argArray, newTarget), {
                 get(target: any, p: string | symbol, receiver: any): any {
                     const originalFunction: unknown = Reflect.get(target, p, receiver)
                     if (typeof p == "string" && methodToBeProxy.has(p) && typeof originalFunction == "function") {

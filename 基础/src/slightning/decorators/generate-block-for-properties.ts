@@ -1,9 +1,7 @@
 import { capitalize } from "../../utils"
 import { VoidType } from "../type/void-type"
-import { Color, MethodBlockParam, MethodGroup, PropertiesTypes, Types } from "../types"
+import { BUILD_IN_PROPERTIES, Color, MethodBlockParam, MethodGroup, PropertiesTypes, Types } from "../types"
 import { Widget } from "../widget"
-
-const buildInProperties: string[] = ["__width", "__height", "__opacity", "__position", "__visible"]
 
 export function generateBlockForProperties(types: Types, widget: Widget): [Types, Widget] {
 
@@ -39,7 +37,7 @@ export function generateBlockForProperties(types: Types, widget: Widget): [Types
                 })
                 continue
             }
-            if (buildInProperties.includes(property.key)) {
+            if (BUILD_IN_PROPERTIES.includes(property.key)) {
                 continue
             }
             const propertyGetBlockKey: string =
@@ -80,7 +78,7 @@ export function generateBlockForProperties(types: Types, widget: Widget): [Types
                 })
                 continue
             }
-            if (buildInProperties.includes(property.key)) {
+            if (BUILD_IN_PROPERTIES.includes(property.key)) {
                 continue
             }
             const propertySetBlockKey: string =
