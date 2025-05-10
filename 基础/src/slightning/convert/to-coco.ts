@@ -72,6 +72,7 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
     const result: CoCo.MethodTypes[] = []
 
     let lastMethod: CoCo.MethodTypes | null = null
+    let showGroupLabel: boolean = false
 
     function add(
         methods: MethodsTypes,
@@ -81,11 +82,21 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
         let isFirst: boolean = true
         for (const method of methods) {
             if ("contents" in method) {
-                add(
-                    method.contents,
-                    method.label == null ? labels : [...labels, method.label],
-                    merge({}, groupBlockOptions, method.blockOptions ?? {})
-                )
+                if (method.label == null) {
+                    add(
+                        method.contents,
+                        labels,
+                        merge({}, groupBlockOptions, method.blockOptions ?? {})
+                    )
+                } else {
+                    showGroupLabel = true
+                    add(
+                        method.contents,
+                        [...labels, method.label],
+                        merge({}, groupBlockOptions, method.blockOptions ?? {})
+                    )
+                    showGroupLabel = true
+                }
                 isFirst = true
                 continue
             }
@@ -181,7 +192,10 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
             }
             if (isFirst) {
                 isFirst = false
-                transformed.blockOptions.line = labels.join("·")
+                if (showGroupLabel) {
+                    showGroupLabel = false
+                    transformed.blockOptions.line = labels.join("·")
+                }
                 if (lastMethod != null) {
                     lastMethod.blockOptions ??= {}
                     lastMethod.blockOptions.space = 40

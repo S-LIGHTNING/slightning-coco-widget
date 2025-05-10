@@ -80,8 +80,11 @@ export function convertPropertiesTypesToCreationProject(
 }
 
 export function convertMethodsTypesToCreationProject(methods: MethodsTypes): CreationProject.MethodTypes[] {
+
     const result: CreationProject.MethodTypes[] = []
+
     let lastMethod: CreationProject.MethodTypes | null = null
+    let showGroupLabel: boolean = false
 
     function add(
         methods: MethodsTypes,
@@ -91,11 +94,21 @@ export function convertMethodsTypesToCreationProject(methods: MethodsTypes): Cre
         let isFirst: boolean = true
         for (const method of methods) {
             if ("contents" in method) {
-                add(
-                    method.contents,
-                    method.label == null ? labels : [...labels, method.label],
-                    merge({}, groupBlockOptions, method.blockOptions ?? {})
-                )
+                if (method.label == null) {
+                    add(
+                        method.contents,
+                        labels,
+                        merge({}, groupBlockOptions, method.blockOptions ?? {})
+                    )
+                } else {
+                    showGroupLabel = true
+                    add(
+                        method.contents,
+                        [...labels, method.label],
+                        merge({}, groupBlockOptions, method.blockOptions ?? {})
+                    )
+                    showGroupLabel = true
+                }
                 isFirst = true
                 continue
             }
@@ -186,7 +199,10 @@ export function convertMethodsTypesToCreationProject(methods: MethodsTypes): Cre
             if (isFirst) {
                 isFirst = false
                 transformed.flyoutOptions ??= {}
-                transformed.flyoutOptions.line = labels.join("·")
+                if (showGroupLabel) {
+                    showGroupLabel = false
+                    transformed.flyoutOptions.line = labels.join("·")
+                }
                 if (lastMethod != null) {
                     transformed.flyoutOptions.gap = 40
                 }
