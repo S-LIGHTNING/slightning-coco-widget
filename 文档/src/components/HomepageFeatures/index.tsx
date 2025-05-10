@@ -9,6 +9,54 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
+    title: '函数一等公民',
+    description: (
+      <>
+        像使用其他类型的数据一样使用函数，函数可以作为参数传递给其他函数，也可以作为其他函数的返回值。SCW 可以将这些函数转为编辑器支持的形式。
+      </>
+    ),
+  },
+  {
+    title: '方法调用验证',
+    description: (
+      <>
+        SCW 可以检查方法调用是否正确，如果方法不存在或参数类型不匹配，SCW 会报错提示。此外，SCW 还可以捕获方法调用中的异常，并显示异常信息。
+      </>
+    ),
+  },
+  {
+    title: 'Creation Project 支持',
+    description: (
+      <>
+        支持部分 Creation Project 特性，如：控件分类、方法回调。让你的控件在 Creation Project 中更强大。
+      </>
+    ),
+  },
+  {
+    title: '方法分组',
+    description: (
+      <>
+        为一组方法统一设置积木样式；无需手动调整积木标签和积木间距，SCW 可以根据方法分组自动调整。
+      </>
+    ),
+  },
+  {
+    title: '自动绕过限制',
+    description: (
+      <>
+        自动绕过 CoCo 对自定义控件的限制，如：控件关键词检查；全局对象访问限制。
+      </>
+    ),
+  },
+  {
+    title: 'TypeScript 支持',
+    description: (
+      <>
+        支持 TypeScript。TypeScript 强大的类型系统可以帮助你更好地开发控件。
+      </>
+    ),
+  },
+  {
     title: '复杂',
     description: (
       <>

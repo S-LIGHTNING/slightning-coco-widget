@@ -13,7 +13,7 @@ SCW 为 CoCo 自定义控件编写了 Types，使得 TypeScript 编译器可以�
 安装 SCW 和 TypeScript 编译器，在自定义控件目录中执行：
 
 ```sh
-npm install slightning-coco-widget@2.0.0-alpha tsc --save-dev
+npm install slightning-coco-widget@2.0.1-alpha tsc --save-dev
 ```
 
 ## 二、启用类型检查

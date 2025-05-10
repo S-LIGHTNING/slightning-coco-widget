@@ -14,7 +14,7 @@ SCW 使用 webpack 打包控件，你可以按照如下流程打包你的自定�
 安装 SCW 和 webpack，在自定义控件目录中执行：
 
 ```sh
-npm install slightning-coco-widget@2.0.0-alpha slightning-coco-widget--webpack@2.0.0-alpha webpack webpack-cli --save-dev
+npm install slightning-coco-widget@2.0.1-alpha slightning-coco-widget--webpack@2.0.1-alpha webpack webpack-cli --save-dev
 ```
 
 如果你使用 TypeScript，还需要安装 ts-loader：
