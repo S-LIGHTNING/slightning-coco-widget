@@ -23,6 +23,10 @@ export const BYPASS_MAP: BypassMap = {
     "fetch": {
         importSource: "slightning-coco-widget--webpack/bypass/fetch"
     },
+    "location": {},
+    "parent.location": {
+        replace: "parent._location"
+    },
     ".fetch": {
         replace: "._fetch",
         importSource: "slightning-coco-widget--webpack/bypass/fetch"
