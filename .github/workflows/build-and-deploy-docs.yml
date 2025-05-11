@@ -33,7 +33,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: ./文档/build
 
   deploy:
     name: Deploy Document Website to GitHub Pages
