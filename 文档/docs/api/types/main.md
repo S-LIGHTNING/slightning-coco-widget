@@ -122,7 +122,7 @@ sidebar_position: 1
 
 #### Types.options.platforms?
 
-类型：`Platforms`
+类型：<code>[PlatformEnum](#platformenum)[]</code>
 
 描述：控件的可用平台。
 
@@ -138,25 +138,25 @@ sidebar_position: 1
 
 ### Types.properties
 
-类型：`(PropertyGroup | PropertyTypes)[]`
+类型：<code>[PropertyGroup](./property#propertygroup)[] | [PropertyTypes](./property#propertytypes)[]</code>
 
 描述：控件属性。
 
 ### Types.methods
 
-类型：`(MethodGroup | MethodTypes)[]`
+类型：<code>[MethodGroup](./method#methodgroup)[] | [MethodTypes](./method#methodtypes)[]</code>
 
 描述：控件方法。
 
 ### Types.events
 
-类型：`EventTypes[]`
+类型：<code>[EventTypes](./event#eventtypes)[]</code>
 
 描述：控件事件。
 
 ## Platforms
 
-类型：`PlatformEnum[]`
+类型：<code>[PlatformEnum](#platformenum)[]</code>
 
 描述：控件的可用平台。
 

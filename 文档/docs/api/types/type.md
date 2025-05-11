@@ -335,12 +335,12 @@ declare class FunctionType<A extends unknown[], R> extends Type<(...args: A) => 
 
 描述：函数类型。
 
-- `block`：方法块类型定义；
+- `block`：函数对应的积木，类似于控件方法类型定义中的 `block` 属性；
 - `returns`：返回值类型；
 - `throws`：抛出异常类型；
 - `defaultValue`：默认值字符串；
 - `raw`：是否保持原始，若为是，则不会被装饰器转换。
 
 :::tip 提示
-你可能需要结合 [generateMethodForFunctions](../export/decorators.md#generatemethodforfunctions)、[transformMethodsCallbackFunctionsToEvents](../export/decorators.md#transformmethodscallbackfunctionstoevents)、[transformMethodsCallbackFunctionsToCodeBlocks](../export/decorators.md#transformmethodscallbackfunctionstocodeblocks) 这几个装饰器以更好地使用函数类型。
+你可能需要结合 [`generateMethodForFunctions`](../export/decorators.md#generatemethodforfunctions)、[`transformMethodsCallbackFunctionsToEvents`](../export/decorators.md#transformmethodscallbackfunctionstoevents)、[`transformMethodsCallbackFunctionsToCodeBlocks`](../export/decorators.md#transformmethodscallbackfunctionstocodeblocks) 这几个装饰器以更好地使用函数类型。
 :::

@@ -170,9 +170,7 @@ const types: Types = {
                     })
                 }
             ],
-            returns: new StringType({
-                defaultValue: "默认值"
-            }),
+            returns: new StringType(),
             blockOptions: {
                 icon: "icon-widget-radio",
                 color: Color.BLUE,
@@ -250,15 +248,11 @@ const types: Types = {
                 {
                     key: "param1",
                     label: "参数1",
-                    type: new StringType({
-                        defaultValue: "默认值"
-                    })
+                    type: new StringType()
                 }, {
                     key: "param2",
                     label: "参数2",
-                    type: new NumberType({
-                        defaultValue: 0
-                    })
+                    type: new NumberType()
                 }
             ]
         }

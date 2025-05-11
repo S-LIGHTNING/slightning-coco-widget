@@ -114,42 +114,121 @@ export enum PlatformEnum {
 export type PropertiesTypes = (PropertyGroup | PropertyTypes)[]
 
 export interface PropertyGroup {
+    /**
+     * 属性组标签，设置后生成的一组积木上方会显示该标签。
+     */
     label?: string | null | undefined
+    /**
+     * 属性组积木选项。组内属性的积木选项会继承该选项。
+     */
     blockOptions?: PropertyBlockOptionsTypes | null | undefined
+    /**
+     * 属性组内容。
+     */
     contents: PropertiesTypes
 }
 
 export interface PropertyTypes {
+    /**
+     * 属性的键名，与控件实体中的属性名对应。
+     */
     key: string
+    /**
+     * 属性的标签，作为在编辑器中显示的属性名。
+     */
     label: string
+    /**
+     * 属性的类型。
+     */
     type: Type
+    /**
+     * 属性的积木选项。
+     */
     blockOptions?: PropertyBlockOptionsTypes | null | undefined
 }
 
 export interface PropertyBlockOptionsTypes {
+    /**
+     * 取值方法积木选项。
+     *
+     * 设为 `false` 则不生成取值方法积木。
+     */
     get?: boolean | PropertyComputeBlockOptionsTypes | null | undefined
+    /**
+     * 赋值方法积木选项。
+     *
+     * 设为 `false` 则不生成赋值方法积木。
+     */
     set?: boolean | PropertyComputeBlockOptionsTypes | null | undefined
 }
 
 export interface PropertyComputeBlockOptionsTypes extends BasicBlockOptionsTypes {
+    /**
+     * 计算方法（取值/赋值方法）的键名，与控件实体中的方法名对应。
+     *
+     * 默认为 `get${capitalize(key)}` 或 `set${capitalize(key)}`，其中 `capitalize(key)` 为大写首字母的属性键名。
+     *
+     * 如果控件实体中不存在该方法，会自动生成。
+     */
     key?: string | null | undefined
 }
 
 export type MethodsTypes = (MethodGroup | MethodTypes)[]
 
 export interface MethodGroup {
+    /**
+     * 方法组标签，设置后生成的一组积木上方会显示该标签。
+     */
     label?: string | null | undefined
+    /**
+     * 方法组积木选项。组内方法的积木选项会继承该选项。
+     */
     blockOptions?: MethodBlockOptionsTypes | null | undefined
+    /**
+     * 方法组内容。
+     */
     contents: MethodsTypes
 }
 
 export interface MethodTypes {
+    /**
+     * 方法的键名，与控件实体中的方法名对应。
+     */
     key: string
+    /**
+     * 方法的标签。
+     */
     label: string
+    /**
+     * 方法的积木。
+     *
+     * 可以是以下内容：
+     *
+     * - `MethodBlockParam.THIS`：`this` 参数，即控件实例本身，`this` 参数必须是第一个参数。
+     * - `MethodBlockParam.METHOD`：方法标签文本。
+     * - 字符串：说明文本。
+     * - MethodParamTypes：方法参数。
+     */
     block: MethodBlockTypes
+    /**
+     * 方法的返回值类型。
+     *
+     * 不设置或设置为空时，表示没有返回值。
+     */
     returns?: Type | null | undefined
+    /**
+     * 方法的抛出异常类型。
+     *
+     * 不设置或设置为空时，表示不会抛出异常。
+     */
     throws?: Type | null | undefined
+    /**
+     * 方法提示信息，当鼠标悬停在积木上时显示。
+     */
     tooltip?: string | null | undefined
+    /**
+     * 方法的积木选项。
+     */
     blockOptions?: MethodBlockOptionsTypes | null | undefined
 }
 
@@ -160,43 +239,116 @@ export enum MethodBlockParam {
 }
 
 export interface MethodParamTypes {
+    /**
+     * 参数的键名。
+     */
     key: string
+    /**
+     * 参数的标签。
+     */
     label: string
+    /**
+     * 参数的类型。
+     */
     type: Type
 }
 
 export interface MethodBlockOptionsTypes extends BasicBlockOptionsTypes {}
 
 export interface EventTypes {
+    /**
+     * 事件的键名，触发事件时需要传入的键名。
+     */
     key: string
+    /**
+     * 事件的子类型。
+     *
+     * **仅在 CoCo 中生效，Creation Project 不支持该特性。**
+     *
+     * 注：如果要在 Creation Project 中使用该特性，请使用 `flattenEventSubTypes` 装饰器将子类型展开。
+     */
     subTypes?: EventSubType[] | null | undefined
+    /**
+     * 事件的标签，作为在编辑器中显示的名称。
+     */
     label: string
+    /**
+     * 事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
+     */
     params: EventParamTypes[]
 }
 
 export interface EventSubType extends DropdownTypes {
+    /**
+     * 子类型的键名。
+     */
     key: string
 }
 
 export interface EventParamTypes {
+    /**
+     * 事件参数的键名。
+     */
     key: string
+    /**
+     * 事件参数的标签，作为在编辑器中显示的名称。
+     */
     label: string
+    /**
+     * 事件参数的类型。
+     */
     type: Type
 }
 
 export interface DropdownTypes {
+    /**
+     * 下拉选项。
+     */
     dropdown: DropdownItemTypes[]
 }
 
 export interface DropdownItemTypes {
+    /**
+     * 选项的标签，作为在编辑器中显示的名称。
+     */
     label: string
+    /**
+     * 选项的值。
+     */
     value: string
 }
 
 export interface BasicBlockOptionsTypes {
+    /**
+     * 积木图标链接。设置后会在积木前显示图标。
+     *
+     * **仅在 CoCo 中生效，Creation Project 不支持该特性。**
+     */
     icon?: string | null | undefined
+    /**
+     * 积木的颜色。
+     */
     color?: Color | string | null | undefined
+    /**
+     * 是否在一行显示。
+     *
+     * 如果设为 `false`，则生成的积木会显示为多行，第一行显示方法标签和 `this` 参数，后面几行显示其他参数。
+     */
     inline?: boolean | null | undefined
+    /**
+     * 是否已被弃用。
+     *
+     * 已弃用的方法具有以下特点：
+     *
+     * - 积木前会显示 `[已弃用]` 标签；
+     * - 积木显示为灰色（覆盖 `color` 选项）；
+     * - tooltip 中会提示弃用；
+     * - 调用时会显示警告。
+     *
+     * 设为 `true` 表示方法已弃用。
+     *
+     * 设为 `string` 表示弃用说明，默认弃用说明为“该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法”。
+     */
     deprecated?: boolean | string | null | undefined
 }
 

@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'SLIGHTNING CoCo 控件框架文档',
   tagline: '工程化 CoCo 自定义控件开发解决方案',
-  favicon: 'static/img/favicon.ico',
+  favicon: 'img/logo.png',
 
   // Set the production url of your site here
   url: 'https://s-lightning.github.io',
@@ -72,7 +72,7 @@ const config: Config = {
       title: 'SCW 文档',
       logo: {
         alt: 'Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.png',
       },
       items: [
         {

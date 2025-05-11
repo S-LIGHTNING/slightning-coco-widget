@@ -31,9 +31,17 @@ sidebar_position: 2
 
 功能：将回调函数转为事件。
 
+:::tip 提示
+该装饰器不会为没有返回值的函数生成返回方法，如果你需要生成返回方法，请将函数的返回值设为 <code>new [VoidType](../../api/types/type#voidtype)()</code>。
+:::
+
 ## transformMethodsCallbackFunctionsToCodeBlocks
 
 功能：将回调函数转为回调积木（即没有返回值和抛出的回调函数）。
+
+:::tip 提示
+该装饰器不会转换已经是回调积木的函数。
+:::
 
 ## flattenEventSubTypes
 
@@ -41,7 +49,7 @@ sidebar_position: 2
 
 ## addThisForMethods
 
-功能：给所有方法的类型定义中添加 `this` 参数
+功能：给所有方法的类型定义中添加 `this` 参数。
 
 ## addCheck
 

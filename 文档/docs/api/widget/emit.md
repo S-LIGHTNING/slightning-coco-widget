@@ -12,7 +12,7 @@ function emit(this /* 控件实例 */, key: string, ...args: unknown[]): void
 | 参数 | 描述 |
 | --- | --- |
 | this | 控件实例 |
-| key | 事件名称 |
+| key | 事件键名称，与 CoCo 一致 |
 | args | 事件参数 |
 
 示例：

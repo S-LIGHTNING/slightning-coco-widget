@@ -94,7 +94,7 @@ npx webpack --watch
 
 ## 四、发布
 
-修改 webpack 配置中的 mode 为 production，devtool 为 false，并执行：
+修改 webpack 配置中的 `mode` 为 `production`，`devtool` 为 `false`，并执行：
 
 ```sh
 npx webpack

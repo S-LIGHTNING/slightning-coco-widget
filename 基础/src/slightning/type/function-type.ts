@@ -14,6 +14,12 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
     public readonly defaultValue?: string | null | undefined
     public readonly raw: boolean
 
+    /**
+     * @param block 函数对应的积木，类似于控件方法类型定义中的 `block` 属性。
+     * @param returns 返回值类型。
+     * @param throws 抛出异常类型。
+     * @param raw 是否保持原始，若为时，则不会被装饰器转换。
+     */
     public constructor({
         block,
         returns,
