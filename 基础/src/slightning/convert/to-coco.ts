@@ -118,10 +118,26 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
                     inputsInline: blockOptions.inline ?? undefined
                 }
             }
+            if (typeof blockOptions.deprecated == "string") {
+                if (transformed.tooltip == null) {
+                    transformed.tooltip = `该方法已弃用：${blockOptions.deprecated}`
+                } else {
+                    transformed.tooltip = `${transformed.tooltip}\n\n该方法已弃用：${blockOptions.deprecated}`
+                }
+            } else if (blockOptions.deprecated) {
+                if (transformed.tooltip == null) {
+                    transformed.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法`
+                } else {
+                    transformed.tooltip = `${transformed.tooltip}\n\n该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法`
+                }
+            }
             transformed.blockOptions ??= {}
             if (blockOptions.inline ?? true) {
                 let restParts: (string | MethodBlockParam | MethodParamTypes)[] | null = null
                 let labelsBeforeThis: string[] = []
+                if (blockOptions.deprecated != null) {
+                    labelsBeforeThis.push("[已弃用]")
+                }
                 if (!method.block.includes(MethodBlockParam.THIS)) {
                     throw new Error(`方法 ${method.label} 缺少 this 参数`)
                 }
@@ -177,6 +193,9 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
                     }
                 }
             } else {
+                if (blockOptions.deprecated != null) {
+                    transformed.blockOptions.callMethodLabel = "[已弃用]"
+                }
                 transformed.blockOptions.inputsInline = false
                 transformed.label = method.label
                 for (const part of method.block) {

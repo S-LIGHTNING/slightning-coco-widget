@@ -134,7 +134,7 @@ export function addCheck(types: Types, widget: Widget): [Types, Widget] {
                                 if (typeof method.blockOptions.deprecated == "string") {
                                     logger.warn(...getDescription(), "该方法已弃用：", method.blockOptions.deprecated)
                                 } else if (method.blockOptions.deprecated) {
-                                    logger.warn(...getDescription(), "该方法已弃用")
+                                    logger.warn(...getDescription(), "该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法")
                                 }
                                 const errors: TypeValidateError<unknown>[] = []
                                 let i: number = 0
