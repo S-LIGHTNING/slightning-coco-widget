@@ -1,4 +1,4 @@
-import { addCheck, addThisForMethods, ArrayType, CoCo, Color, CreationProject, emit, exportWidget, flattenEventSubTypes, FunctionType, generateBlockForProperties, generateMethodForFunctions, getSuperWidget, IntegerType, Logger, MethodBlockParam, ObjectType, StringType, transformIcons, transformIconsExceptWidgetIcon, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, Types } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, BooleanType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, flattenEventSubTypes, FunctionType, generateBlockForProperties, generateMethodForFunctions, getSuperWidget, ImageType, InstanceType, IntegerType, Logger, MethodBlockParam, NumberType, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, Types, UnionType, VideoType } from "slightning-coco-widget"
 import _ from "lodash"
 
 const types: Types = {
@@ -97,6 +97,10 @@ const types: Types = {
                     }
                 ]
             }, {
+                label: "事件",
+                blockOptions: {
+                    color: Color.BLUE
+                },
                 contents: [
                     {
                         key: "emitTestEvent",
@@ -104,6 +108,189 @@ const types: Types = {
                         block: [
                             MethodBlockParam.METHOD
                         ]
+                    }, {
+                        key: "emitTestEventSubTypes",
+                        label: "触发测试事件子类型",
+                        block: [
+                            "触发", "测试事件子类型", {
+                                key: "subType1",
+                                label: "子类型1",
+                                type: new StringEnumType({
+                                    entries: [
+                                        { label: "测试1", value: "test1" },
+                                        { label: "测试2", value: "test2" }
+                                    ]
+                                })
+                            }, {
+                                key: "subType2",
+                                label: "子类型2",
+                                type: new StringEnumType({
+                                    entries: [
+                                        { label: "测试3", value: "test3" },
+                                        { label: "测试4", value: "test4" }
+                                    ]
+                                })
+                            }
+                        ]
+                    }
+                ]
+            }, {
+                label: "方法",
+                blockOptions: {
+                    color: Color.CYAN
+                },
+                contents: [
+                    {
+                        key: "testMethodParams",
+                        label: "测试方法参数",
+                        block: [
+                            "字符串", {
+                                key: "string",
+                                label: "字符串",
+                                type: new StringType({
+                                    defaultValue: "字符串"
+                                })
+                            }, "整数", {
+                                key: "integer",
+                                label: "整数",
+                                type: new IntegerType({
+                                    defaultValue: 0
+                                })
+                            }, "数字", {
+                                key: "number",
+                                label: "数字",
+                                type: new NumberType({
+                                    defaultValue: 0
+                                })
+                            }, "布尔", {
+                                key: "boolean",
+                                label: "布尔",
+                                type: new BooleanType({
+                                    defaultValue: false
+                                })
+                            }, "任意", {
+                                key: "any",
+                                label: "任意",
+                                type: new AnyType({
+                                    defaultValue: null
+                                })
+                            }, "字符串枚举", {
+                                key: "stringEnum",
+                                label: "字符串枚举",
+                                type: new StringEnumType({
+                                    entries: [
+                                        { label: "选项1", value: "option1" },
+                                        { label: "选项2", value: "option2" }
+                                    ]
+                                })
+                            }, "字典", {
+                                key: "object",
+                                label: "字典",
+                                type: new ObjectType({
+                                    propertiesType: {
+                                        property1: new StringType({
+                                            defaultValue: "属性1"
+                                        }),
+                                        property2: new IntegerType({
+                                            defaultValue: 0
+                                        })
+                                    }
+                                })
+                            }, "列表", {
+                                key: "array",
+                                label: "列表",
+                                type: new ArrayType({
+                                    itemType: new StringType({
+                                        defaultValue: "列表项"
+                                    })
+                                })
+                            }, "颜色", {
+                                key: "color",
+                                label: "颜色",
+                                type: new ColorType({
+                                    defaultValue: Color.BLUE
+                                })
+                            }, "图片", {
+                                key: "image",
+                                label: "图片",
+                                type: new ImageType()
+                            }, "音频", {
+                                key: "audio",
+                                label: "音频",
+                                type: new AudioType()
+                            }, "视频", {
+                                key: "video",
+                                label: "视频",
+                                type: new VideoType()
+                            }, "联合", {
+                                key: "union",
+                                label: "联合",
+                                type: new UnionType<string | number>(new StringType({
+                                    defaultValue: "联合"
+                                }), new IntegerType())
+                            }, "实例", {
+                                key: "instance",
+                                label: "实例",
+                                type: new InstanceType({
+                                    theClass: Object
+                                })
+                            }, "函数", {
+                                key: "function",
+                                label: "函数",
+                                type: new FunctionType({
+                                    block: [
+                                        {
+                                            key: "param1",
+                                            label: "参数1",
+                                            type: new StringType({
+                                                defaultValue: "参数1"
+                                            })
+                                        }, {
+                                            key: "param2",
+                                            label: "参数2",
+                                            type: new IntegerType({
+                                                defaultValue: 0
+                                            })
+                                        }
+                                    ],
+                                    returns: new AnyType(),
+                                    throws: new AnyType()
+                                })
+                            }
+                        ]
+                    }, {
+                        key: "testMethodThrowsNoReturns",
+                        label: "测试方法无返回值抛出异常",
+                        block: [
+                            MethodBlockParam.METHOD, {
+                                key: "type",
+                                label: "类型",
+                                type: new StringEnumType({
+                                    entries: [
+                                        { label: "返回", value: "returns" },
+                                        { label: "抛出", value: "throws" }
+                                    ]
+                                })
+                            }
+                        ],
+                        throws: new AnyType()
+                    }, {
+                        key: "testMethodThrowsWithReturns",
+                        label: "测试方法有返回值抛出异常",
+                        block: [
+                            MethodBlockParam.METHOD, {
+                                key: "type",
+                                label: "类型",
+                                type: new StringEnumType({
+                                    entries: [
+                                        { label: "返回", value: "returns" },
+                                        { label: "抛出", value: "throws" }
+                                    ]
+                                })
+                            }
+                        ],
+                        returns: new AnyType(),
+                        throws: new AnyType()
                     }
                 ]
             }, {
@@ -131,15 +318,7 @@ const types: Types = {
         }, {
             key: "onTestEvent",
             label: "测试事件",
-            params: [
-                {
-                    key: "function",
-                    label: "函数",
-                    type: new FunctionType({
-                        block: []
-                    })
-                }
-            ]
+            params: []
         }, {
             key: "onTestEventSubTypes",
             label: "测试事件子类型",
@@ -190,11 +369,25 @@ class TestBaseWidget extends getSuperWidget(types) {
         emit.call(this, "onTestEvent")
     }
 
-    public testEvent(this: this): void {
-        this.logger.log("测试事件传出函数被调用")
-        emit.call(this, "onTestEvent", (): void => {
-            this.logger.log("事件传出函数函数被调用")
-        })
+    public emitTestEventSubTypes(
+        this: this,
+        subType1: "test1" | "test2",
+        subType2: "test3" | "test4"
+    ): void {
+        emit.call(this, `onTestEventSubTypes${subType1}${subType2}`)
+    }
+
+    public testMethodThrowsNoReturns(this: this, type: "returns" | "throws"): void {
+        if (type == "throws") {
+            throw new Error("测试方法无返回值抛出异常")
+        }
+    }
+
+    public testMethodThrowsWithReturns(this: this, type: "returns" | "throws"): any {
+        if (type == "throws") {
+            throw new Error("测试方法有返回值抛出异常")
+        }
+        return "返回值"
     }
 
     public testMethod(): void {
