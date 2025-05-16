@@ -4,7 +4,7 @@
 
 ## 文档
 
-[点击查看文档](https://s-slightning.github.io/slightning-coco-widget)
+[点击查看文档](https://s-lightning.github.io/slightning-coco-widget)
 
 ## 星星
 
