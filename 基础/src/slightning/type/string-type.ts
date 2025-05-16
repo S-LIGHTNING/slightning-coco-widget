@@ -1,8 +1,9 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
+import { typeToString } from "./utils"
 
 export enum StringInputType {
     INLINE = "INLINE",
@@ -34,8 +35,7 @@ export class StringType implements Type<string> {
     public readonly inputType: StringInputType
 
     public constructor({
-        defaultValue,
-        inputType
+        defaultValue, inputType
     }: {
         defaultValue?: string | null | undefined
         inputType?: StringInputType | null | undefined
@@ -45,15 +45,19 @@ export class StringType implements Type<string> {
         this.inputType = inputType ?? StringInputType.INLINE
     }
 
-    public toString(): string {
-        return "字符串"
-    }
-
     public validate(value: unknown): value is string {
         if (typeof value != "string") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${this.toString()}`, value, this)
+            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         return true
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        return []
+    }
+
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        return []
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {

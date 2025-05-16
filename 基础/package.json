@@ -54,7 +54,7 @@
     "编程猫"
   ],
   "dependencies": {
-    "@slightning/anything-to-string": "^1.0.0",
+    "@slightning/anything-to-string": "^1.1.0",
     "@types/ant-design__icons-vue": "file:types-of-provided-modules/ant-design__icons-vue",
     "@types/antd-mobile": "file:types-of-provided-modules/antd-mobile",
     "@types/axios-0.21.1": "file:types-of-provided-modules/axios/0.21.1",

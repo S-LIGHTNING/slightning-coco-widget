@@ -1,8 +1,9 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString } from "../../utils"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
+import { typeToString } from "./utils"
 
 export enum StringEnumInputType {
     DROPDOWN = "INLINE",
@@ -13,14 +14,11 @@ export class StringEnumType<T extends string> implements Type<T> {
 
     public readonly entries: { label: string, value: string }[]
     public readonly inputType: StringEnumInputType
-
     public readonly valueToLabelMap: Record<string, string>
-
-    private readonly values: string[]
+    public readonly values: string[]
 
     public constructor({
-        entries,
-        inputType
+        entries, inputType
     }: {
         entries: { label: string, value: string }[]
         inputType?: StringEnumInputType | null | undefined
@@ -34,15 +32,19 @@ export class StringEnumType<T extends string> implements Type<T> {
         this.values = entries.map((entry: { label: string, value: string }): string => entry.value)
     }
 
-    public toString(): string {
-        return this.values.map((value: string): string => JSON.stringify(value)).join(" | ")
-    }
-
     public validate(value: unknown): value is T {
         if (typeof value != "string" || !this.values.includes(value)) {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${this.toString()}`, value, this)
+            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         return true
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        return []
+    }
+
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        return []
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {

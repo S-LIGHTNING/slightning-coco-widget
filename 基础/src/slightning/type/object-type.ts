@@ -1,9 +1,10 @@
+import * as stringify from "@slightning/anything-to-string"
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
-import { validate } from "./utils"
+import { typeToString, validate } from "./utils"
 
 export class ObjectType<T extends {}> implements Type<T> {
 
@@ -13,8 +14,7 @@ export class ObjectType<T extends {}> implements Type<T> {
     public readonly defaultValue: T | string
 
     public constructor({
-        propertiesType,
-        defaultValue
+        propertiesType, defaultValue
     }: {
         propertiesType?: {
             [K in keyof T]: Type<T[K]>
@@ -25,31 +25,44 @@ export class ObjectType<T extends {}> implements Type<T> {
         this.defaultValue = defaultValue ?? this.toInlineString()
     }
 
-    public toString(): string {
-        let result: string = "字典"
-        if (this.propertiesType != null) {
-            const properties = Object.entries<Type<T[keyof T]>>(this.propertiesType)
-                .map(([key, type]: [string, Type<T[keyof T]>]): string => `${key}: ${type.toString()}`)
-                .join("\n")
-            result += ` {\n${properties}\n}`
-        }
-        return result
-    }
-
     public toInlineString(): string {
-        let result: string = "字典"
-        if (this.propertiesType != null) {
-            const properties = Object.entries<Type<T[keyof T]>>(this.propertiesType)
-                .map(([key, type]: [string, Type<T[keyof T]>]): string => `${key}: ${type.toString()}`)
-                .join("; ")
-            result += ` { ${properties} }`
-        }
-        return result
+        return typeToString(this, [{
+            test(data: unknown): data is ObjectType<{}> {
+                return data instanceof ObjectType
+            },
+            prepare(
+                data: ObjectType<{}>,
+                config: stringify.RequiredConfig,
+                context: stringify.PrepareContext
+            ): void {
+                if (data.propertiesType != null) {
+                    for (const propertyType of Object.values(data.propertiesType)) {
+                        new stringify.AnythingRule().prepare(propertyType, config, context)
+                    }
+                }
+            },
+            toString(
+                data: ObjectType<{}>,
+                config: stringify.RequiredConfig,
+                context: stringify.ToStringContext
+            ): string {
+                let result: string = "字典"
+                if (data.propertiesType != null) {
+                    const properties: string = Object.entries<Type<T[keyof T]>>(data.propertiesType)
+                        .map(([key, type]: [string, Type<T[keyof T]>]): string => `${key}: ${
+                            new stringify.AnythingRule().toString(type, config, context)
+                        }`)
+                        .join("; ")
+                    result += ` { ${properties} }`
+                }
+                return result
+            },
+        }])
     }
 
     public validate(value: unknown): value is T {
         if (value == null || typeof value != "object") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${this.toString()}`, value, this)
+            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         if (this.propertiesType != null) {
             const errors: TypeValidateError<T>[] = []
@@ -65,7 +78,7 @@ export class ObjectType<T extends {}> implements Type<T> {
             }
             if (errors.length != 0) {
                 throw new TypeValidateError(
-                    `不能将 ${betterToString(value)} 分配给 ${this.toString()}\n` +
+                    `不能将 ${betterToString(value)} 分配给 ${typeToString(this)}\n` +
                     errors.map(
                         (error: TypeValidateError<T>): string =>
                             error.message
@@ -79,6 +92,20 @@ export class ObjectType<T extends {}> implements Type<T> {
             }
         }
         return true
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        return this.propertiesType == null ? [] : Object.entries<Type<unknown>>(this.propertiesType).map(
+            ([key, type]: [string, Type<unknown>]): ChildTypeInfo => ({
+                key: `__slightning_coco_widget_object_property__${key}`,
+                label: `属性·${key}`,
+                type: type
+            })
+        )
+    }
+
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        return []
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {

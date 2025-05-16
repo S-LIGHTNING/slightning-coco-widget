@@ -1,9 +1,9 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString } from "../../utils"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
-import { validate } from "./utils"
+import { typeToString, validate } from "./utils"
 
 export class UnionType<T> implements Type<T> {
 
@@ -47,7 +47,7 @@ export class UnionType<T> implements Type<T> {
             }
         }
         throw new TypeValidateError(
-            `不能将 ${betterToString(value)} 分配给 ${this.toString()}\n` +
+            `不能将 ${betterToString(value)} 分配给 ${typeToString(this)}\n` +
             errors.map(
                 (error: TypeValidateError<T>): string =>
                     error.message
@@ -58,6 +58,25 @@ export class UnionType<T> implements Type<T> {
             value,
             this
         )
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        const result: ChildTypeInfo[] = []
+        for (let i: number = 0; i < this.types.length; i++) {
+            const type: Type | undefined = this.types[i]
+            if (type != undefined) {
+                result.push({
+                    key: `__slightning_coco_widget_union_type_child__${i}_${Object.getPrototypeOf(type)?.constructor?.name ?? "unknown"}`,
+                    label: String(i),
+                    type: type
+                })
+            }
+        }
+        return result
+    }
+
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        return []
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
@@ -123,7 +142,7 @@ export class UnionType<T> implements Type<T> {
     }
 
     public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
-        throw new Error(`不能将 ${this.toString()} 转为 Creation Project 属性类型`)
+        throw new Error(`不能将 ${typeToString(this)} 转为 Creation Project 属性类型`)
     }
 
     public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {

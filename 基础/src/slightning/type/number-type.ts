@@ -1,8 +1,9 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, Range } from "../../utils"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
+import { typeToString } from "./utils"
 
 export class NumberType implements Type<number> {
 
@@ -10,8 +11,7 @@ export class NumberType implements Type<number> {
     public readonly range: Range | null | undefined
 
     public constructor({
-        defaultValue,
-        range
+        defaultValue, range
     }: {
         defaultValue?: number | null | undefined
         range?: Range | null | undefined
@@ -20,22 +20,22 @@ export class NumberType implements Type<number> {
         this.range = range
     }
 
-    public toString(): string {
-        let result: string = "数字"
-        if (this.range != null) {
-            result += this.range.toString()
-        }
-        return result
-    }
-
     public validate(value: unknown): value is number {
         if (typeof value != "number") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${this.toString()}`, value, this)
+            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         if (this.range != null && !this.range.includes(value)) {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${this.toString()}：数字超出范围`, value, this)
+            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}：数字超出范围`, value, this)
         }
         return true
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        return []
+    }
+
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        return []
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {

@@ -1,7 +1,7 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { XMLEscape } from "../../utils"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 
 export class AnyType implements Type<any> {
 
@@ -15,12 +15,16 @@ export class AnyType implements Type<any> {
         this.defaultValue = defaultValue ?? ""
     }
 
-    public toString(): string {
-        return "任意"
-    }
-
     public validate(__value: unknown): __value is any {
         return true
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        return []
+    }
+
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        return []
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {

@@ -1,9 +1,9 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
-import { validate } from "./utils"
+import { typeToString, validate } from "./utils"
 
 export class ArrayType<T> implements Type<T[]> {
 
@@ -11,27 +11,18 @@ export class ArrayType<T> implements Type<T[]> {
     public readonly defaultValue: T[] | string
 
     public constructor({
-        itemType,
-        defaultValue
+        itemType, defaultValue
     }: {
         itemType?: Type<T> | null | undefined
         defaultValue?: T[] | string | null | undefined
     } = {}) {
         this.itemType = itemType
-        this.defaultValue = defaultValue ?? this.toString()
-    }
-
-    public toString(): string {
-        let result: string = "列表"
-        if (this.itemType != null) {
-            result += `<${this.itemType.toString()}>`
-        }
-        return result
+        this.defaultValue = defaultValue ?? typeToString(this)
     }
 
     public validate(value: unknown): value is T[] {
         if (!Array.isArray(value)) {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${this.toString()}`, value, this)
+            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         if (this.itemType != null) {
             const errors: TypeValidateError<T[]>[] = []
@@ -47,7 +38,7 @@ export class ArrayType<T> implements Type<T[]> {
             }
             if (errors.length != 0) {
                 throw new TypeValidateError(
-                    `不能将 ${betterToString(value)} 分配给 ${this.toString()}\n` +
+                    `不能将 ${betterToString(value)} 分配给 ${typeToString(this)}\n` +
                     errors.map(
                         (error: TypeValidateError<T[]>): string =>
                             error.message
@@ -61,6 +52,18 @@ export class ArrayType<T> implements Type<T[]> {
             }
         }
         return true
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        return this.itemType == null ? [] : [{
+            key: "__slightning_coco_widget_array_item__",
+            label: "数组项",
+            type: this.itemType
+        }]
+    }
+
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        return []
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {

@@ -2,8 +2,9 @@ import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
 import { MethodBlockTypes } from "../types"
-import { Type } from "./type"
+import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
+import { typeToString } from "./utils"
 import { VoidType } from "./void-type"
 
 export class FunctionType<A extends unknown[], R> implements Type<(...args: A) => R> {
@@ -21,11 +22,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
      * @param raw 是否保持原始，若为时，则不会被装饰器转换。
      */
     public constructor({
-        block,
-        returns,
-        throws,
-        defaultValue,
-        raw
+        block, returns, throws, defaultValue, raw
     }: {
         block: MethodBlockTypes
         returns?: Type | null | undefined
@@ -40,39 +37,60 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         this.raw = raw ?? false
     }
 
-    public toString(): string {
-        let result: string = "("
-        let isFirst: boolean = true
-        for (const part of this.block) {
-            if (typeof part != "object") {
-                continue
-            }
-            if (isFirst) {
-                isFirst = false
-            } else {
-                result += ", "
-            }
-            result += `${part.label}: ${part.type.toString()}`
+    public validate(value: unknown): value is (...args: A) => R {
+        if (typeof value != "function") {
+            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
-        result += `) => ${(this.returns ?? new VoidType()).toString()}`
+        return true
+    }
+
+    public getSameDirectionChildren(): ChildTypeInfo[] {
+        const result: {
+            key: string
+            label: string
+            type: Type
+        }[] = []
+        if (this.returns != null) {
+            result.push({
+                key: "__slightning_coco_widget_function_return_value__",
+                label: "返回值",
+                type: this.returns
+            })
+        }
         if (this.throws != null) {
-            result += ` 抛出 ${this.throws.toString()}`
+            result.push({
+                key: "__slightning_coco_widget_function_throw_value__",
+                label: "抛出值",
+                type: this.throws
+            })
         }
         return result
     }
 
-    public validate(value: unknown): value is (...args: A) => R {
-        if (typeof value != "function") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${this.toString()}`, value, this)
+    public getReverseDirectionChildren(): ChildTypeInfo[] {
+        const result: {
+            key: string
+            label: string
+            type: Type
+        }[] = []
+        for (const part of this.block) {
+            if (typeof part != "object") {
+                continue
+            }
+            result.push({
+                key: `__slightning_coco_widget_function_param__${part.key}`,
+                label: `参数·${part.label}`,
+                type: part.type
+            })
         }
-        return true
+        return result
     }
 
     public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
         return {
             valueType: ["string", "number", "boolean", "array", "object"],
             checkType: "string",
-            defaultValue: XMLEscape(this.defaultValue ?? this.toString())
+            defaultValue: XMLEscape(this.defaultValue ?? typeToString(this))
         }
     }
 
@@ -80,7 +98,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         return {
             valueType: ["string", "number", "boolean", "array", "object"],
             checkType: "string",
-            defaultValue: XMLEscape(this.defaultValue ?? this.toString())
+            defaultValue: XMLEscape(this.defaultValue ?? typeToString(this))
         }
     }
 
@@ -99,7 +117,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
     public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
         return {
             valueType: "object",
-            defaultValue: this.defaultValue ?? this.toString()
+            defaultValue: this.defaultValue ?? typeToString(this)
         }
     }
 
@@ -127,7 +145,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         }
         return {
             valueType: "object",
-            defaultValue: this.defaultValue ?? this.toString()
+            defaultValue: this.defaultValue ?? typeToString(this)
         }
     }
 
