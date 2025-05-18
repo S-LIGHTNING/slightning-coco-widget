@@ -45,10 +45,18 @@ export function convertPropertiesTypesToCreationProject(
                 add(property.contents)
                 continue
             }
-            if (property.blockOptions?.get != null && typeof property.blockOptions.get == "object") {
+            if (
+                property.blockOptions?.get != null &&
+                typeof property.blockOptions.get == "object" &&
+                property.blockOptions.get.key != null
+            ) {
                 throw new Error(`无法将属性 ${property.label} 的取值函数转为 Creation Project 类型`)
             }
-            if (property.blockOptions?.set != null && typeof property.blockOptions.set == "object") {
+            if (
+                property.blockOptions?.set != null &&
+                typeof property.blockOptions.set == "object" &&
+                property.blockOptions.set.key != null
+            ) {
                 throw new Error(`无法将属性 ${property.label} 的赋值函数转为 Creation Project 类型`)
             }
             if (property.key == "__width" && (property.type instanceof IntegerType || property.type instanceof NumberType)) {
@@ -244,7 +252,7 @@ export function convertEventsTypesToCreationProject(events: EventTypes[]): Creat
         }
         result.push({
             key: event.key,
-            label: event.label,
+            label: event.blockOptions?.deprecated ?? false ? `[已弃用] ${event.label}` : event.label,
             params: event.params.map((param: EventParamTypes): CreationProject.EmitParamTypes => {
                 return {
                     key: param.key,

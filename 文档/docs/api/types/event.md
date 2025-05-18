@@ -39,6 +39,22 @@ sidebar_position: 4
 
 描述：事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
 
+### EventTypes.tooltip?
+
+类型：`string`
+
+描述：事件的提示信息，当鼠标悬停在积木上时显示。
+
+**仅在 CoCo 中生效，Creation Project 不支持该特性。**
+
+### EventTypes.blockOptions?
+
+类型：<code>[BlockOptionsTypes](./block-options#blockoptionstypes)</code>
+
+描述：事件积木选项。
+
+**仅在 CoCo 中生效，Creation Project 不支持该特性。**
+
 ## EventSubType
 
 类型：`object`

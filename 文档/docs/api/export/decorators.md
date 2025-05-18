@@ -6,7 +6,7 @@ sidebar_position: 2
 
 ## generateMethodForFunctions
 
-功能：为传出的函数生成调用方法
+功能：为传出的函数生成调用方法。
 
 ## generateBlockForProperties
 
@@ -22,10 +22,13 @@ sidebar_position: 2
 
 具体来说，该装饰器会对抛出异常的方法做以下转换：
 
-- 将方法的返回值改为一个类似于 `Promise` 的对象；
-- 为方法生成一个继续方法，继续方法的作用是获取方法的返回值，如果方法出错，则输出错误信息，类似于使用 `await`；
-- 为方法生成一个然后方法，然后方法接收一个回调函数，然后在方法成功执行后调用回调函数，类似于 `.then()`；
-- 为方法生成一个捕获方法，捕获方法接收一个错误处理函数，然后在方法出错时调用该函数，类似于 `.catch()`。
+- 删除方法的返回值；
+- 为方法添加一个成功回调函数参数，成功回调函数会在方法成功执行后调用；
+- 为方法添加一个失败回调函数参数，失败回调函数会在方法出错时调用；
+
+## addTransformMethodsThrows
+
+该装饰器类似于 [`transformMethodsThrows`](#transformmethodsthrows)，除了不会删除转换前的方法。
 
 ## transformMethodsCallbackFunctionsToEvents
 
@@ -35,6 +38,14 @@ sidebar_position: 2
 该装饰器不会为没有返回值的函数生成返回方法，如果你需要生成返回方法，请将函数的返回值设为 <code>new [VoidType](../../api/types/type#voidtype)()</code>。
 :::
 
+:::caution 注意
+该装饰器生成的返回积木和抛出积木并不能终止当前的执行流程，也就是说，返回积木和抛出积木后面的积木仍然会执行。
+:::
+
+## addTransformMethodsCallbackFunctionsToEvents
+
+该装饰器类似于 [`transformMethodsCallbackFunctionsToEvents`](#transformmethodscallbackfunctionstoevents)，除了不会删除转换前的方法。
+
 ## transformMethodsCallbackFunctionsToCodeBlocks
 
 功能：将回调函数转为回调积木（即没有返回值和抛出的回调函数）。
@@ -43,9 +54,21 @@ sidebar_position: 2
 该装饰器不会转换已经是回调积木的函数。
 :::
 
+:::caution 注意
+该装饰器生成的返回积木和抛出积木并不能终止当前的执行流程，也就是说，返回积木和抛出积木后面的积木仍然会执行。
+:::
+
+## addTransformMethodsCallbackFunctionsToCodeBlocks
+
+该装饰器类似于 [`transformMethodsCallbackFunctionsToCodeBlocks`](#transformmethodscallbackfunctionstocodeblocks)，除了不会删除转换前的方法。
+
 ## flattenEventSubTypes
 
 功能：拉平事件子类型，使用多个事件替换事件子类型。
+
+## addFlattenEventSubTypes
+
+该装饰器类似于 [`flattenEventSubTypes`](#flatteneventsubtypes)，除了不会删除转换前的事件。
 
 ## addThisForMethods
 

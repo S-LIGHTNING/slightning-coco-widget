@@ -53,14 +53,14 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         if (this.returns != null) {
             result.push({
                 key: "__slightning_coco_widget_function_return_value__",
-                label: "返回值",
+                label: "函数返回值",
                 type: this.returns
             })
         }
         if (this.throws != null) {
             result.push({
                 key: "__slightning_coco_widget_function_throw_value__",
-                label: "抛出值",
+                label: "函数抛出值",
                 type: this.throws
             })
         }
@@ -79,7 +79,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
             }
             result.push({
                 key: `__slightning_coco_widget_function_param__${part.key}`,
-                label: `参数·${part.label}`,
+                label: `函数参数·${part.label}`,
                 type: part.type
             })
         }

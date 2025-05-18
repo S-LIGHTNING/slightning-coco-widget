@@ -83,9 +83,9 @@ const config: Config = {
         },
         {
           type: 'docSidebar',
-          sidebarId: 'fastStartSidebar',
+          sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: '快速开始',
+          label: '教程',
         },
         {
           type: 'docSidebar',

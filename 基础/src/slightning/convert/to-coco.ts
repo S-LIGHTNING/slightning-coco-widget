@@ -1,7 +1,8 @@
 import * as CoCo from "../../coco"
-import { merge } from "../../utils"
+import { capitalize, merge } from "../../utils"
 import { VoidType } from "../type"
-import { Color, EventParamTypes, EventTypes, MethodBlockOptionsTypes, MethodBlockParam, MethodParamTypes, MethodsTypes, PropertiesTypes, Types } from "../types"
+import { Color, EventBlockOptionsTypes, EventParamTypes, EventSubType, EventTypes, MethodBlockOptionsTypes, MethodBlockParam, MethodParamTypes, MethodsTypes, PropertiesTypes, Types } from "../types"
+import { eventKeyMap } from "../utils"
 import { Widget } from "../widget"
 
 export function convertToCoCo(
@@ -40,10 +41,18 @@ export function convertPropertiesTypesToCoCo(properties: PropertiesTypes): CoCo.
                 add(property.contents)
                 continue
             }
-            if (property.blockOptions?.get != null && typeof property.blockOptions.get == "object") {
+            if (
+                property.blockOptions?.get != null &&
+                typeof property.blockOptions.get == "object" &&
+                property.blockOptions.get.key != null
+            ) {
                 throw new Error(`无法将属性 ${property.label} 的取值函数转为 CoCo 类型`)
             }
-            if (property.blockOptions?.set != null && typeof property.blockOptions.set == "object") {
+            if (
+                property.blockOptions?.set != null &&
+                typeof property.blockOptions.set == "object" &&
+                property.blockOptions.set.key != null
+            ) {
                 throw new Error(`无法将属性 ${property.label} 的赋值函数转为 CoCo 类型`)
             }
             result.push({
@@ -52,10 +61,10 @@ export function convertPropertiesTypesToCoCo(properties: PropertiesTypes): CoCo.
                 ...property.type.toCoCoPropertyValueTypes(),
                 blockOptions: {
                     getter: {
-                        generateBlock: property.blockOptions?.get ?? true
+                        generateBlock: typeof property.blockOptions?.get == "object" || (property.blockOptions?.get ?? true)
                     },
                     setter: {
-                        generateBlock: property.blockOptions?.set ?? true
+                        generateBlock: typeof property.blockOptions?.set == "object" || (property.blockOptions?.set ?? true)
                     }
                 }
             })
@@ -231,16 +240,67 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
 }
 
 export function convertEventsTypesToCoCo(events: EventTypes[]): CoCo.EventTypes[] {
-    return events.map((event: EventTypes): CoCo.EventTypes => ({
-        key: event.key,
-        subTypes: event.subTypes ?? undefined,
-        label: event.label,
-        params: event.params.map((param: EventParamTypes): CoCo.EventParamTypes => {
-            return {
-                key: param.key,
-                label: param.label,
-                ...param.type.toCoCoEventParamValueTypes()
+    return events.map((event: EventTypes): CoCo.EventTypes => {
+        const result: CoCo.EventTypes = {
+            key: event.key,
+            subTypes: event.subTypes ?? undefined,
+            label: event.blockOptions?.deprecated ?? false ? `[已弃用] ${event.label}` : event.label,
+            params: event.params.map((param: EventParamTypes): CoCo.EventParamTypes => {
+                return {
+                    key: param.key,
+                    label: param.label,
+                    ...param.type.toCoCoEventParamValueTypes()
+                }
+            }),
+            tooltip: event.tooltip ?? undefined,
+            blockOptions: {
+                icon: event.blockOptions?.icon ?? undefined
             }
-        })
-    }))
+        }
+        if (event.subTypes != null) {
+            addEventSubTypesMap(event.subTypes, 0, [event.key], [event.key], [event.label], event)
+        }
+        const blockOptions: EventBlockOptionsTypes = event.blockOptions ?? {}
+        if (blockOptions.deprecated != null) {
+            result.label = `[已弃用] ${result.label}`
+        }
+        if (typeof blockOptions.deprecated == "string") {
+            if (result.tooltip == null) {
+                result.tooltip = `该事件已弃用：${blockOptions.deprecated}`
+            } else {
+                result.tooltip = `${result.tooltip}\n\n该事件已弃用：${blockOptions.deprecated}`
+            }
+        } else if (blockOptions.deprecated) {
+            if (result.tooltip == null) {
+                result.tooltip = `该事件已弃用，并且可能在未来版本中移除，请尽快迁移到其他事件`
+            } else {
+                result.tooltip = `${result.tooltip}\n\n该事件已弃用，并且可能在未来版本中移除，请尽快迁移到其他事件`
+            }
+        }
+        return result
+    })
+}
+
+function addEventSubTypesMap(
+    subTypes: EventSubType[],
+    i: number,
+    keys: string[],
+    capitalizedKeys: string[],
+    labels: string[],
+    event: EventTypes
+): void {
+    if (i >= subTypes.length) {
+        eventKeyMap[capitalizedKeys.join("")] = keys.join("")
+        return
+    }
+    const subType: EventSubType | undefined = subTypes[i]
+    if (subType == undefined) {
+        addEventSubTypesMap(subTypes, i + 1, keys, capitalizedKeys, labels, event)
+        return
+    }
+    for (const item of subType.dropdown) {
+        addEventSubTypesMap(
+            subTypes, i + 1, [...keys, item.value], [...capitalizedKeys, capitalize(item.value)], [...labels, item.label], event
+        )
+    }
 }

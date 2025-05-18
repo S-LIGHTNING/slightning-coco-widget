@@ -276,6 +276,18 @@ export interface EventTypes {
      * 事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
      */
     params: EventParamTypes[]
+    /**
+     * 事件的提示信息，当鼠标悬停在积木上时显示。
+     *
+     * **仅在 CoCo 中生效，Creation Project 不支持该特性。**
+     */
+    tooltip?: string | null | undefined
+    /**
+     * 事件的积木选项。
+     *
+     * **仅在 CoCo 中生效，Creation Project 不支持该特性。**
+     */
+    blockOptions?: EventBlockOptionsTypes | null | undefined
 }
 
 export interface EventSubType extends DropdownTypes {
@@ -299,6 +311,8 @@ export interface EventParamTypes {
      */
     type: Type
 }
+
+export interface EventBlockOptionsTypes extends BasicBlockOptionsTypes {}
 
 export interface DropdownTypes {
     /**
@@ -338,12 +352,12 @@ export interface BasicBlockOptionsTypes {
     /**
      * 是否已被弃用。
      *
-     * 已弃用的方法具有以下特点：
+     * 已弃用的方法或事件具有以下特点：
      *
      * - 积木前会显示 `[已弃用]` 标签；
-     * - 积木显示为灰色（覆盖 `color` 选项）；
+     * - 积木显示为灰色（如果可以做得的话）（覆盖 `color` 选项）；
      * - tooltip 中会提示弃用；
-     * - 调用时会显示警告。
+     * - 方法调用时会显示警告。
      *
      * 设为 `true` 表示方法已弃用。
      *

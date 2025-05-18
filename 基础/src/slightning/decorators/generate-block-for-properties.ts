@@ -53,9 +53,14 @@ export function generateBlockForProperties(types: Types, widget: Widget): [Types
                 blockOptions: property.blockOptions?.get == true ? {} : property.blockOptions?.get
             })
             if (widget.prototype[propertyGetBlockKey] == null) {
-                widget.prototype[propertyGetBlockKey] = function (): unknown {
-                    return this[property.key]
-                }
+                Object.defineProperty(widget.prototype, propertyGetBlockKey, {
+                    value: function (): unknown {
+                        return this[property.key]
+                    },
+                    writable: true,
+                    enumerable: false,
+                    configurable: true
+                })
             }
             property.blockOptions ??= {}
             property.blockOptions.get = false
@@ -98,9 +103,14 @@ export function generateBlockForProperties(types: Types, widget: Widget): [Types
                 blockOptions: property.blockOptions?.set == true ? {} : property.blockOptions?.set
             })
             if (widget.prototype[propertySetBlockKey] == null) {
-                widget.prototype[propertySetBlockKey] = function (value: unknown): void {
-                    this[property.key] = value
-                }
+                Object.defineProperty(widget.prototype, propertySetBlockKey, {
+                    value: function (value: unknown): void {
+                        this[property.key] = value
+                    },
+                    writable: true,
+                    enumerable: false,
+                    configurable: true
+                })
             }
             property.blockOptions ??= {}
             property.blockOptions.set = false

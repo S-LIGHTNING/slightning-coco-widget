@@ -1,6 +1,6 @@
 import { capitalize } from "../../utils"
-import { FunctionType } from "../type"
-import { MethodGroup, MethodsTypes, MethodTypes, Types } from "../types"
+import { FunctionType, Type } from "../type"
+import { MethodBlockOptionsTypes, MethodBlockParam, MethodGroup, MethodParamTypes, MethodsTypes, MethodTypes, Types } from "../types"
 import { Widget } from "../widget"
 
 export function generateMethodForFunctions(types: Types, widget: Widget): [Types, Widget] {
@@ -14,7 +14,7 @@ function generateMethodsForMethodFunctions(types: Types, widget: Widget): void {
 }
 
 function methodsGenerateForMethodFunctions(methods: MethodsTypes, widget: Widget): void {
-    for (let i: number = 0; i < methods.length; i++) {
+    for (let i: number = methods.length - 1; i >= 0; i--) {
         const method: MethodGroup | MethodTypes | undefined = methods[i]
         if (method == undefined) {
             continue
@@ -23,34 +23,36 @@ function methodsGenerateForMethodFunctions(methods: MethodsTypes, widget: Widget
             methodsGenerateForMethodFunctions(method.contents, widget)
             continue
         }
-        for (const part of method.block) {
+        if (method.throws != null) {
+            methods.splice(i + 1, 0, ...generateMethodsForEfferent(
+                [method.key, "__slightning_coco_widget_function_throw_value__"],
+                [method.label, "抛出值"],
+                method.throws,
+                method.blockOptions,
+                widget
+            ))
+        }
+        if (method.returns != null) {
+            methods.splice(i + 1, 0, ...generateMethodsForEfferent(
+                [method.key, "__slightning_coco_widget_function_return_value__"],
+                [method.label, "返回值"],
+                method.returns,
+                method.blockOptions,
+                widget
+            ))
+        }
+        for (let j: number = method.block.length - 1; j >= 0; j--) {
+            const part: string | MethodBlockParam | MethodParamTypes | undefined = method.block[j]
             if (typeof part != "object") {
                 continue
             }
-            if (part.type instanceof FunctionType) {
-                methods.splice(i + 1, 0, ...generateMethodsForFunctionParams(
-                    [method.key, capitalize(part.key)],
-                    [method.label, part.label],
-                    part.type,
-                    widget
-                ))
-            }
-            if (method.returns instanceof FunctionType) {
-                methods.splice(i + 1, 0, ...generateMethodsForFunction(
-                    [method.key, "ReturnValue"],
-                    [method.label, "返回值"],
-                    method.returns,
-                    widget
-                ))
-            }
-            if (method.throws instanceof FunctionType) {
-                methods.splice(i + 1, 0, ...generateMethodsForFunction(
-                    [method.key, "ThrowValue"],
-                    [method.label, "抛出值"],
-                    method.throws,
-                    widget
-                ))
-            }
+            methods.splice(i + 1, 0, ...generateMethodsForAfferent(
+                [method.key, "__slightning_coco_widget_function_param__", part.key],
+                [method.label, "参数", part.label],
+                part.type,
+                method.blockOptions,
+                widget
+            ))
         }
     }
 }
@@ -65,10 +67,11 @@ function generateMethodForEventsFunctions(types: Types, widget: Widget): void {
     for (const event of types.events) {
         for (const param of event.params) {
             if (param.type instanceof FunctionType) {
-                methodsGroup.contents.push(...generateMethodsForFunction(
-                    [event.key, capitalize(param.key)],
-                    [event.label, param.label],
+                methodsGroup.contents.push(...generateMethodsForEfferent(
+                    [event.key, "__slightning_coco_widget_event_param__", capitalize(param.key)],
+                    [event.label, "参数", param.label],
                     param.type,
+                    event.blockOptions,
                     widget
                 ))
             }
@@ -77,65 +80,63 @@ function generateMethodForEventsFunctions(types: Types, widget: Widget): void {
     types.methods.unshift(methodsGroup)
 }
 
-function generateMethodsForFunction(
+function generateMethodsForEfferent(
     keys: string[],
     labels: string[],
-    type: FunctionType<unknown[], unknown>,
+    type: Type<unknown>,
+    blockOptions: MethodBlockOptionsTypes | null | undefined,
     widget: Widget
 ): MethodTypes[] {
     const result: MethodTypes[] = []
-    result.push(generateMethodForFunction(keys, labels, type, widget))
-    for (const part of type.block) {
-        if (typeof part != "object") {
-            continue
-        }
-        if (part.type instanceof FunctionType) {
-            result.push(...generateMethodsForFunctionParams(
-                [...keys, capitalize(part.key)],
-                [...labels, part.label],
-                part.type,
-                widget
-            ))
-        }
+    if (type instanceof FunctionType && !type.raw) {
+        result.push(generateMethodForFunction(keys, labels, type, blockOptions, widget))
     }
-    if (type.returns instanceof FunctionType) {
-        result.push(generateMethodForFunction(
-            [...keys, "ReturnValue"],
-            [...labels, "返回值"],
-            type.returns,
+    for (const child of type.getSameDirectionChildren()) {
+        result.push(...generateMethodsForEfferent(
+            [...keys, capitalize(child.key)],
+            [...labels, child.label],
+            child.type,
+            blockOptions,
             widget
         ))
     }
-    if (type.throws instanceof FunctionType) {
-        result.push(generateMethodForFunction(
-            [...keys, "ThrowValue"],
-            [...labels, "抛出值"],
-            type.throws,
+    for (const child of type.getReverseDirectionChildren()) {
+        result.push(...generateMethodsForAfferent(
+            [...keys, capitalize(child.key)],
+            [...labels, child.label],
+            child.type,
+            blockOptions,
             widget
         ))
     }
     return result
 }
 
-function generateMethodsForFunctionParams(
+function generateMethodsForAfferent(
     keys: string[],
     labels: string[],
-    type: FunctionType<unknown[], unknown>,
+    type: Type<unknown>,
+    blockOptions: MethodBlockOptionsTypes | null | undefined,
     widget: Widget
 ): MethodTypes[] {
     const result: MethodTypes[] = []
-    for (const part of type.block) {
-        if (typeof part != "object") {
-            continue
-        }
-        if (part.type instanceof FunctionType) {
-            result.push(...generateMethodsForFunction(
-                [...keys, capitalize(part.key)],
-                [...labels, part.label],
-                part.type,
-                widget
-            ))
-        }
+    for (const child of type.getSameDirectionChildren()) {
+        result.push(...generateMethodsForAfferent(
+            [...keys, capitalize(child.key)],
+            [...labels, child.label],
+            child.type,
+            blockOptions,
+            widget
+        ))
+    }
+    for (const child of type.getReverseDirectionChildren()) {
+        result.push(...generateMethodsForEfferent(
+            [...keys, capitalize(child.key)],
+            [...labels, child.label],
+            child.type,
+            blockOptions,
+            widget
+        ))
     }
     return result
 }
@@ -144,20 +145,26 @@ function generateMethodForFunction(
     keys: string[],
     labels: string[],
     type: FunctionType<unknown[], unknown>,
+    blockOptions: MethodBlockOptionsTypes | null | undefined,
     widget: Widget
 ): MethodTypes {
-    const key: string = keys.join("")
+    const key: string = `__slightning_coco_widget_call_function__${keys.join("")}`
     const label: string = labels.join("·")
-    widget.prototype[key] = function (func: (...args: unknown[]) => unknown, ...args: unknown[]): unknown {
-        return func.apply(this, args)
-    }
+    Object.defineProperty(widget.prototype, key, {
+        value: function (func: (...args: unknown[]) => unknown, ...args: unknown[]): unknown {
+            return func.apply(this, args)
+        },
+        writable: true,
+        enumerable: false,
+        configurable: true
+    })
     return {
         key,
         label,
         block: [
             {
-                key: "function",
-                label: `函数`,
+                key: "__slightning_coco_widget_function__",
+                label,
                 type: new FunctionType({
                     block: type.block,
                     returns: type.returns,
@@ -168,6 +175,7 @@ function generateMethodForFunction(
             }, ...type.block
         ],
         returns: type.returns,
-        throws: type.throws
+        throws: type.throws,
+        blockOptions
     }
 }

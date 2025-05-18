@@ -98,7 +98,7 @@ export class ObjectType<T extends {}> implements Type<T> {
         return this.propertiesType == null ? [] : Object.entries<Type<unknown>>(this.propertiesType).map(
             ([key, type]: [string, Type<unknown>]): ChildTypeInfo => ({
                 key: `__slightning_coco_widget_object_property__${key}`,
-                label: `属性·${key}`,
+                label: `字典属性·${key}`,
                 type: type
             })
         )

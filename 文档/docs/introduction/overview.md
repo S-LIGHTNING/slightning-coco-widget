@@ -6,9 +6,7 @@ sidebar_position: 1
 
 ## 一、简介
 
-SLIGHTNING CoCo 控件框架（SLIGHTNING CoCo Widget，简称“SCW”）是由 SLIGHTNING 开发的 CoCo 自定义控件框架，旨在解决 SLIGHTNING 在开发 CoCo 控件时所遇到的一些问题。
-
-请注意：SCW 正处于内部测试阶段，可能有各种奇葩 BUG 和诸多不完善的地方。
+SLIGHTNING CoCo 控件框架（SLIGHTNING CoCo Widget，简称“SCW”）是由 [@SLIGHTNING](https://s-lightning.github.io/) 开发的 CoCo 自定义控件框架，旨在解决 [@SLIGHTNING](https://s-lightning.github.io/) 在开发 CoCo 控件时所遇到的一些问题。
 
 ## 二、功能
 
@@ -24,6 +22,20 @@ SLIGHTNING CoCo 控件框架（SLIGHTNING CoCo Widget，简称“SCW”）是由
 
 详见[劝退指南](dissuade)。
 
-## 四、其他
+## 四、设计原则
 
-SLIGHTNING 说他要统治 CoCo 自定义控件开发圈。
+SCW 优先考虑工程需求，其次考虑简洁、易用。具体原则如下：
+
+- 可读性优先：SCW 优先考虑代码的可读性而不是简洁；
+- 高兼容性：SCW 尽可能避免破坏性的更新，在出现破坏性更新时，SCW 会提供向下兼容的方案和升级指南；
+- 易于扩展：SCW 的 API 应易于扩展，以便在添加新功能时不破坏已有功能；
+- 不预设功能：SCW 不会预设任何功能，所有功能都需要手动添加，以便让用户知道 SCW 做了什么，这也避免了预设功能的变更带来的影响。
+
+此外，SCW 的绝大多数功能要经过严格测试后才会在正式版本中发布，以保证其稳定性和正确性。
+
+以上原则注定了 SCW 的一些缺陷，例如：
+
+- 学习成本高；
+- 代码不够简洁；
+- 历史包袱过重；
+- 新功能发布速度慢。

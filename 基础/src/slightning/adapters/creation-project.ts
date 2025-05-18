@@ -57,7 +57,12 @@ export const CreationProjectAdapter: Adapter = {
                     },
                     set(target: CreationProject.widgetClass, p: string | symbol, newValue: any, receiver: any): boolean {
                         if (typeof p == "string" && propertiesSet.has(p)) {
-                            return Reflect.set(target.props, p, newValue, receiver)
+                            if (types.options.visible) {
+                                CreationProject.widgetClass.prototype.setProp.call(receiver, p, newValue)
+                                return true
+                            } else {
+                                return Reflect.set(target.props, p, newValue, receiver)
+                            }
                         }
                         return Reflect.set(target, p, newValue, receiver)
                     }

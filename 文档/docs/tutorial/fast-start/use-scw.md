@@ -8,10 +8,6 @@ sidebar_position: 4
 在阅读本文档之前，我们假定你已经知道如何利用 SCW 打包 CoCo 控件，如果你还不了解，详见 [打包 CoCo 控件](pack)。
 :::
 
-:::caution 注意
-本文档只介绍 SCW 的基础使用方法，SCW 的 API 详见 [API](../api/types)。
-:::
-
 ## 一、控件类型定义
 
 ```typescript
