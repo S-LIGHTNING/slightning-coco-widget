@@ -44,7 +44,7 @@ module.exports = merge(SCW.config, {
                 if (fs.lstatSync(filePathname).isDirectory()) {
                     recursiveAddEntryFiles(filePathname)
                 } else if (/\.tsx?$/.test(fileName)) {
-                    entry[filePathname.replace(path.resolve(__dirname, "src"), ".").replace(/(?<=\.)t(?=sx?$)/, "j")] = filePathname
+                    entry[filePathname.replace(path.resolve(__dirname, "src"), ".").replace(/(?<=\.)tsx?$/, "js")] = filePathname
                 }
             }
         }
@@ -97,8 +97,10 @@ module.exports = merge(SCW.config, {
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".jsx"]
     },
+    externalsType: "commonjs",
     externals: {
-        axios: "axios"
+        axios: "axios",
+        lodash: "lodash"
     },
     plugins: [
         new ForkTsCheckerWebpackPlugin(),

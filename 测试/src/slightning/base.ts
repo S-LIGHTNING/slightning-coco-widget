@@ -1,4 +1,4 @@
-import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, BooleanType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, flattenEventSubTypes, FunctionType, generateBlockForProperties, generateMethodForFunctions, getSuperWidget, ImageType, InstanceType, IntegerType, Logger, MethodBlockParam, NumberType, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, Types, UnionType, VideoType } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, BooleanType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, InstanceType, IntegerType, MethodBlockParam, NumberType, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows } from "slightning-coco-widget"
 import _ from "lodash"
 
 const types: Types = {
@@ -291,6 +291,55 @@ const types: Types = {
                         ],
                         returns: new AnyType(),
                         throws: new AnyType()
+                    }, {
+                        key: "testMethodCallbackFunction",
+                        label: "测试方法回调函数",
+                        block: [
+                            MethodBlockParam.METHOD, {
+                                key: "callback",
+                                label: "回调",
+                                type: new FunctionType({
+                                    block: [],
+                                    returns: new StringType(),
+                                    throws: new StringType()
+                                })
+                            }
+                        ],
+                        returns: new StringType(),
+                    }, {
+                        key: "testMethodEfferentFunction",
+                        label: "测试方法传出函数",
+                        block: [
+                            MethodBlockParam.METHOD, {
+                                key: "callback",
+                                label: "回调",
+                                type: new FunctionType({
+                                    block: [
+                                        {
+                                            key: "function",
+                                            label: "函数",
+                                            type: new FunctionType({
+                                                block: []
+                                            })
+                                        }
+                                    ]
+                                })
+                            }
+                        ],
+                        returns: new UnionType<unknown>(
+                            new ObjectType({
+                                propertiesType: {
+                                    "函数": new FunctionType({
+                                        block: []
+                                    })
+                                }
+                            }),
+                            new ArrayType({
+                                itemType: new FunctionType({
+                                    block: []
+                                })
+                            })
+                        )
                     }
                 ]
             }, {
@@ -338,21 +387,34 @@ const types: Types = {
                 }
             ],
             params: []
+        }, {
+            key: "onEfferentFunctionCalled",
+            label: "传出函数被调用",
+            params: []
+        }, {
+            key: "onTestEventEfferentFunction",
+            label: "测试事件传出函数",
+            params: [
+                {
+                    key: "function",
+                    label: "函数",
+                    type: new FunctionType({
+                        block: []
+                    })
+                }
+            ]
         }
     ]
 }
 
-let exportedWidgetTypes: CoCo.Types | CreationProject.Types
+let exportedWidgetTypes: CoCo.Types | CreationProject.Types | undefined
 
 class TestBaseWidget extends getSuperWidget(types) {
-
-    private logger: Logger
 
     public testPropertyCustomKeyCustomCalculateMethod!: string
 
     public constructor(props: unknown) {
         super(props)
-        this.logger = new Logger(types, this)
     }
 
     public customKeyCustomGet(this: this): string {
@@ -374,7 +436,7 @@ class TestBaseWidget extends getSuperWidget(types) {
         subType1: "test1" | "test2",
         subType2: "test3" | "test4"
     ): void {
-        emit.call(this, `onTestEventSubTypes${subType1}${subType2}`)
+        emit.call(this, `onTestEventSubTypes${_.capitalize(subType1)}${_.capitalize(subType2)}`)
     }
 
     public testMethodThrowsNoReturns(this: this, type: "returns" | "throws"): void {
@@ -390,12 +452,30 @@ class TestBaseWidget extends getSuperWidget(types) {
         return "返回值"
     }
 
-    public testMethod(): void {
-        this.logger.log("异常捕获测试方法被调用")
-        throw new Error("异常，这是一个测试异常")
+    public async testMethodCallbackFunction(
+        this: this,
+        callback: () => string | Promise<string>
+    ): Promise<string> {
+        try {
+            return `返回：${await callback()}`
+        } catch (error) {
+            return `异常：${error}`
+        }
+    }
+
+    public testMethodEfferentFunction(
+        this: this,
+        callback: (theFunction: () => void) => void | Promise<void>
+    ): void | Promise<void> {
+        return callback((): void => {
+            emit.call(this, "onEfferentFunctionCalled")
+        })
     }
 
     public exportedWidgetTypes(): CoCo.Types | CreationProject.Types {
+        if (exportedWidgetTypes == undefined) {
+            throw new Error("找不到导出的控件类型定义")
+        }
         return exportedWidgetTypes
     }
 }
@@ -425,10 +505,10 @@ exportWidget(types, TestBaseWidget, {
     }
 })
 
-exportedWidgetTypes = _.cloneDeep(
+exportedWidgetTypes = _ == undefined ? undefined : _.cloneDeep(
     CoCo.widgetExports.types ??
     CreationProject.widgetExports.type ??
-    ((): never => {
-        throw new Error("找不到导出的控件类型定义")
-    })()
+    undefined
 )
+
+console.log("导出的控件类型定义：", exportedWidgetTypes)
