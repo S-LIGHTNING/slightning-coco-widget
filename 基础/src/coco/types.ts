@@ -31,16 +31,10 @@ export type PropertyTypes = {
             value?: number | undefined
             message?: string | undefined
         } | undefined
-        /**
-         * @deprecated
-         */
         lessThanOrEqualTo?: number | {
             value?: number | undefined
             message?: string | undefined
         } | undefined
-        /**
-         * @deprecated
-         */
         greaterThanOrEqualTo?: number | {
             value?: number | undefined
             message?: string | undefined
@@ -62,13 +56,20 @@ export type PropertyValueTypes = {
 } & CommonAfferentValueTypes | DropdownTypes
 
 export type PropertyBlockOptionsTypes = {
-    getter?: {
-        generateBlock?: boolean | undefined
-    } | undefined
-    setter?: {
-        generateBlock?: boolean | undefined
-    } | undefined
-} & BasicBlockOptionsTypes
+    generateBlock?: boolean | undefined
+    line?: string | undefined
+    space?: number | undefined
+    order?: number | undefined
+    getter?: PropertyCalculatorBlockOptionsTypes | undefined
+    setter?: PropertyCalculatorBlockOptionsTypes | undefined
+}
+
+export type PropertyCalculatorBlockOptionsTypes = {
+    generateBlock?: boolean | undefined
+    line?: string | undefined
+    space?: number | undefined
+    keys?: string[] | undefined
+}
 
 export type MethodTypes = {
     key: string
@@ -101,14 +102,23 @@ export type MethodValueTypes = {
 }
 
 export type MethodBlockOptionsTypes = {
-    callMethodLabel?: boolean | string
-} & BasicBlockOptionsTypes
+    generateBlock?: boolean | undefined
+    line?: string | undefined
+    space?: number | undefined
+    order?: number | undefined
+    icon?: string | undefined
+    color?: string | undefined
+    inputsInline?: boolean | undefined
+    callMethodLabel?: boolean | string | undefined
+}
 
 export type EventTypes = {
     key: string
     subTypes?: EventSubType[] | undefined
     label: string
     params: EventParamTypes[]
+    tooltip?: string | undefined
+    blockOptions?: EventBlockOptionsTypes | undefined
 }
 
 export type EventSubType = {
@@ -124,6 +134,14 @@ export type EventParamValueTypes = {
     valueType: ValueType
 }
 
+export type EventBlockOptionsTypes = {
+    generateBlock?: boolean | undefined
+    line?: string | undefined
+    space?: number | undefined
+    order?: number | undefined
+    icon?: string | undefined
+}
+
 export type CommonAfferentValueTypes = {
     valueType: ValueType
     checkType?: CheckType | undefined
@@ -137,15 +155,6 @@ export type DropdownTypes = {
 export type DropdownItemTypes = {
     label: string
     value: string
-}
-
-export type BasicBlockOptionsTypes = {
-    line?: string | undefined
-    generateBlock?: boolean | undefined
-    icon?: string | undefined
-    color?: string | undefined
-    inputsInline?: boolean | undefined
-    space?: number | undefined
 }
 
 export type ValueType = SignalValueType | SignalValueType[]
