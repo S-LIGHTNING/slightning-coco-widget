@@ -25,7 +25,11 @@ npm install ts-loader --save-dev
 
 ## 二、配置 webpack
 
+在项目根目录下创建 `webpack.config.js` 文件，并配置 webpack。以下是示例配置：
+
 ```javascript
+// webpack.config.js
+
 const { merge } = require("webpack-merge")
 const SCW = require("slightning-coco-widget--webpack")
 

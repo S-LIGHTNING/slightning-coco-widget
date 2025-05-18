@@ -39,7 +39,7 @@ sidebar_position: 2
 :::
 
 :::caution 注意
-该装饰器生成的返回积木和抛出积木并不能终止当前的执行流程，也就是说，返回积木和抛出积木后面的积木仍然会执行。
+该装饰器生成的返回积木和抛出积木并不能终止回调积木的执行流程，也就是说，返回积木和抛出积木后面的积木仍然会执行。
 :::
 
 ## addTransformMethodsCallbackFunctionsToEvents
@@ -55,7 +55,7 @@ sidebar_position: 2
 :::
 
 :::caution 注意
-该装饰器生成的返回积木和抛出积木并不能终止当前的执行流程，也就是说，返回积木和抛出积木后面的积木仍然会执行。
+该装饰器生成的返回积木和抛出积木并不能终止回调积木的执行流程，也就是说，返回积木和抛出积木后面的积木仍然会执行。
 :::
 
 ## addTransformMethodsCallbackFunctionsToCodeBlocks
