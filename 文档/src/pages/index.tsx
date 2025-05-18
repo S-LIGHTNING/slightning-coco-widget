@@ -30,8 +30,8 @@ function HomepageHeader() {
           </Link>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/fast-start/before-start">
-            快速开始
+            to="/docs/tutorial/fast-start">
+            教程
           </Link>
         </div>
       </div>

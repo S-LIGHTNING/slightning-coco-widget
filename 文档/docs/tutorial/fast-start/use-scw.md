@@ -31,11 +31,11 @@ const types: Types = {
 | 属性 | 说明 |
 | --- | --- |
 | type | 控件类型，全局唯一，命名规范：大写字母加下划线组成 |
-| info | 控件信息，包括名称、图标、分类等，详见 [API](../api/types/main#typesinfo) |
+| info | 控件信息，包括名称、图标、分类等，详见 [API](../../api/types/main#typesinfo) |
 | info.title | 控件名称 |
 | info.icon | 控件图标 |
 | info.category | 控件分类 |
-| options | 控件选项，包括是否可见、是否全局等，详见 [API](../api/types/main#typesoptions) |
+| options | 控件选项，包括是否可见、是否全局等，详见 [API](../../api/types/main#typesoptions) |
 | options.visible | 是否可见，默认 false |
 | options.global | 是否全局，默认 false |
 | properties | 控件属性，包括控件的属性、类型、默认值等 |
@@ -69,8 +69,8 @@ const types: Types = {
 | --- | --- |
 | key | 控件的属性，命名规范：英文 + 数字组成，不能以数字开头，可以使用 CoCo 内置属性 |
 | label | 属性的显示名称 |
-| type | 属性的类型，详见 [类型 API](../api/types/type) |
-| blockOptions | 属性的积木块选项，详见 [属性积木块选项 API](../api/types/property#propertytypesblockoptions) |
+| type | 属性的类型，详见 [类型 API](../../api/types/type) |
+| blockOptions | 属性的积木块选项，详见 [属性积木块选项 API](../../api/types/property#propertytypesblockoptions) |
 | blockOptions.get | 属性的获取方法积木选项，false 表示不可获取 |
 | blockOptions.get.key | 获取方法名 |
 | blockOptions.set | 属性的设置方法积木选项，false 表示不可设置 |
@@ -183,8 +183,8 @@ const types: Types = {
 | key | 控件的方法，命名规范：英文 + 数字组成，不能以数字开头 |
 | label | 方法标签 |
 | block | 方法的积木 |
-| returns | 方法的返回值类型，详见 [方法返回 API](../api/types/method#methodtypesreturns) |
-| blockOptions | 方法的积木块选项，详见 [方法积木块选项 API](../api/types/method#methodtypesblockoptions) |
+| returns | 方法的返回值类型，详见 [方法返回 API](../../api/types/method#methodtypesreturns) |
+| blockOptions | 方法的积木块选项，详见 [方法积木块选项 API](../../api/types/method#methodtypesblockoptions) |
 
 方法组
 
@@ -379,5 +379,5 @@ exportWidget(types, MtWidget, {
 | CreationProject.decorators | Creation Project 装饰器列表 |
 
 :::tip 提示
-有关于装饰器的更多信息详见 [导出装饰器 API](../api/export/decorators)。
+有关于装饰器的更多信息详见 [导出装饰器 API](../../api/export/decorators)。
 :::
