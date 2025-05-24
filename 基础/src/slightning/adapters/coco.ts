@@ -10,17 +10,6 @@ export const CoCoAdapter: Adapter = {
         return class extends (types.options.visible ? CoCo.VisibleWidget : CoCo.InvisibleWidget) {
             public constructor(props: Record<string, any>) {
                 super(props)
-                ;(async (): Promise<void> => {
-                    await Promise.resolve()
-                    for (const [key, value] of Object.entries(props)) {
-                        Object.defineProperty(this, key, {
-                            value,
-                            writable: true,
-                            enumerable: true,
-                            configurable: true
-                        })
-                    }
-                })()
                 if (types.options.visible) {
                     const propertiesSet: Set<string> = new Set()
                     function addProperties(properties: PropertiesTypes): void {

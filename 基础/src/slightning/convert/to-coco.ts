@@ -9,7 +9,21 @@ export function convertToCoCo(
     types: Types,
     widget: Widget
 ): [CoCo.Types, new (props: Record<string, any>) => CoCo.Widget] {
-    return [typesToCoCo(types), widget as new (props: Record<string, any>) => CoCo.Widget]
+    return [typesToCoCo(types), new Proxy(widget, {
+        construct(target: Widget, argArray: [Record<string, any>], newTarget: Function): CoCo.Widget {
+            const [props] = argArray
+            const widgetInstance: CoCo.Widget = Reflect.construct(target, argArray, newTarget)
+            for (const [key, value] of Object.entries(props)) {
+                Object.defineProperty(widgetInstance, key, {
+                    value,
+                    writable: true,
+                    enumerable: true,
+                    configurable: true
+                })
+            }
+            return widgetInstance
+        },
+    }) as new (props: Record<string, any>) => CoCo.Widget]
 }
 
 export function typesToCoCo(types: Types): CoCo.Types {
