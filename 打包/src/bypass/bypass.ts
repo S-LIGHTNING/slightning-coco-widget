@@ -23,13 +23,12 @@ export const BYPASS_MAP: BypassMap = {
     "fetch": {
         importSource: "slightning-coco-widget--webpack/bypass/fetch"
     },
+    ".fetch": {
+        replace: "._fetch"
+    },
     "location": {},
     "parent.location": {
         replace: "parent._location"
-    },
-    ".fetch": {
-        replace: "._fetch",
-        importSource: "slightning-coco-widget--webpack/bypass/fetch"
     },
     "WebSocket": {
         replace: "Web_Socket",
@@ -43,13 +42,22 @@ export const BYPASS_MAP: BypassMap = {
         replace: "Web_SocketStream",
         importSource: "slightning-coco-widget--webpack/bypass/web-socket-stream"
     },
+    "codemao": {},
     "socketcv.codemao.cn": {
         replace: "socketcv_.codemao_.cn"
     }
 }
 
+export const BYPASS_KEYS: string[] = Object.entries(BYPASS_MAP).filter(
+    ([, bypass]: [string, Bypass]): boolean => {
+        return bypass.replace != null
+    }
+).map(([name]: [string, Bypass]): string => {
+    return name
+})
+
 export function includesKeyWords(value: string): boolean {
-    return Object.keys(BYPASS_MAP).some((name: string): boolean => {
+    return BYPASS_KEYS.some((name: string): boolean => {
         return value.includes(name)
     })
 }
