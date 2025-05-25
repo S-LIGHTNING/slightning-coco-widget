@@ -1,9 +1,13 @@
 import type * as webpack from "webpack"
 
-import { DevServerFixPlugin } from "./plugin/dev-server-fix-plugin"
 import { WrapperPlugin } from "./plugin/wrapper-plugin"
 
 export const config: webpack.Configuration = {
+    output: {
+        library: {
+            type: "commonjs2"
+        }
+    },
     module: {
         rules: [
             {
@@ -16,7 +20,6 @@ export const config: webpack.Configuration = {
         react: "var React"
     },
     plugins: [
-        new DevServerFixPlugin(),
         new WrapperPlugin()
     ]
 }

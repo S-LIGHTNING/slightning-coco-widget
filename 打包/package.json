@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget--webpack",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "exports": {
     ".": "./dist/index.js",
     "./config": "./dist/config.js",
@@ -23,6 +23,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
+    "start": "tsc --watch",
     "watch": "tsc --watch",
     "build": "cleandir ./dist && tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

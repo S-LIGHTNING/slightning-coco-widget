@@ -1,6 +1,6 @@
 {
-  "name": "slightning-coco-widget--test",
-  "version": "2.2.0",
+  "name": "coco-widget-live-reload",
+  "version": "0.0.1",
   "private": true,
   "file": [
     "dist",
@@ -8,9 +8,9 @@
     "readme.md"
   ],
   "scripts": {
-    "start": "webpack serve --config webpack.config.js",
-    "watch": "webpack --config webpack.config.js --watch",
-    "build": "webpack --config webpack.config.js"
+    "start": "webpack serve --env mode=development --config webpack.config.js",
+    "watch": "webpack --watch --env mode=development --config webpack.config.js",
+    "build": "webpack --env mode=production --config webpack.config.js"
   },
   "author": "SLIGHTNING",
   "license": "Apache-2.0",
@@ -25,21 +25,17 @@
   ],
   "devDependencies": {
     "@babel/preset-env": "^7.0.0",
-    "@types/lodash": "^4.17.16",
+    "@types/lodash": "^4.0.0",
     "@types/react": "^19.0.0",
     "babel-loader": "^9.0.0",
     "fork-ts-checker-webpack-plugin": "^9.0.0",
-    "slightning-coco-widget": "file:../基础",
-    "slightning-coco-widget--webpack": "file:../打包",
+    "slightning-coco-widget": "../../基础",
+    "slightning-coco-widget--webpack": "..",
     "terser-webpack-plugin": "^5.0.0",
     "ts-loader": "^9.0.0",
     "typescript": "^5.0.0",
     "webpack": "^5.0.0",
     "webpack-cli": "^5.0.0",
-    "webpack-dev-server": "^5.0.0",
-    "webpack-visualizer-plugin2": "^1.0.0"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
+    "webpack-dev-server": "^5.0.0"
   }
 }

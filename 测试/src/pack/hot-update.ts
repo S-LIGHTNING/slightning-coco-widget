@@ -1,31 +1,17 @@
-import { addCheck, addThisForMethods, Color, exportWidget, getSuperWidget, IntegerType, Logger, MethodBlockParam, transformIcons, Types } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, Color, exportWidget, getSuperWidget, Logger, MethodBlockParam, transformIcons, Types } from "slightning-coco-widget"
 
 const types: Types = {
     type: "SLIGHTNING_TEST_HOT_UPDATE_WIDGET",
     info: {
         title: "测试热更新",
         icon: "icon-widget-radio",
-        category: "SLIGHTNING CoCo 控件框架 测试",
+        category: "测试 SCW",
     },
     options: {
         visible: false,
         global: false
     },
-    properties: [
-        {
-            key: "__width",
-            label: "宽度",
-            type: new IntegerType({
-                defaultValue: 360
-            })
-        }, {
-            key: "__height",
-            label: "高度",
-            type: new IntegerType({
-                defaultValue: 360
-            })
-        }
-    ],
+    properties: [],
     methods: [
         {
             blockOptions: {

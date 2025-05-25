@@ -9,6 +9,10 @@ sidebar_position: 3
 SCW 使用 webpack 打包控件，你可以按照如下流程打包你的自定义控件。
 :::
 
+:::tip 提示
+SCW webpack 相关工具与 SCW 是独立的，也就是说，使用 SCW webpack 相关工具不必须使用 SCW，原生自定义控件和使用其他框架的自定义控件也可以使用 SCW 提供的 webpack 工具。
+:::
+
 ## 一、安装
 
 安装 SCW 和 webpack，在自定义控件目录中执行：
@@ -30,6 +34,7 @@ npm install ts-loader --save-dev
 ```javascript
 // webpack.config.js
 
+const path = require("path")
 const { merge } = require("webpack-merge")
 const SCW = require("slightning-coco-widget--webpack")
 
@@ -63,6 +68,11 @@ module.exports = merge(SCW.config, {   // 合并 SCW 配置
 const SCW = require("slightning-coco-widget--webpack")
 
 module.exports = {
+    output: {
+        library: {                     // 导出配置
+            type: "commonjs2"
+        }
+    },
     module: {
         rules: [
             {                          // 绕过 CoCo 自定义控件的限制
@@ -80,7 +90,17 @@ module.exports = {
 }
 ```
 
-## 三、编译
+## 三、控件的导入导出
+
+由于 CoCo 导入导出与 CommonJS 相似，可能导致 CoCo 的导入导出无法被访问。你可以使用 `CoCo.widgetRequire` 和 `CoCo.widgetExports` 来访问 CoCo 的导入导出。
+
+`CoCo.widgetRequire` 和 `CoCo.widgetExports` 在包 `slightning-coco-widget` 中，如果你没有安装，你需要安装它。
+
+```sh
+npm install slightning-coco-widget --save-dev
+```
+
+## 四、编译
 
 在自定义控件目录中执行：
 
@@ -96,7 +116,7 @@ npx webpack
 npx webpack --watch
 ```
 
-## 四、发布
+## 五、发布
 
 修改 webpack 配置中的 `mode` 为 `production`，`devtool` 为 `false`，并执行：
 

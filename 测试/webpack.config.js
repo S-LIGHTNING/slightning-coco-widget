@@ -9,24 +9,6 @@ const VisualizerPlugin2 = require("webpack-visualizer-plugin2")
 
 const SCW = require("slightning-coco-widget--webpack")
 
-// SCW.addExternalImport({
-//     name: "axios",
-//     source: "axios",
-//     importer: SCW.importFromCoCo
-// })
-
-// SCW.addExternalImport({
-//     name: "axios",
-//     source: "https://cdn.jsdelivr.net/npm/axios@1/dist/axios.min.js",
-//     importer: SCW.importFromURL
-// })
-
-// SCW.addExternalImport({
-//     name: "lodash",
-//     source: "lodash",
-//     importer: SCW.importFromCoCo
-// })
-
 module.exports = merge(SCW.config, {
     mode: "development",
     stats: "minimal",
@@ -57,17 +39,23 @@ module.exports = merge(SCW.config, {
         static: {
             directory: path.join(__dirname, "dist")
         },
-        allowedHosts: ["coco.codemao.cn"],
-        headers: {
-            "Access-Control-Allow-Origin": "https://coco.codemao.cn",
-            "Access-Control-Allow-Headers": "*",
-            "Access-Control-Allow-Methods": "GET"
+        allowedHosts: [
+            "coco.codemao.cn",
+            "cp.cocotais.cn"
+        ],
+        headers(incomingMessage) {
+            /** @type {{ rawHeaders: string[] }} */
+            const {rawHeaders} = incomingMessage
+            const origin = rawHeaders[rawHeaders.findIndex((value) => {
+                return /origin/i.test(value)
+            }) + 1]
+            return {
+                "Access-Control-Allow-Origin": origin,
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Allow-Methods": "GET"
+            }
         },
-        client: {
-            webSocketURL: "ws://localhost:8080/ws",
-            overlay: false
-        },
-        hot: "only",
+        hot: false,
         liveReload: false
     },
     devtool: "eval-source-map",
@@ -105,6 +93,9 @@ module.exports = merge(SCW.config, {
     plugins: [
         new ForkTsCheckerWebpackPlugin(),
         new webpack.ProgressPlugin(),
+        new webpack.IgnorePlugin({
+            resourceRegExp: /webpack-dev-server/,
+        }),
         new VisualizerPlugin2({
             filename: "./stats.html"
         })
