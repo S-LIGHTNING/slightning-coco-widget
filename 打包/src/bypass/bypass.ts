@@ -30,6 +30,9 @@ export const BYPASS_MAP: BypassMap = {
     "parent.location": {
         replace: "parent._location"
     },
+    "top.location": {
+        replace: "top._location"
+    },
     "WebSocket": {
         replace: "Web_Socket",
         importSource: "slightning-coco-widget--webpack/bypass/web-socket"

@@ -5,19 +5,20 @@ import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
 import { typeToString } from "./utils"
 
-export class InstanceType<T> implements Type<T> {
+export class InstanceOfClassType<T> implements Type<T> {
 
     public readonly theClass: new (...args: any[]) => T
     public readonly defaultValue: string
 
-    public constructor({
-        theClass, defaultValue
-    }: {
+    public constructor(props: {
         theClass: new (...args: any[]) => T
         defaultValue?: string | null | undefined
-    }) {
-        this.theClass = theClass
-        this.defaultValue = defaultValue ?? ""
+    } | (new (...args: any[]) => T)) {
+        if (typeof props == "function") {
+            props = { theClass: props }
+        }
+        this.theClass = props.theClass
+        this.defaultValue = props.defaultValue ?? `实例<${props.theClass.name}>`
     }
 
     public validate(value: unknown): value is T {
@@ -89,3 +90,5 @@ export class InstanceType<T> implements Type<T> {
         }
     }
 }
+
+export { InstanceOfClassType as InstanceType }

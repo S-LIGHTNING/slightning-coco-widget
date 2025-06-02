@@ -1,12 +1,13 @@
 import * as CoCo from "../../coco"
-import { capitalize, merge } from "../../utils"
+import { capitalize } from "../../utils"
+import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
 import { VoidType } from "../type"
-import { Color, EventBlockOptionsTypes, EventParamTypes, EventSubType, EventTypes, MethodBlockOptionsTypes, MethodBlockParam, MethodParamTypes, MethodsTypes, PropertiesTypes, Types } from "../types"
+import { Color, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, MethodBlockParam, MethodParamTypes, StandardTypes, StandardMethodBlock } from "../types"
 import { eventKeyMap } from "../utils"
 import { Widget } from "../widget"
 
 export function convertToCoCo(
-    types: Types,
+    types: StandardTypes,
     widget: Widget
 ): [CoCo.Types, new (props: Record<string, any>) => CoCo.Widget] {
     return [typesToCoCo(types), new Proxy(widget, {
@@ -22,12 +23,12 @@ export function convertToCoCo(
                 })
             }
             return widgetInstance
-        },
+        }
     }) as new (props: Record<string, any>) => CoCo.Widget]
 }
 
-export function typesToCoCo(types: Types): CoCo.Types {
-    return {
+export function typesToCoCo(types: StandardTypes): CoCo.Types {
+    const result: CoCo.Types = {
         type: types.type,
         title: types.info.title,
         icon: types.info.icon,
@@ -39,146 +40,136 @@ export function typesToCoCo(types: Types): CoCo.Types {
         isGlobalWidget: types.options.global,
         platforms: types.options.platforms ?? undefined,
         hasAnyWidget: types.options.any ?? undefined,
-        properties: convertPropertiesTypesToCoCo(types.properties),
-        methods: convertMethodsTypesToCoCo(types.methods),
-        events: convertEventsTypesToCoCo(types.events)
+        properties: [],
+        methods: [],
+        events: []
     }
-}
-
-export function convertPropertiesTypesToCoCo(properties: PropertiesTypes): CoCo.PropertyTypes[] {
-
-    const result: CoCo.PropertyTypes[] = []
-
-    function add(properties: PropertiesTypes): void {
-        for (const property of properties) {
-            if ("contents" in property) {
-                add(property.contents)
-                continue
+    const labels: string[] = []
+    let showLine: boolean | string = false
+    let addSpace: boolean = false
+    let last: CoCo.PropertyTypes | CoCo.MethodTypes | CoCo.EventTypes | null = null
+    let count: number = 0
+    traverseTypes(types, {
+        PropertyGroup: {
+            entry(node: PropertyGroupNode): void {
+                if (node.value.label != null) {
+                    labels.push(node.value.label)
+                    showLine = true
+                }
+                addSpace = true
+            },
+            exit(node: PropertyGroupNode): void {
+                if (node.value.label != null) {
+                    labels.pop()
+                    showLine = true
+                }
+                addSpace = true
             }
-            if (
-                property.blockOptions?.get != null &&
-                typeof property.blockOptions.get == "object" &&
-                property.blockOptions.get.key != null
-            ) {
-                throw new Error(`无法将属性 ${property.label} 的取值函数转为 CoCo 类型`)
+        },
+        PropertyTypes(node: PropertyTypesNode): void {
+            if (addSpace) {
+                if (last != null) {
+                    last.blockOptions ??= {}
+                    last.blockOptions.space = 40
+                }
+                addSpace = false
             }
-            if (
-                property.blockOptions?.set != null &&
-                typeof property.blockOptions.set == "object" &&
-                property.blockOptions.set.key != null
-            ) {
-                throw new Error(`无法将属性 ${property.label} 的赋值函数转为 CoCo 类型`)
-            }
-            result.push({
-                key: property.key,
-                label: property.label,
-                ...property.type.toCoCoPropertyValueTypes(),
+            result.properties.push(last = {
+                key: node.value.key,
+                label: node.value.label,
+                ...node.value.type.toCoCoPropertyValueTypes(),
                 blockOptions: {
                     getter: {
-                        generateBlock: typeof property.blockOptions?.get == "object" || (property.blockOptions?.get ?? true)
+                        generateBlock: node.blockOptions.get != false
                     },
                     setter: {
-                        generateBlock: typeof property.blockOptions?.set == "object" || (property.blockOptions?.set ?? true)
-                    }
+                        generateBlock: node.blockOptions.set != false
+                    },
+                    line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined
                 }
             })
-        }
-    }
-
-    add(properties)
-
-    return result
-}
-
-export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTypes[] {
-
-    const result: CoCo.MethodTypes[] = []
-
-    let lastMethod: CoCo.MethodTypes | null = null
-    let showGroupLabel: boolean = false
-
-    function add(
-        methods: MethodsTypes,
-        labels: string[] = [],
-        groupBlockOptions: MethodBlockOptionsTypes = {}
-    ): void {
-        let isFirst: boolean = true
-        for (const method of methods) {
-            if ("contents" in method) {
-                if (method.label == null) {
-                    add(
-                        method.contents,
-                        labels,
-                        merge({}, groupBlockOptions, method.blockOptions ?? {})
-                    )
-                } else {
-                    showGroupLabel = true
-                    add(
-                        method.contents,
-                        [...labels, method.label],
-                        merge({}, groupBlockOptions, method.blockOptions ?? {})
-                    )
-                    showGroupLabel = true
+            showLine = false
+        },
+        MethodGroup: {
+            entry(node: MethodGroupNode): void {
+                if (node.value.label != null) {
+                    labels.push(node.value.label)
+                    showLine = true
                 }
-                isFirst = true
-                continue
+                addSpace = true
+            },
+            exit(node: MethodGroupNode): void {
+                if (node.value.label != null) {
+                    labels.pop()
+                    showLine = true
+                }
+                addSpace = true
             }
-            if (method.throws != null && !(method.throws instanceof VoidType)) {
-                throw new Error(`无法将方法 ${method.label} 的抛出类型转为 CoCo 类型`)
+        },
+        MethodTypes(node: MethodTypesNode): void {
+            if (addSpace) {
+                if (last != null) {
+                    last.blockOptions ??= {}
+                    last.blockOptions.space = 40
+                }
+                addSpace = false
             }
-            const blockOptions: MethodBlockOptionsTypes = merge(
-                {}, groupBlockOptions, method.blockOptions ?? {}
-            )
+            if (node.value.throws != null && !(node.value.throws instanceof VoidType)) {
+                throw new Error(`无法将方法 ${node.value.label} 的抛出类型转为 CoCo 类型`)
+            }
+            const deprecated: boolean | string = node.value.deprecated ?? node.blockOptions.deprecated ?? false
             const transformed: CoCo.MethodTypes = {
-                key: method.key,
+                key: node.value.key,
                 params: [],
-                ...method.returns?.toCoCoMethodValueTypes(),
-                tooltip: method.tooltip ?? undefined,
+                ...node.value.returns?.toCoCoMethodValueTypes(),
+                tooltip: node.value.tooltip ?? undefined,
                 blockOptions: {
                     callMethodLabel: false,
-                    icon: blockOptions.icon ?? undefined,
-                    color: blockOptions.deprecated ? Color.GREY : blockOptions.color ?? undefined,
-                    inputsInline: blockOptions.inline ?? undefined
+                    line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined,
+                    order: ++count,
+                    icon: node.blockOptions.icon ?? undefined,
+                    color: deprecated ? Color.GREY : node.blockOptions.color ?? undefined,
+                    inputsInline: node.blockOptions.inline ?? undefined
                 }
             }
-            if (typeof blockOptions.deprecated == "string") {
+            if (typeof deprecated == "string") {
                 if (transformed.tooltip == null) {
-                    transformed.tooltip = `该方法已弃用：${blockOptions.deprecated}`
+                    transformed.tooltip = `${deprecated}`
                 } else {
-                    transformed.tooltip = `${transformed.tooltip}\n\n该方法已弃用：${blockOptions.deprecated}`
+                    transformed.tooltip = `${deprecated}\n\n${transformed.tooltip}`
                 }
-            } else if (blockOptions.deprecated) {
+            } else if (deprecated) {
                 if (transformed.tooltip == null) {
                     transformed.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法`
                 } else {
-                    transformed.tooltip = `${transformed.tooltip}\n\n该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法`
+                    transformed.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法\n\n${transformed.tooltip}`
                 }
             }
             transformed.blockOptions ??= {}
-            if (blockOptions.inline ?? true) {
-                let restParts: (string | MethodBlockParam | MethodParamTypes)[] | null = null
+            if (node.blockOptions.inline ?? true) {
+                let restParts: StandardMethodBlock | null = null
                 let labelsBeforeThis: string[] = []
-                if (blockOptions.deprecated != null) {
+                if (deprecated != false) {
                     labelsBeforeThis.push("[已弃用]")
                 }
-                if (!method.block.includes(MethodBlockParam.THIS)) {
-                    throw new Error(`方法 ${method.label} 缺少 this 参数`)
+                if (!node.value.block.includes(MethodBlockParam.THIS)) {
+                    throw new Error(`方法 ${node.value.label} 缺少 this 参数`)
                 }
-                for (let i: number = 0; i < method.block.length; i++) {
-                    const part: string | MethodBlockParam | MethodParamTypes | undefined = method.block[i]
+                for (let i: number = 0; i < node.value.block.length; i++) {
+                    const part: string | MethodBlockParam | MethodParamTypes | undefined = node.value.block[i]
                     if (part == MethodBlockParam.METHOD) {
-                        labelsBeforeThis.push(method.label)
+                        labelsBeforeThis.push(node.value.label)
                     } else if (part == MethodBlockParam.THIS) {
-                        restParts = method.block.slice(i + 1)
+                        restParts = node.value.block.slice(i + 1)
                         break
                     } else if (typeof part == "string") {
                         labelsBeforeThis.push(part)
                     } else if (part != undefined) {
-                        throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
+                        throw new Error(`方法 ${node.value.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
                     }
                 }
                 if (restParts == null) {
-                    throw new Error(`方法 ${method.label} 缺少 this 参数`)
+                    throw new Error(`方法 ${node.value.label} 缺少 this 参数`)
                 }
                 if (labelsBeforeThis.length != 0) {
                     transformed.blockOptions.callMethodLabel = labelsBeforeThis.join(" ")
@@ -201,9 +192,9 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
                 }
                 for (const part of restParts) {
                     if (part == MethodBlockParam.THIS) {
-                        throw new Error(`方法只能有一个 this 参数，而方法 ${method.label} 有多个 this 参数`)
+                        throw new Error(`方法只能有一个 this 参数，而方法 ${node.value.label} 有多个 this 参数`)
                     } else if (part == MethodBlockParam.METHOD) {
-                        addText(method.label)
+                        addText(node.value.label)
                     } else if (typeof part == "string") {
                         addText(part)
                     } else {
@@ -216,12 +207,12 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
                     }
                 }
             } else {
-                if (blockOptions.deprecated != null) {
+                if (deprecated != false) {
                     transformed.blockOptions.callMethodLabel = "[已弃用]"
                 }
                 transformed.blockOptions.inputsInline = false
-                transformed.label = method.label
-                for (const part of method.block) {
+                transformed.label = node.value.label
+                for (const part of node.value.block) {
                     if (typeof part != "object") {
                         continue
                     }
@@ -232,82 +223,83 @@ export function convertMethodsTypesToCoCo(methods: MethodsTypes): CoCo.MethodTyp
                     })
                 }
             }
-            if (isFirst) {
-                isFirst = false
-                if (showGroupLabel) {
-                    showGroupLabel = false
-                    transformed.blockOptions.line = labels.join("·")
+            showLine = false
+            last = transformed
+            result.methods.push(transformed)
+        },
+        EventTypes(node: EventTypesNode): void {
+            if (addSpace) {
+                if (last != null) {
+                    last.blockOptions ??= {}
+                    last.blockOptions.space = 40
                 }
-                if (lastMethod != null) {
-                    lastMethod.blockOptions ??= {}
-                    lastMethod.blockOptions.space = 40
+                addSpace = false
+            }
+            const deprecated: boolean | string = node.value.deprecated ?? node.blockOptions.deprecated ?? false
+            const transformed: CoCo.EventTypes = {
+                key: node.value.key,
+                subTypes: node.value.subTypes ?? undefined,
+                label: deprecated != false ? `[已弃用] ${node.value.label}` : node.value.label,
+                params: node.value.params.map((param: StandardEventParamTypes): CoCo.EventParamTypes => {
+                    return {
+                        key: param.key,
+                        label: param.label,
+                        ...param.type.toCoCoEventParamValueTypes()
+                    }
+                }),
+                tooltip: node.value.tooltip ?? undefined,
+                blockOptions: {
+                    line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined,
+                    order: ++count,
+                    icon: node.blockOptions.icon ?? undefined
                 }
             }
-            lastMethod = transformed
-            result.push(transformed)
+            if (node.value.subTypes != null) {
+                addEventSubTypesMap(node.value.subTypes, 0, [node.value.key], [node.value.key], [node.value.label], node.value)
+            }
+            if (typeof deprecated == "string") {
+                if (transformed.tooltip == null) {
+                    transformed.tooltip = `${deprecated}`
+                } else {
+                    transformed.tooltip = `${deprecated}\n\n${transformed.tooltip}`
+                }
+            } else if (deprecated) {
+                if (transformed.tooltip == null) {
+                    transformed.tooltip = `该事件已弃用，并且可能在未来版本中移除，请尽快迁移到其他事件`
+                } else {
+                    transformed.tooltip = `该事件已弃用，并且可能在未来版本中移除，请尽快迁移到其他事件\n\n${transformed.tooltip}`
+                }
+            }
+            showLine = false
+            last = transformed
+            result.events.push(transformed)
+        },
+        BlockBoxOptions(node: BlockBoxOptionsNode): void {
+            if (node.value.space !=  null && last != null) {
+                last.blockOptions ??= {}
+                last.blockOptions.space = node.value.space
+            }
+            if (node.value.line != null) {
+                showLine = node.value.line
+            }
         }
-    }
-
-    add(methods)
-
+    })
     return result
 }
 
-export function convertEventsTypesToCoCo(events: EventTypes[]): CoCo.EventTypes[] {
-    return events.map((event: EventTypes): CoCo.EventTypes => {
-        const result: CoCo.EventTypes = {
-            key: event.key,
-            subTypes: event.subTypes ?? undefined,
-            label: event.blockOptions?.deprecated ?? false ? `[已弃用] ${event.label}` : event.label,
-            params: event.params.map((param: EventParamTypes): CoCo.EventParamTypes => {
-                return {
-                    key: param.key,
-                    label: param.label,
-                    ...param.type.toCoCoEventParamValueTypes()
-                }
-            }),
-            tooltip: event.tooltip ?? undefined,
-            blockOptions: {
-                icon: event.blockOptions?.icon ?? undefined
-            }
-        }
-        if (event.subTypes != null) {
-            addEventSubTypesMap(event.subTypes, 0, [event.key], [event.key], [event.label], event)
-        }
-        const blockOptions: EventBlockOptionsTypes = event.blockOptions ?? {}
-        if (blockOptions.deprecated != null) {
-            result.label = `[已弃用] ${result.label}`
-        }
-        if (typeof blockOptions.deprecated == "string") {
-            if (result.tooltip == null) {
-                result.tooltip = `该事件已弃用：${blockOptions.deprecated}`
-            } else {
-                result.tooltip = `${result.tooltip}\n\n该事件已弃用：${blockOptions.deprecated}`
-            }
-        } else if (blockOptions.deprecated) {
-            if (result.tooltip == null) {
-                result.tooltip = `该事件已弃用，并且可能在未来版本中移除，请尽快迁移到其他事件`
-            } else {
-                result.tooltip = `${result.tooltip}\n\n该事件已弃用，并且可能在未来版本中移除，请尽快迁移到其他事件`
-            }
-        }
-        return result
-    })
-}
-
 function addEventSubTypesMap(
-    subTypes: EventSubType[],
+    subTypes: StandardEventSubType[],
     i: number,
     keys: string[],
     capitalizedKeys: string[],
     labels: string[],
-    event: EventTypes
+    event: StandardEventTypes
 ): void {
     if (i >= subTypes.length) {
         eventKeyMap[capitalizedKeys.join("")] = keys.join("")
         return
     }
-    const subType: EventSubType | undefined = subTypes[i]
+    const subType: StandardEventSubType | undefined = subTypes[i]
     if (subType == undefined) {
         addEventSubTypesMap(subTypes, i + 1, keys, capitalizedKeys, labels, event)
         return

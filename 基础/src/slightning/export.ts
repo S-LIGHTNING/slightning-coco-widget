@@ -1,10 +1,14 @@
 import { Adapter, getDefaultAdapter } from "./adapters/adapter"
+import { standardizeTypes } from "./convert/standardize-types"
 import { Decorator } from "./decorators"
 import { Types } from "./types"
 import { Widget } from "./widget"
 
 export interface ExportConfig {
-    decorators?: Decorator[] | null | undefined
+    decorators?: (Decorator | {
+        CoCo?: Decorator | null | undefined
+        CreationProject?: Decorator | null | undefined
+    })[] | null | undefined
     CoCo?: {
         decorators?: Decorator[] | null | undefined
     } | null | undefined
@@ -19,11 +23,5 @@ export function exportWidget(
     config?: ExportConfig | null | undefined
 ): void {
     const adapter: Adapter = getDefaultAdapter()
-    const decorators: Decorator[] = [
-        ...config?.decorators ?? []
-    ]
-    for (const decorator of decorators) {
-        [types, widget] = decorator(types, widget)
-    }
-    adapter.exportWidget(types, widget, config)
+    adapter.exportWidget(standardizeTypes(types), widget, config)
 }

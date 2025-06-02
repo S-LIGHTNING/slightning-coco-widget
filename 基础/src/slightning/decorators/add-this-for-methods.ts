@@ -1,19 +1,14 @@
-import { MethodBlockParam, MethodsTypes, Types } from "../types"
+import { MethodBlockParam, StandardTypes } from "../types"
 import { Widget } from "../widget"
+import { MethodTypesNode, traverseTypes } from "./utils"
 
-export function addThisForMethods(types: Types, widget: Widget): [Types, Widget] {
-    methodsAddThis(types.methods)
+export function addThisForMethods(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
+    traverseTypes(types, {
+        MethodTypes(node: MethodTypesNode): void {
+            if (!node.value.block.includes(MethodBlockParam.THIS)) {
+                node.value.block.unshift(MethodBlockParam.THIS)
+            }
+        }
+    })
     return [types, widget]
-}
-
-function methodsAddThis(methods: MethodsTypes): void {
-    for (const method of methods) {
-        if ("contents" in method) {
-            methodsAddThis(method.contents)
-            continue
-        }
-        if (!method.block.includes(MethodBlockParam.THIS)) {
-            method.block.unshift(MethodBlockParam.THIS)
-        }
-    }
 }

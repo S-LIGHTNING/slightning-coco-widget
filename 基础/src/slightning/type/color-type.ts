@@ -9,13 +9,14 @@ export class ColorType implements Type<string> {
 
     public readonly defaultValue: string
 
-    public constructor({
-        defaultValue
-    }: {
+    public constructor(props: {
         defaultValue?: string | null | undefined
 
-    } = {}) {
-        this.defaultValue = defaultValue ?? "#000000"
+    } | string = {}) {
+        if (typeof props == "string") {
+            props = { defaultValue: props }
+        }
+        this.defaultValue = props.defaultValue ?? "#000000"
     }
 
     public validate(value: unknown): value is string {

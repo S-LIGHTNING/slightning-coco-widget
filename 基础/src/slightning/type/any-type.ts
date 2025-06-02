@@ -7,12 +7,13 @@ export class AnyType implements Type<any> {
 
     public readonly defaultValue: any
 
-    public constructor({
-        defaultValue
-    }: {
+    public constructor(props: {
         defaultValue?: any | null | undefined
-    } = {}) {
-        this.defaultValue = defaultValue ?? ""
+    } | string | number | boolean = {}) {
+        if (typeof props != "object") {
+            props = { defaultValue: props }
+        }
+        this.defaultValue = props.defaultValue ?? ""
     }
 
     public validate(__value: unknown): __value is any {

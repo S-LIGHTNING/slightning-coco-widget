@@ -1,6 +1,6 @@
 import * as CoCo from "../../coco"
 import { convertToCoCo } from "../convert/to-coco"
-import { PropertiesTypes, Types } from "../types"
+import { PropertiesTypes, StandardTypes, Types } from "../types"
 import { Widget } from "../widget"
 import { Adapter, LoggerAdapter } from "./adapter"
 import { ExportConfig } from "../export"
@@ -51,7 +51,7 @@ export const CoCoAdapter: Adapter = {
                                 addProperties(property.contents)
                                 continue
                             }
-                            propertiesSet.add(property.key)
+                            propertiesSet.add(Array.isArray(property) ? property[0] : property.key)
                         }
                     }
                     addProperties(types.properties)
@@ -73,7 +73,16 @@ export const CoCoAdapter: Adapter = {
             }
         }
     },
-    exportWidget(types: Types, widget: Widget, config?: ExportConfig | null | undefined): void {
+    exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void {
+        for (const decorator of config?.decorators ?? []) {
+            if (typeof decorator == "object") {
+                if (decorator.CoCo != null) {
+                    [types, widget] = decorator.CoCo(types, widget)
+                }
+            } else {
+                [types, widget] = decorator(types, widget)
+            }
+        }
         for (const decorator of config?.CoCo?.decorators ?? []) {
             [types, widget] = decorator(types, widget)
         }

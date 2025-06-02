@@ -138,13 +138,13 @@ sidebar_position: 1
 
 ### Types.properties
 
-类型：<code>[PropertyGroup](./property#propertygroup)[] | [PropertyTypes](./property#propertytypes)[]</code>
+类型：<code>[PropertiesTypes](./property#propertiestypes)</code>
 
 描述：控件属性。
 
 ### Types.methods
 
-类型：<code>[MethodGroup](./method#methodgroup)[] | [MethodTypes](./method#methodtypes)[]</code>
+类型：<code>[MethodsTypes](./method#methodstypes)</code>
 
 描述：控件方法。
 

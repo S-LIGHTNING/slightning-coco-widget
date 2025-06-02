@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget--webpack",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "exports": {
     ".": "./dist/index.js",
     "./config": "./dist/config.js",

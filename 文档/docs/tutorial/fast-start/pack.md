@@ -4,7 +4,6 @@ sidebar_position: 3
 
 # 打包 CoCo 控件
 
-
 :::tip 提示
 SCW 使用 webpack 打包控件，你可以按照如下流程打包你的自定义控件。
 :::
@@ -13,12 +12,14 @@ SCW 使用 webpack 打包控件，你可以按照如下流程打包你的自定�
 SCW webpack 相关工具与 SCW 是独立的，也就是说，使用 SCW webpack 相关工具不必须使用 SCW，原生自定义控件和使用其他框架的自定义控件也可以使用 SCW 提供的 webpack 工具。
 :::
 
-## 一、安装
+## 基本流程
+
+### 一、安装
 
 安装 SCW 和 webpack，在自定义控件目录中执行：
 
 ```sh
-npm install slightning-coco-widget slightning-coco-widget--webpack webpack webpack-cli --save-dev
+npm install slightning-coco-widget slightning-coco-widget--webpack webpack webpack-cli webpack-merge --save-dev
 ```
 
 如果你使用 TypeScript，还需要安装 ts-loader：
@@ -27,7 +28,7 @@ npm install slightning-coco-widget slightning-coco-widget--webpack webpack webpa
 npm install ts-loader --save-dev
 ```
 
-## 二、配置 webpack
+### 二、配置 webpack
 
 在项目根目录下创建 `webpack.config.js` 文件，并配置 webpack。以下是示例配置：
 
@@ -70,7 +71,7 @@ const SCW = require("slightning-coco-widget--webpack")
 module.exports = {
     output: {
         library: {                     // 导出配置
-            type: "commonjs2"
+            type: "commonjs"
         }
     },
     module: {
@@ -90,17 +91,7 @@ module.exports = {
 }
 ```
 
-## 三、控件的导入导出
-
-由于 CoCo 导入导出与 CommonJS 相似，可能导致 CoCo 的导入导出无法被访问。你可以使用 `CoCo.widgetRequire` 和 `CoCo.widgetExports` 来访问 CoCo 的导入导出。
-
-`CoCo.widgetRequire` 和 `CoCo.widgetExports` 在包 `slightning-coco-widget` 中，如果你没有安装，你需要安装它。
-
-```sh
-npm install slightning-coco-widget --save-dev
-```
-
-## 四、编译
+### 三、编译
 
 在自定义控件目录中执行：
 
@@ -116,10 +107,147 @@ npx webpack
 npx webpack --watch
 ```
 
-## 五、发布
+### 四、发布
 
 修改 webpack 配置中的 `mode` 为 `production`，`devtool` 为 `false`，并执行：
 
 ```sh
 npx webpack
 ```
+
+## 进阶用法
+
+### 使用 JSX
+
+Webpack 默认无法解析 JSX，要使用 JSX，需要进行一些预处理。
+
+如果你使用 TypeScript, 可以使用 ts-loader 转换 TSX，只需在 TypeScript 文件中添加 JSX 配置。
+
+```json
+// tsconfig
+
+{
+    "compilerOptions": {
+        // ...
+        "jsx": "react",
+        //...
+    },
+    // ...
+}
+```
+
+如果你不使用 TypeScript，则需要用 Babel 来处理 JSX。
+
+安装依赖：
+
+```sh
+npm install @babel/core babel-loader @babel/preset-react --save-dev
+```
+
+配置 webpack：
+
+```javascript
+// webpack.config.js
+
+const path = require("path")
+const { merge } = require("webpack-merge")
+const SCW = require("slightning-coco-widget--webpack")
+
+module.exports = merge(SCW.config, {
+    // ...
+    module: {
+        rules: [
+            {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader",
+                    options: {
+                        presets: ["@babel/preset-react"]
+                    }
+                }
+            }
+        ]
+    }
+    // ...
+})
+```
+
+### 分离配置
+
+由于开发环境和生产环境配置有较大差异，建议开发环境和生产环境的配置分开。
+
+删除 `webpack.config.js`，并添加以下文件：
+
+```javascript
+// webpack.common.js
+
+const path = require("path")
+const { merge } = require("webpack-merge")
+const SCW = require("slightning-coco-widget--webpack")
+
+module.exports = merge(SCW.config, {
+    stats: "minimal",
+    entry: "./path-to-you-widget.ts",
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "output-widget.js"
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                use: "ts-loader"
+            }
+        ]
+    },
+    resolve: {
+        extensions: [".ts", ".tsx", ".js", ".jsx"]
+    }
+})
+```
+
+```javascript
+// webpack.dev.js
+
+const { merge } = require("webpack-merge")
+const common = require("./webpack.common.js")
+
+module.exports = merge(common, {
+    mode: "development",
+    devtool: "eval-source-map"
+})
+```
+
+```javascript
+// webpack.prod.js
+
+const { merge } = require("webpack-merge")
+const common = require("./webpack.common.js")
+
+module.exports = merge(common, {
+    mode: "production",
+    devtool: false
+})
+```
+
+在开发环境下，使用 `npx webpack --config webpack.dev.js` 命令打包；在生产环境下，使用 `npx webpack --config webpack.prod.js` 命令打包。
+
+### 使用 NPM Scripts
+
+可以把打包命令添加到 `package.json` 的 `scripts` 字段中，以方便使用：
+
+```json
+// package.json
+
+{
+  // ...
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "watch": "webpack --watch --config webpack.dev.js"
+  }
+}
+```
+
+配置好后，就可以使用 `npm run build` 和 `npm run watch` 来进行打包。

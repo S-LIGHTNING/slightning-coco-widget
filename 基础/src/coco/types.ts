@@ -68,6 +68,7 @@ export type PropertyCalculatorBlockOptionsTypes = {
     generateBlock?: boolean | undefined
     line?: string | undefined
     space?: number | undefined
+    order?: number | undefined
     keys?: string[] | undefined
 }
 

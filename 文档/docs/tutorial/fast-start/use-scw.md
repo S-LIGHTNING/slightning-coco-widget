@@ -51,9 +51,7 @@ const types: Types = {
         {
             key: "property",
             label: "属性",
-            type: new StringType({
-                defaultValue: "默认值"
-            }),
+            type: new StringType("默认值"),
             blockOptions: {
                 get: {
                     key: "getProperty"
@@ -70,7 +68,7 @@ const types: Types = {
 | key | 控件的属性，命名规范：英文 + 数字组成，不能以数字开头，可以使用 CoCo 内置属性 |
 | label | 属性的显示名称 |
 | type | 属性的类型，详见 [类型 API](../../api/types/type) |
-| blockOptions | 属性的积木块选项，详见 [属性积木块选项 API](../../api/types/property#propertytypesblockoptions) |
+| blockOptions | 属性的积木块选项，详见 [属性积木块选项 API](../../api/types/property#propertytypes--propertytypes3blockoptions) |
 | blockOptions.get | 属性的获取方法积木选项，false 表示不可获取 |
 | blockOptions.get.key | 获取方法名 |
 | blockOptions.set | 属性的设置方法积木选项，false 表示不可设置 |
@@ -90,15 +88,11 @@ const types: Types = {
                 {
                     key: "property1",
                     label: "属性1",
-                    type: new StringType({
-                        defaultValue: "默认值"
-                    })
+                    type: new StringType("默认值")
                 }, {
                     key: "property2",
                     label: "属性2",
-                    type: new StringType({
-                        defaultValue: "默认值"
-                    })
+                    type: new StringType("默认值")
                 }
             ]
         }
@@ -128,9 +122,7 @@ const types: Types = {
                         {
                             key: "property",
                             label: "属性",
-                            type: new StringType({
-                                defaultValue: "默认值"
-                            })
+                            type: new StringType("默认值")
                         }
                     ]
                 }
@@ -155,15 +147,11 @@ const types: Types = {
                 "调用", MethodBlockParam.THIS, MethodBlockParam.METHOD, "参数1", {
                     key: "param1",
                     label: "参数1",
-                    type: new StringType({
-                        defaultValue: "默认值"
-                    })
+                    type: new StringType("默认值")
                 }, "参数2", {
                     key: "param2",
                     label: "参数2",
-                    type: new NumberType({
-                        defaultValue: 0
-                    })
+                    type: new NumberType(0)
                 }
             ],
             returns: new StringType(),
@@ -183,8 +171,8 @@ const types: Types = {
 | key | 控件的方法，命名规范：英文 + 数字组成，不能以数字开头 |
 | label | 方法标签 |
 | block | 方法的积木 |
-| returns | 方法的返回值类型，详见 [方法返回 API](../../api/types/method#methodtypesreturns) |
-| blockOptions | 方法的积木块选项，详见 [方法积木块选项 API](../../api/types/method#methodtypesblockoptions) |
+| returns | 方法的返回值类型，详见 [方法返回 API](../../api/types/method#methodtypesreturns--methodtypes3) |
+| blockOptions | 方法的积木块选项，详见 [方法积木块选项 API](../../api/types/method#methodtypes--methodtypes4blockoptions) |
 
 方法组
 
@@ -258,8 +246,8 @@ const types: Types = {
 
 | 属性 | 说明 |
 | --- | --- |
-| key | 事件名，全局唯一，命名规范：英文 + 数字组成，不能以数字开头 |
-| label | 事件标签 |
+| key | 事件的键 |
+| label | 事件标签，会在编辑器中显示 |
 | params | 事件的参数列表 |
 
 ## 二、控件实体定义
@@ -348,35 +336,27 @@ exportWidget(types, MtWidget, {
     decorators: [
         generateMethodForFunctions,
         generateBlockForProperties,
-        transformMethodsThrows
-    ],
-    CoCo: {
-        decorators: [
-            transformMethodsCallbackFunctionsToEvents,
-            addThisForMethods,
-            addCheck,
-            transformIconsExceptWidgetIcon
-        ]
-    },
-    CreationProject: {
-        decorators: [
-            flattenEventSubTypes,
-            transformMethodsCallbackFunctionsToCodeBlocks,
-            addThisForMethods,
-            addCheck,
-            transformIcons
-        ]
-    }
+        transformMethodsThrows,
+        { CreationProject: flattenEventSubTypes },
+        {
+            CoCo: transformMethodsCallbackFunctionsToEvents,
+            CreationProject: transformMethodsCallbackFunctionsToCodeBlocks
+        },
+        addThisForMethods,
+        addCheck,
+        {
+            CoCo: transformIconsExceptWidgetIcon,
+            CreationProject: transformIcons
+        }
+    ]
 })
 ```
 
 | 属性 | 说明 |
 | --- | --- |
 | decorators | 装饰器列表 |
-| CoCo | CoCo 导出配置 |
-| CoCo.decorators | CoCo 项目装饰器列表 |
-| CreationProject | Creation Project 导出配置 |
-| CreationProject.decorators | Creation Project 装饰器列表 |
+| decorators[number].CoCo | CoCo 平台的装饰器 |
+| decorators[number].CreationProject | Creation Project 平台的装饰器 |
 
 :::tip 提示
 有关于装饰器的更多信息详见 [导出装饰器 API](../../api/export/decorators)。

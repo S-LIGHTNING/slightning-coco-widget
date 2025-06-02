@@ -16,10 +16,10 @@ import { ImageType } from "./image-type"
 import { AudioType } from "./audio-type"
 import { UnionType } from "./union-type"
 import { VideoType } from "./video-type"
-import { InstanceType } from "./instance-type"
+import { InstanceOfClassType } from "./instance-of-class-type"
 import { FunctionType } from "./function-type"
 
-export function validate<T>(name: string | null, value: unknown, type: Type<T>): value is T {
+export function validate<T>(name: string | null, value: unknown, type: Type<T>): asserts value is T {
     let message: string | null = null, result: boolean = false
     try {
         result = type.validate(value)
@@ -38,7 +38,6 @@ export function validate<T>(name: string | null, value: unknown, type: Type<T>):
         }
         throw new TypeValidateError<T>(message, value, type)
     }
-    return true
 }
 
 export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] = []): string {
@@ -191,11 +190,11 @@ export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] 
                     return `(${data.types.map((type: Type<unknown>): string => typeToString(type)).join(" | ")})`
                 }
             }, {
-                test(data: unknown): data is InstanceType<unknown> {
-                    return data instanceof InstanceType
+                test(data: unknown): data is InstanceOfClassType<unknown> {
+                    return data instanceof InstanceOfClassType
                 },
-                toString(data: InstanceType<unknown>, __config: stringify.RequiredConfig): string {
-                    return `[Object ${data.theClass.name}]`
+                toString(data: InstanceOfClassType<unknown>, __config: stringify.RequiredConfig): string {
+                    return `实例<${data.theClass.name}>`
                 }
             }, {
                 test(data: unknown): data is FunctionType<unknown[], unknown> {

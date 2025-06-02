@@ -2,15 +2,50 @@
 sidebar_position: 5
 ---
 
-# 积木选项
+# 积木
 
-## BlockOptionsTypes
+## BlockType
+
+2.3 版本新增。
+
+枚举类型：
+
+- `METHOD`：表示类型为方法。
+- `EVENT`：表示类型为事件。
+
+## BlockBoxOptions
+
+2.3 版本新增。
+
+类型：`object`
+
+描述：积木盒选项，用于调整积木布局。
+
+### BlockBoxOptions.space?
+
+类型：`number`
+
+描述：积木间距。
+
+## BlockBoxOptions.line?
+
+类型：`string`
+
+描述：在积木上方显示的提示
+
+## ~~BlockOptionsTypes~~
+
+:::caution 警告
+该属性已在 2.3 版本中更名为 BlockOptions，该属性是为兼容性考虑而添加的，请尽快迁移到 [BlockOptions](#blockoptions)。
+:::
+
+## BlockOptions
 
 类型：`object`
 
 描述：积木选项。
 
-### BlockOptionsTypes.icon?
+### BlockOptions.icon?
 
 类型：`string`
 
@@ -18,13 +53,13 @@ sidebar_position: 5
 
 **仅在 CoCo 中生效，Creation Project 不支持该特性。**
 
-### BlockOptionsTypes.color?
+### BlockOptions.color?
 
 类型：`string`
 
 描述：积木的颜色。
 
-### BlockOptionsTypes.inline?
+### BlockOptions.inline?
 
 类型：`boolean`
 
@@ -34,7 +69,11 @@ sidebar_position: 5
 
 默认值：`true`
 
-### BlockOptionsTypes.deprecated?
+### ~~BlockOptions.deprecated~~?
+
+:::caution 警告
+该选项已在 2.3 版本中弃用，并可能在将来的版本中移除，请改用方法或事件的 `deprecated` 选项。
+:::
 
 类型：`boolean | string`
 

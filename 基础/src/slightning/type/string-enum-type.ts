@@ -10,26 +10,39 @@ export enum StringEnumInputType {
     OPTION_SWITCH = "OPTION_SWITCH"
 }
 
+type StandardEntry = { label: string, value: string }
+
+type Entry = ({ label: string, value: string } | [string, string] | string)
+
 export class StringEnumType<T extends string> implements Type<T> {
 
-    public readonly entries: { label: string, value: string }[]
+    public readonly entries: StandardEntry[]
     public readonly inputType: StringEnumInputType
     public readonly valueToLabelMap: Record<string, string>
     public readonly values: string[]
 
-    public constructor({
-        entries, inputType
-    }: {
-        entries: { label: string, value: string }[]
+    public constructor(props: {
+        entries: Entry[]
         inputType?: StringEnumInputType | null | undefined
-    }) {
-        this.entries = entries
-        this.inputType = inputType ?? StringEnumInputType.DROPDOWN
+    } | Entry[]) {
+        if (Array.isArray(props)) {
+            props = { entries: props }
+        }
+        this.entries = props.entries.map((entry: Entry): StandardEntry => {
+            if (typeof entry == "string") {
+                return { label: entry, value: entry }
+            } else if (Array.isArray(entry)) {
+                return { label: entry[0], value: entry[1] }
+            } else {
+                return entry
+            }
+        })
+        this.inputType = props.inputType ?? StringEnumInputType.DROPDOWN
         this.valueToLabelMap = {}
-        for (const entry of entries) {
+        for (const entry of this.entries) {
             this.valueToLabelMap[entry.value] = entry.label
         }
-        this.values = entries.map((entry: { label: string, value: string }): string => entry.value)
+        this.values = this.entries.map((entry: StandardEntry): string => entry.value)
     }
 
     public validate(value: unknown): value is T {

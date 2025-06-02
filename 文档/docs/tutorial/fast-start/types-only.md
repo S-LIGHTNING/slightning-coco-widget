@@ -23,11 +23,14 @@ npm install slightning-coco-widget tsc --save-dev
 首先创建 TypeScript 配置文件。在项目根目录下创建一个名为 `tsconfig.json` 的文件，并添加以下内容：
 
 ```json
+// tsconfig.json
+
 {
     "compilerOptions": {
         "outDir": "dist",              // 编译输出目录
         "target": "ESNext",            // 编译目标 JavaScript 版本，这里设置为 ESNext，以关闭 TypeScript 兼容性转义，防止出现一些奇奇怪怪的问题
         "module": "preserve",          // 保留模块导入方式，防止 TypeScript 将 CoCo 导入和导出转为其他形式
+        "moduleResolution": "bundler", // 按照打包器的模块解析方式解析模块导入
         "jsx": "react",                // JSX 转为 React
         "lib": ["ESNext", "DOM"],      // 使用 JS 和浏览器 API
         "skipLibCheck": true           // 跳过对依赖库的检查

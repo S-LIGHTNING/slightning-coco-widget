@@ -10,14 +10,15 @@ export class NumberType implements Type<number> {
     public readonly defaultValue: number
     public readonly range: Range | null | undefined
 
-    public constructor({
-        defaultValue, range
-    }: {
+    public constructor(props: {
         defaultValue?: number | null | undefined
         range?: Range | null | undefined
-    } = {}) {
-        this.defaultValue = defaultValue ?? 0
-        this.range = range
+    } | number = {}) {
+        if (typeof props == "number") {
+            props = { defaultValue: props }
+        }
+        this.defaultValue = props.defaultValue ?? 0
+        this.range = props.range
     }
 
     public validate(value: unknown): value is number {

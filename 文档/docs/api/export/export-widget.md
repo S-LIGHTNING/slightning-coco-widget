@@ -8,7 +8,10 @@ sidebar_position: 1
 
 ```typescript
 interface ExportConfig {
-    decorators?: Decorator[] | null | undefined
+    decorators?: (Decorator | {
+        CoCo?: Decorator | null | undefined
+        CreationProject?: Decorator | null | undefined
+    })[] | null | undefined
     CoCo?: {
         decorators?: Decorator[] | null | undefined
     } | null | undefined
@@ -36,6 +39,13 @@ declare function exportWidget(
 | --- | --- |
 | decorators | 装饰器列表 |
 | CoCo | CoCo 导出配置 |
-| CoCo.decorators | CoCo 项目装饰器列表 |
+| CoCo.decorators | CoCo 平台的装饰器列表 |
 | CreationProject | Creation Project 导出配置 |
-| CreationProject.decorators | Creation Project 装饰器列表 |
+| CreationProject.decorators | Creation Project 平台的装饰器列表 |
+
+2.3 版本新增：
+
+| 属性 | 说明 |
+| --- | --- |
+| decorators[number].CoCo | CoCo 平台的装饰器 |
+| decorators[number].CreationProject | Creation Project 平台的装饰器 |

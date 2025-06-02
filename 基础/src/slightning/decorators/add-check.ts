@@ -1,28 +1,24 @@
 import React from "react"
-import { addMessageToError, betterToString, errorToArray, merge } from "../../utils"
+import { addMessageToError, betterToString, errorToArray } from "../../utils"
 import { StringEnumType, TypeValidateError, validate } from "../type"
-import { MethodBlockOptionsTypes, MethodBlockParam, MethodsTypes, MethodTypes, Types } from "../types"
+import { MethodBlockOptions, MethodBlockParam, StandardMethodTypes, StandardTypes } from "../types"
 import { Logger } from "../utils"
 import { getSuperWidget, Widget } from "../widget"
+import { MethodTypesNode, traverseTypes } from "./utils"
 
-export function addCheck(types: Types, widget: Widget): [Types, Widget] {
+export function addCheck(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
     const methodsMap: Record<string, {
-        types: MethodTypes
-        blockOptions: MethodBlockOptionsTypes
+        types: StandardMethodTypes
+        blockOptions: MethodBlockOptions
     }> = {}
-    function addMethods(methods: MethodsTypes, groupBlockOptions: MethodBlockOptionsTypes = {}): void {
-        for (const method of methods) {
-            if ("contents" in method) {
-                addMethods(method.contents, merge({}, groupBlockOptions, method.blockOptions ?? {}))
-                continue
-            }
-            methodsMap[method.key] = {
-                types: method,
-                blockOptions: merge({}, groupBlockOptions, method.blockOptions ?? {})
+    traverseTypes(types, {
+        MethodTypes(node: MethodTypesNode): void {
+            methodsMap[node.value.key] = {
+                types: node.value,
+                blockOptions: node.blockOptions
             }
         }
-    }
-    addMethods(types.methods)
+    })
     return [types, new Proxy(widget, {
         construct(target: Widget, argArray: any[], newTarget: Function): object {
             let widget: any, logger: Logger
@@ -56,8 +52,8 @@ export function addCheck(types: Types, widget: Widget): [Types, Widget] {
                     const originalFunction: unknown = Reflect.get(target, p, receiver)
                     if (typeof p == "string" && p in methodsMap) {
                         const method: {
-                            types: MethodTypes
-                            blockOptions: MethodBlockOptionsTypes
+                            types: StandardMethodTypes
+                            blockOptions: MethodBlockOptions
                         } = methodsMap[p]!
                         let newFunction: Function
                         if (typeof originalFunction == "function") {
@@ -217,6 +213,6 @@ export function addCheck(types: Types, widget: Widget): [Types, Widget] {
                     return originalFunction
                 }
             })
-        },
+        }
     })]
 }

@@ -1,7 +1,8 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
-import { MethodBlockTypes } from "../types"
+import { standardizeMethodBlock } from "../convert/standardize-types"
+import { MethodBlock, StandardMethodBlock } from "../types"
 import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
 import { typeToString } from "./utils"
@@ -9,7 +10,7 @@ import { VoidType } from "./void-type"
 
 export class FunctionType<A extends unknown[], R> implements Type<(...args: A) => R> {
 
-    public readonly block: MethodBlockTypes
+    public readonly block: StandardMethodBlock
     public readonly returns?: Type | null | undefined
     public readonly throws?: Type | null | undefined
     public readonly defaultValue?: string | null | undefined
@@ -24,13 +25,13 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
     public constructor({
         block, returns, throws, defaultValue, raw
     }: {
-        block: MethodBlockTypes
+        block: MethodBlock
         returns?: Type | null | undefined
         throws?: Type | null | undefined
         defaultValue?: string | null | undefined
         raw?: boolean | null | undefined
     }) {
-        this.block = block
+        this.block = standardizeMethodBlock(block)
         this.returns = returns
         this.throws = throws
         this.defaultValue = defaultValue

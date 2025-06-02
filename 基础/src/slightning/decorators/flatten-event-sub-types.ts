@@ -1,18 +1,16 @@
-import { EventTypes, Types } from "../types"
+import { StandardTypes } from "../types"
 import { Widget } from "../widget"
 import { addFlattenEventSubTypes } from "./add-flatten-event-sub-types"
+import { EventTypesNode, traverseTypes } from "./utils"
 
-export function flattenEventSubTypes(types: Types, widget: Widget): [Types, Widget] {
+export function flattenEventSubTypes(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
     [types, widget] = addFlattenEventSubTypes(types, widget)
-    for (let i: number = types.events.length - 1; i >= 0; i--) {
-        const event: EventTypes | undefined = types.events[i]
-        if (event == undefined) {
-            continue
+    traverseTypes(types, {
+        EventTypes(node: EventTypesNode): void {
+            if (node.value.subTypes != null && node.value.subTypes.length > 0) {
+                node.remove()
+            }
         }
-        if (event.subTypes == null) {
-            continue
-        }
-        types.events.splice(i, 1)
-    }
+    })
     return [types, widget]
 }

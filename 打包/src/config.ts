@@ -5,7 +5,7 @@ import { WrapperPlugin } from "./plugin/wrapper-plugin"
 export const config: webpack.Configuration = {
     output: {
         library: {
-            type: "commonjs2"
+            type: "commonjs"
         }
     },
     module: {

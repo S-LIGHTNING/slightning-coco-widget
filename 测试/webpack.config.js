@@ -67,10 +67,6 @@ module.exports = merge(SCW.config, {
     module: {
         rules: [
             {
-                test: /\.(j|t)sx?$/,
-                exclude: /node_modules/,
-                use: "babel-loader",
-            }, {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: {

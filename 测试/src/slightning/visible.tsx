@@ -16,37 +16,26 @@ const types: Types = {
         {
             key: "__width",
             label: "宽度",
-            type: new NumberType({
-                defaultValue: 360
-            })
+            type: new NumberType(360)
         }, {
             key: "__height",
             label: "高度",
-            type: new NumberType({
-                defaultValue: 360
-            })
+            type: new NumberType(360)
         }, {
             key: "count",
             label: "计数",
-            type: new NumberType({
-                defaultValue: 0
-            })
+            type: new NumberType(0)
         }
     ],
-    methods: [{
-        blockOptions: {
-            color: Color.PINK
-        },
-        contents: [
-            {
-                key: "increaseCount",
-                label: "增加计数",
-                block: [
-                    MethodBlockParam.METHOD
-                ]
-            }
-        ]
-    }],
+    methods: [{ blockOptions: {
+        color: Color.PINK
+    }, contents: [
+        {
+            key: "increaseCount",
+            label: "增加计数",
+            block: [MethodBlockParam.METHOD]
+        }
+    ]}],
     events: []
 }
 
@@ -71,20 +60,12 @@ class TestVisibleWidget extends getSuperWidget(types) {
 
 exportWidget(types, TestVisibleWidget, {
     decorators: [
-        generateBlockForProperties
-    ],
-    CoCo: {
-        decorators: [
-            addThisForMethods,
-            addCheck,
-            transformIconsExceptWidgetIcon
-        ]
-    },
-    CreationProject: {
-        decorators: [
-            addThisForMethods,
-            addCheck,
-            transformIcons
-        ]
-    }
+        generateBlockForProperties,
+        addThisForMethods,
+        addCheck,
+        {
+            CoCo: transformIconsExceptWidgetIcon,
+            CreationProject: transformIcons
+        }
+    ]
 })

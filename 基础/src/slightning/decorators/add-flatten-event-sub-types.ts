@@ -1,36 +1,36 @@
 import { capitalize } from "../../utils"
-import { EventSubType, EventTypes, Types } from "../types"
+import { BlockType, StandardEventSubType, StandardEventTypes, StandardTypes } from "../types"
 import { eventKeyMap } from "../utils"
 import { Widget } from "../widget"
+import { EventTypesNode, traverseTypes } from "./utils"
 
-export function addFlattenEventSubTypes(types: Types, widget: Widget): [Types, Widget] {
-    for (let i: number = types.events.length - 1; i >= 0; i--) {
-        const event: EventTypes | undefined = types.events[i]
-        if (event == undefined) {
-            continue
+export function addFlattenEventSubTypes(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
+    traverseTypes(types, {
+        EventTypes(node: EventTypesNode): void {
+            if (node.value.subTypes == null || node.value.subTypes.length == 0) {
+                return
+            }
+            node.insertAfter(...flattenSubTypes(
+                node.value.subTypes, 0, [node.value.key], [node.value.label], node.value
+            ))
         }
-        if (event.subTypes == null) {
-            continue
-        }
-        types.events.splice(i, 0, ...flattenSubTypes(
-            event.subTypes, 0, [event.key], [event.label], event
-        ))
-    }
+    })
     return [types, widget]
 }
 
 function flattenSubTypes(
-    subTypes: EventSubType[],
+    subTypes: StandardEventSubType[],
     i: number,
     keys: string[],
     labels: string[],
-    event: EventTypes
-): EventTypes[] {
-    const result: EventTypes[] = []
+    event: StandardEventTypes
+): StandardEventTypes[] {
+    const result: StandardEventTypes[] = []
     if (i >= subTypes.length) {
         const key: string = keys.join("")
         eventKeyMap[key] = `__slightning_coco_widget_flatten_event_sub_types__${key}`
         return [{
+            type: BlockType.EVENT,
             key: `__slightning_coco_widget_flatten_event_sub_types__${key}`,
             label: labels.join(" "),
             params: event.params,
@@ -38,7 +38,7 @@ function flattenSubTypes(
             blockOptions: event.blockOptions
         }]
     }
-    const subType: EventSubType | undefined = subTypes[i]
+    const subType: StandardEventSubType | undefined = subTypes[i]
     if (subType == undefined) {
         return flattenSubTypes(subTypes, i + 1, keys, labels, event)
     }

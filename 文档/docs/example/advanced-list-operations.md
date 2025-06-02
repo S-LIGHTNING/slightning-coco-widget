@@ -15,7 +15,31 @@ JS 中有一些复杂的列表操作，如：`map`、`filter`、`some`、`every`
 ## 控件代码
 
 ```typescript
-import { addCheck, addThisForMethods, AnyType, ArrayType, BooleanType, Color, exportWidget, FunctionType, getSuperWidget, NumberType, transformIcons, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, Types } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, ArrayType, BooleanType, Color, exportWidget, FunctionType, getSuperWidget, MethodBlock, MethodParamTypes, NumberType, transformIcons, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, Types } from "slightning-coco-widget"
+
+const MethodArrayParamTypes: MethodParamTypes = {
+    key: "array",
+    label: "列表",
+    type: new ArrayType({
+        defaultValue: ["列表"]
+    })
+}
+
+const MethodCallbackParamBlock: MethodBlock = [
+    {
+        key: "item",
+        label: "项",
+        type: new AnyType()
+    }, {
+        key: "index",
+        label: "索引",
+        type: new NumberType()
+    }, {
+        key: "array",
+        label: "列表",
+        type: new ArrayType()
+    }
+]
 
 const types: Types = {
     type: "SLIGHTNING_COCO_WIDGET_EXAMPLE_ADVANCED_LIST_OPERATIONS_WIDGET",
@@ -29,160 +53,71 @@ const types: Types = {
         global: true
     },
     properties: [],
-    methods: [{
-        blockOptions: {
-            color: Color.YELLOW
-        },
-        contents: [
-            {
-                key: "arrayMap",
-                label: "列表映射",
-                block: [
-                    "映射", {
-                        key: "array",
-                        label: "列表",
-                        type: new ArrayType({
-                            defaultValue: ["列表"]
-                        })
-                    }, {
-                        key: "callback",
-                        label: "回调函数",
-                        type: new FunctionType({
-                            block: [
-                                {
-                                    key: "item",
-                                    label: "项",
-                                    type: new AnyType()
-                                }, {
-                                    key: "index",
-                                    label: "索引",
-                                    type: new NumberType()
-                                }, {
-                                    key: "array",
-                                    label: "列表",
-                                    type: new ArrayType()
-                                }
-                            ],
-                            returns: new AnyType()
-                        })
-                    }
-                ],
-                returns: new ArrayType(),
-                tooltip: "返回给定列表中每个元素经过回调函数映射后的新列表。"
-            }, {
-                key: "arrayFilter",
-                label: "列表过滤",
-                block: [
-                    "过滤", {
-                        key: "array",
-                        label: "列表",
-                        type: new ArrayType({
-                            defaultValue: ["列表"]
-                        })
-                    }, {
-                        key: "callback",
-                        label: "回调函数",
-                        type: new FunctionType({
-                            block: [
-                                {
-                                    key: "item",
-                                    label: "项",
-                                    type: new AnyType()
-                                }, {
-                                    key: "index",
-                                    label: "索引",
-                                    type: new NumberType()
-                                }, {
-                                    key: "array",
-                                    label: "列表",
-                                    type: new ArrayType()
-                                }
-                            ],
-                            returns: new BooleanType({
-                                defaultValue: true
-                            })
-                        })
-                    }
-                ],
-                returns: new ArrayType(),
-                tooltip: "返回给定列表中满足回调函数条件的元素组成的新列表。"
-            }, {
-                key: "arrayEvery",
-                label: "列表全部满足",
-                block: [
-                    {
-                        key: "array",
-                        label: "列表",
-                        type: new ArrayType({
-                            defaultValue: ["列表"]
-                        })
-                    }, "全部满足", {
-                        key: "callback",
-                        label: "回调函数",
-                        type: new FunctionType({
-                            block: [
-                                {
-                                    key: "item",
-                                    label: "项",
-                                    type: new AnyType()
-                                }, {
-                                    key: "index",
-                                    label: "索引",
-                                    type: new NumberType()
-                                }, {
-                                    key: "array",
-                                    label: "列表",
-                                    type: new ArrayType()
-                                }
-                            ],
-                            returns: new BooleanType({
-                                defaultValue: true
-                            })
-                        })
-                    }
-                ],
-                returns: new BooleanType(),
-                tooltip: "判断给定列表中是否全部元素都满足回调函数的条件。"
-            }, {
-                key: "arraySome",
-                label: "列表存在满足",
-                block: [
-                    {
-                        key: "array",
-                        label: "列表",
-                        type: new ArrayType({
-                            defaultValue: ["列表"]
-                        })
-                    }, "存在满足", {
-                        key: "callback",
-                        label: "回调函数",
-                        type: new FunctionType({
-                            block: [
-                                {
-                                    key: "item",
-                                    label: "项",
-                                    type: new AnyType()
-                                }, {
-                                    key: "index",
-                                    label: "索引",
-                                    type: new NumberType()
-                                }, {
-                                    key: "array",
-                                    label: "列表",
-                                    type: new ArrayType()
-                                }
-                            ],
-                            returns: new BooleanType({
-                                defaultValue: true
-                            })
-                        })
-                    }
-                ],
-                returns: new BooleanType(),
-                tooltip: "判断给定列表中是否存在至少一个元素满足回调函数的条件。"
-            }
-        ]}
-    ],
+    methods: [{ blockOptions: {
+        color: Color.YELLOW
+    }, contents: [
+        {
+            key: "arrayMap",
+            label: "列表映射",
+            block: [
+                "映射", MethodArrayParamTypes, {
+                    key: "callback",
+                    label: "回调函数",
+                    type: new FunctionType({
+                        block: MethodCallbackParamBlock,
+                        returns: new AnyType()
+                    })
+                }
+            ],
+            returns: new ArrayType(),
+            tooltip: "返回给定列表中每个元素经过回调函数映射后的新列表。"
+        }, {
+            key: "arrayFilter",
+            label: "列表过滤",
+            block: [
+                "过滤", MethodArrayParamTypes, {
+                    key: "callback",
+                    label: "回调函数",
+                    type: new FunctionType({
+                        block: MethodCallbackParamBlock,
+                        returns: new BooleanType(true)
+                    })
+                }
+            ],
+            returns: new ArrayType(),
+            tooltip: "返回给定列表中满足回调函数条件的元素组成的新列表。"
+        }, {
+            key: "arrayEvery",
+            label: "列表全部满足",
+            block: [
+                MethodArrayParamTypes, "全部满足", {
+                    key: "callback",
+                    label: "回调函数",
+                    type: new FunctionType({
+                        block: MethodCallbackParamBlock,
+                        returns: new BooleanType(true)
+                    })
+                }
+            ],
+            returns: new BooleanType(),
+            tooltip: "判断给定列表中是否全部元素都满足回调函数的条件。"
+        }, {
+            key: "arraySome",
+            label: "列表存在满足",
+            block: [
+                MethodArrayParamTypes, "存在满足", {
+                    key: "callback",
+                    label: "回调函数",
+                    type: new FunctionType({
+                        block: MethodCallbackParamBlock,
+                        returns: new BooleanType(true)
+                    })
+                }
+            ],
+            returns: new BooleanType(),
+            tooltip: "判断给定列表中是否存在至少一个元素满足回调函数的条件。"
+        }
+    ]}],
     events: []
 }
 
@@ -292,25 +227,23 @@ class AdvancedListOperationsWidget extends getSuperWidget(types) {
 }
 
 exportWidget(types, AdvancedListOperationsWidget, {
-    CoCo: {
-        decorators: [
-            transformMethodsCallbackFunctionsToEvents,
-            addThisForMethods,
-            addCheck
-        ]
-    },
-    CreationProject: {
-        decorators: [
-            transformMethodsCallbackFunctionsToCodeBlocks,
-            addThisForMethods,
-            addCheck,
-            transformIcons
-        ]
-    }
+    decorators: [
+        {
+            CoCo: transformMethodsCallbackFunctionsToEvents,
+            CreationProject: transformMethodsCallbackFunctionsToCodeBlocks
+        },
+        addThisForMethods,
+        addCheck,
+        { CreationProject: transformIcons }
+    ]
 })
 ```
 
 ## 生成的积木
+
+:::info 信息
+不同版本的 SCW 生成的积木顺序和样式略有差异，但它们的功能都是一样的。
+:::
 
 ### CoCo
 

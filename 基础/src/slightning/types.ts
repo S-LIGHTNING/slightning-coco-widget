@@ -1,6 +1,18 @@
 import { Type } from "./type"
 
-export interface Types {
+export interface Types extends BasicTypes {
+    properties: PropertiesTypes
+    methods: MethodsTypes
+    events: EventTypes[]
+}
+
+export interface StandardTypes extends BasicTypes {
+    properties: StandardPropertiesTypes
+    methods: StandardMethodsTypes
+    events: []
+}
+
+interface BasicTypes {
     /**
      * 全局唯一控件类型。
      *
@@ -89,9 +101,6 @@ export interface Types {
          */
         any?: boolean | null | undefined
     }
-    properties: PropertiesTypes
-    methods: MethodsTypes
-    events: EventTypes[]
 }
 
 export type Platforms = PlatformEnum[]
@@ -113,7 +122,15 @@ export enum PlatformEnum {
 
 export type PropertiesTypes = (PropertyGroup | PropertyTypes)[]
 
-export interface PropertyGroup {
+export type StandardPropertiesTypes = StandardPropertiesItem[]
+
+export type StandardPropertiesItem = StandardPropertyGroup | StandardPropertyTypes
+
+export interface PropertyGroup extends BasicPropertyGroup<PropertiesTypes> {}
+
+export interface StandardPropertyGroup extends BasicPropertyGroup<StandardPropertiesTypes> {}
+
+interface BasicPropertyGroup<CONTENTS_TYPE> {
     /**
      * 属性组标签，设置后生成的一组积木上方会显示该标签。
      */
@@ -121,14 +138,42 @@ export interface PropertyGroup {
     /**
      * 属性组积木选项。组内属性的积木选项会继承该选项。
      */
-    blockOptions?: PropertyBlockOptionsTypes | null | undefined
+    blockOptions?: PropertyBlockOptions | null | undefined
     /**
      * 属性组内容。
      */
-    contents: PropertiesTypes
+    contents: CONTENTS_TYPE
 }
 
-export interface PropertyTypes {
+export type PropertyTypes = BriefPropertyTypes | StandardPropertyTypes
+
+export type BriefPropertyTypes = [
+    /**
+     * 属性的键名，与控件实体中的属性名对应。
+     */
+    string,
+    /**
+     * 属性的标签，作为在编辑器中显示的属性名。
+     */
+    string,
+    /**
+     * 属性的类型或默认值。
+     *
+     * - 当类型为 `Type` 时，表示属性的类型；
+     * - 当类型为 `string`、`number`、`boolean`、`DropdownItem[]` 时，表示属性的默认值，属性的类型按照如下规则自动推断：
+     *   - `string`：类型为 `StringType`；
+     *   - `number`：类型为 `NumberType`；
+     *   - `boolean`：类型为 `BooleanType`；
+     *   - `DropdownItem[]`：类型为 `StringEnumType`。
+     */
+    string | number | boolean | DropdownItem[] | Type,
+    /**
+     * 属性的积木选项。
+     */
+    (PropertyOptions | null | undefined)?
+]
+
+export interface StandardPropertyTypes extends PropertyOptions {
     /**
      * 属性的键名，与控件实体中的属性名对应。
      */
@@ -141,28 +186,41 @@ export interface PropertyTypes {
      * 属性的类型。
      */
     type: Type
+}
+
+/**
+ * @deprecated 请使用 `PropertyBlockOptions` 代替。
+ */
+export type PropertyBlockOptionsTypes = PropertyBlockOptions
+
+export interface PropertyOptions {
     /**
      * 属性的积木选项。
      */
-    blockOptions?: PropertyBlockOptionsTypes | null | undefined
+    blockOptions?: PropertyBlockOptions | null | undefined
 }
 
-export interface PropertyBlockOptionsTypes {
+export interface PropertyBlockOptions {
     /**
      * 取值方法积木选项。
      *
      * 设为 `false` 则不生成取值方法积木。
      */
-    get?: boolean | PropertyComputeBlockOptionsTypes | null | undefined
+    get?: boolean | PropertyComputeBlockOptions | null | undefined
     /**
      * 赋值方法积木选项。
      *
      * 设为 `false` 则不生成赋值方法积木。
      */
-    set?: boolean | PropertyComputeBlockOptionsTypes | null | undefined
+    set?: boolean | PropertyComputeBlockOptions | null | undefined
 }
 
-export interface PropertyComputeBlockOptionsTypes extends BasicBlockOptionsTypes {
+/**
+ * @deprecated 请使用 `PropertyComputeBlockOptions` 代替。
+ */
+export type PropertyComputeBlockOptionsTypes = PropertyComputeBlockOptions
+
+export interface PropertyComputeBlockOptions extends BasicBlockOptions {
     /**
      * 计算方法（取值/赋值方法）的键名，与控件实体中的方法名对应。
      *
@@ -173,9 +231,17 @@ export interface PropertyComputeBlockOptionsTypes extends BasicBlockOptionsTypes
     key?: string | null | undefined
 }
 
-export type MethodsTypes = (MethodGroup | MethodTypes)[]
+export type MethodsTypes = (MethodGroup | MethodTypes | ClearEventTypes | BlockBoxOptions)[]
 
-export interface MethodGroup {
+export type StandardMethodsTypes = StandardMethodsItem[]
+
+export type StandardMethodsItem = StandardMethodGroup | StandardMethodTypes | StandardEventTypes | BlockBoxOptions
+
+export interface MethodGroup extends BasicMethodGroup<MethodsTypes> {}
+
+export interface StandardMethodGroup extends BasicMethodGroup<StandardMethodsTypes> {}
+
+interface BasicMethodGroup<CONTENTS_TYPE> {
     /**
      * 方法组标签，设置后生成的一组积木上方会显示该标签。
      */
@@ -183,14 +249,87 @@ export interface MethodGroup {
     /**
      * 方法组积木选项。组内方法的积木选项会继承该选项。
      */
-    blockOptions?: MethodBlockOptionsTypes | null | undefined
+    blockOptions?: MethodBlockOptions | null | undefined
     /**
      * 方法组内容。
      */
-    contents: MethodsTypes
+    contents: CONTENTS_TYPE
 }
 
-export interface MethodTypes {
+export type MethodTypes = BriefMethodTypes | UnclearBriefMethodTypes | PartiallyStandardMethodTypes | UnclearPartiallyStandardMethodTypes
+
+export type BriefMethodTypes = [
+    typeof BlockType.METHOD,
+    /**
+     * 方法的键名，与控件实体中的方法名对应。
+     */
+    string,
+    /**
+     * 方法的标签。
+     */
+    string,
+    /**
+     * 方法的积木。
+     *
+     * 同 `StandardMethodTypes` 中的 `block`。
+     */
+    MethodBlock,
+    /**
+     * 方法的返回值类型。
+     *
+     * 同 `StandardMethodTypes` 中的 `returns`。
+     */
+    (Type | null | undefined)?,
+    /**
+     * 方法的其他配置。
+     */
+    (MethodOptions | null | undefined)?
+]
+
+export type UnclearBriefMethodTypes = [
+    /**
+     * 方法的键名，与控件实体中的方法名对应。
+     */
+    string,
+    /**
+     * 方法的标签。
+     */
+    string,
+    /**
+     * 方法的积木。
+     *
+     * 同 `StandardMethodTypes` 中的 `block`。
+     */
+    MethodBlock,
+    /**
+     * 方法的返回值类型。
+     *
+     * 同 `StandardMethodTypes` 中的 `returns`。
+     */
+    (Type | null | undefined)?,
+    /**
+     * 方法的其他配置。
+     */
+    (MethodOptions | null | undefined)?
+]
+
+export interface PartiallyStandardMethodTypes extends BasicStandardMethodTypes<MethodBlock> {
+    type: typeof BlockType.METHOD
+}
+
+export interface UnclearPartiallyStandardMethodTypes extends BasicStandardMethodTypes<MethodBlock> {
+    type?: typeof BlockType.METHOD | null | undefined
+}
+
+export interface StandardMethodTypes extends BasicStandardMethodTypes<StandardMethodBlock> {
+    type: typeof BlockType.METHOD
+}
+
+export interface UnclearStandardMethodTypes extends BasicStandardMethodTypes<StandardMethodBlock> {
+    type?: typeof BlockType.METHOD | null | undefined
+}
+
+interface BasicStandardMethodTypes<BLOCK_TYPE> extends MethodOptions {
     /**
      * 方法的键名，与控件实体中的方法名对应。
      */
@@ -209,36 +348,57 @@ export interface MethodTypes {
      * - 字符串：说明文本。
      * - MethodParamTypes：方法参数。
      */
-    block: MethodBlockTypes
+    block: BLOCK_TYPE
     /**
      * 方法的返回值类型。
      *
      * 不设置或设置为空时，表示没有返回值。
      */
     returns?: Type | null | undefined
-    /**
-     * 方法的抛出异常类型。
-     *
-     * 不设置或设置为空时，表示不会抛出异常。
-     */
-    throws?: Type | null | undefined
-    /**
-     * 方法提示信息，当鼠标悬停在积木上时显示。
-     */
-    tooltip?: string | null | undefined
-    /**
-     * 方法的积木选项。
-     */
-    blockOptions?: MethodBlockOptionsTypes | null | undefined
 }
 
-export type MethodBlockTypes = (string | MethodBlockParam | MethodParamTypes)[]
+/**
+ * @deprecated 请使用 `MethodBlock` 代替。
+ */
+export type MethodBlockTypes = MethodBlock
+
+export type MethodBlock = MethodBlockItem[]
+
+export type MethodBlockItem = string | MethodBlockParam | MethodParamTypes
+
+export type StandardMethodBlock = StandardMethodBlockItem[]
+
+export type StandardMethodBlockItem = string | MethodBlockParam | StandardMethodParamTypes
 
 export enum MethodBlockParam {
     THIS = "$this", METHOD = "$method"
 }
 
-export interface MethodParamTypes {
+export type MethodParamTypes = BriefMethodParamTypes | StandardMethodParamTypes
+
+export type BriefMethodParamTypes = [
+    /**
+     * 参数的键名。
+     */
+    string,
+    /**
+     * 参数的标签。
+     */
+    string,
+    /**
+     * 参数的类型或默认值。
+     *
+     * - 当类型为 `Type` 时，表示参数的类型；
+     * - 当类型为 `string`、`number`、`boolean`、`DropdownItem[]` 时，表示参数的默认值，参数的类型按照如下规则自动推断：
+     *   - `string`：类型为 `StringType`；
+     *   - `number`：类型为 `NumberType`；
+     *   - `boolean`：类型为 `BooleanType`；
+     *   - `DropdownItem[]`：类型为 `StringEnumType`。
+     */
+    string | number | boolean | DropdownItem[] | Type
+]
+
+export interface StandardMethodParamTypes {
     /**
      * 参数的键名。
      */
@@ -253,13 +413,158 @@ export interface MethodParamTypes {
     type: Type
 }
 
-export interface MethodBlockOptionsTypes extends BasicBlockOptionsTypes {}
+export interface MethodOptions {
+    /**
+     * 方法的抛出异常类型。
+     *
+     * 不设置或设置为空时，表示不会抛出异常。
+     */
+    throws?: Type | null | undefined
+    /**
+     * 方法提示信息，当鼠标悬停在积木上时显示。
+     */
+    tooltip?: string | null | undefined
+    /**
+     * 是否已被弃用。
+     *
+     * 已弃用的方法具有以下特点：
+     *
+     * - 积木前会显示 `[已弃用]` 标签；
+     * - 积木显示为灰色（覆盖 `color` 选项）；
+     * - tooltip 中会提示弃用；
+     * - 调用时会显示警告。
+     *
+     * 设为 `true` 表示方法已弃用。
+     *
+     * 设为 `string` 表示弃用说明，默认弃用说明为“该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法”。
+     */
+    deprecated?: boolean | string | null | undefined
+    /**
+     * 方法的积木选项。
+     */
+    blockOptions?: MethodBlockOptions | null | undefined
+}
 
-export interface EventTypes {
+/**
+ * @deprecated 请使用 `MethodBlockOptions` 代替。
+ */
+export type MethodBlockOptionsTypes = MethodBlockOptions
+
+export interface MethodBlockOptions extends BasicBlockOptions {}
+
+export interface BlockBoxOptions {
+    /**
+     * 积木间距。
+     */
+    space?: number
+    /**
+     * 在积木上方显示的提示。
+     */
+    line?: string
+}
+
+export type EventTypes = BriefEventTypes | UnclearBriefEventTypes | PartiallyStandardEventTypes | UnclearPartiallyStandardEventTypes
+
+export type ClearEventTypes = BriefEventTypes | PartiallyStandardEventTypes
+
+export type BriefEventTypes = [
+    typeof BlockType.EVENT,
+    /**
+     * 事件的键名，触发事件时需要传入的键名。
+     */
+    string,
+    /**
+     * 事件的标签，作为在编辑器中显示的名称。
+     */
+    string,
+    /**
+     * 事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
+     */
+    EventParamTypes[],
+    (EventOptions | null | undefined)?
+] | [
+    typeof BlockType.EVENT,
+    /**
+     * 事件的键名，触发事件时需要传入的键名。
+     */
+    string,
+    /**
+     * 事件的标签，作为在编辑器中显示的名称。
+     */
+    string,
+    /**
+     * 事件的子类型。
+     *
+     * 类似于 `StandardEventTypes` 中的 `subTypes` 属性。
+     */
+    EventSubType[],
+    /**
+     * 事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
+     */
+    EventParamTypes[],
+    (EventOptions | null | undefined)?
+]
+
+export type UnclearBriefEventTypes = [
+    /**
+     * 事件的键名，触发事件时需要传入的键名。
+     */
+    string,
+    /**
+     * 事件的标签，作为在编辑器中显示的名称。
+     */
+    string,
+    /**
+     * 事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
+     */
+    EventParamTypes[],
+    (EventOptions | null | undefined)?
+] | [
+    /**
+     * 事件的键名，触发事件时需要传入的键名。
+     */
+    string,
+    /**
+     * 事件的标签，作为在编辑器中显示的名称。
+     */
+    string,
+    /**
+     * 事件的子类型。
+     *
+     * 类似于 `StandardEventTypes` 中的 `subTypes` 属性。
+     */
+    EventSubType[],
+    /**
+     * 事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
+     */
+    EventParamTypes[],
+    (EventOptions | null | undefined)?
+]
+
+export interface PartiallyStandardEventTypes extends BasicStandardEventTypes<EventSubType, EventParamTypes> {
+    type: typeof BlockType.EVENT
+}
+export interface UnclearPartiallyStandardEventTypes extends BasicStandardEventTypes<EventSubType, EventParamTypes> {
+    type?: typeof BlockType.EVENT | null | undefined
+}
+
+export interface StandardEventTypes extends BasicStandardEventTypes<StandardEventSubType, StandardEventParamTypes> {
+    type: typeof BlockType.EVENT
+}
+
+export interface UnclearStandardEventTypes extends BasicStandardEventTypes<StandardEventSubType, StandardEventParamTypes> {
+    type?: typeof BlockType.EVENT | null | undefined
+}
+
+interface BasicStandardEventTypes<SUB_TYPE, PARAMS_TYPE> extends EventOptions {
     /**
      * 事件的键名，触发事件时需要传入的键名。
      */
     key: string
+    /**
+     * 事件的标签，作为在编辑器中显示的名称。
+     */
+    label: string
     /**
      * 事件的子类型。
      *
@@ -267,15 +572,14 @@ export interface EventTypes {
      *
      * 注：如果要在 Creation Project 中使用该特性，请使用 `flattenEventSubTypes` 装饰器将子类型展开。
      */
-    subTypes?: EventSubType[] | null | undefined
-    /**
-     * 事件的标签，作为在编辑器中显示的名称。
-     */
-    label: string
+    subTypes?: SUB_TYPE[] | null | undefined
     /**
      * 事件的参数。触发事件时需要传入的参数，顺序与此处定义的顺序一致。
      */
-    params: EventParamTypes[]
+    params: PARAMS_TYPE[]
+}
+
+export interface EventOptions {
     /**
      * 事件的提示信息，当鼠标悬停在积木上时显示。
      *
@@ -283,21 +587,73 @@ export interface EventTypes {
      */
     tooltip?: string | null | undefined
     /**
+     * 是否已被弃用。
+     *
+     * 已弃用的事件具有以下特点：
+     *
+     * - 积木前会显示 `[已弃用]` 标签；
+     * - 积木显示为灰色（如果可以做到的话）（覆盖 `color` 选项）；
+     * - tooltip 中会提示弃用；
+     * - 使用事件时会显示警告（如果可以做到的话）。
+     *
+     * 设为 `true` 表示事件已弃用。
+     *
+     * 设为 `string` 表示弃用说明，默认弃用说明为“该事件已弃用，并且可能在未来版本中移除，请尽快迁移到其他事件”。
+     */
+    deprecated?: boolean | string | null | undefined
+    /**
      * 事件的积木选项。
      *
      * **仅在 CoCo 中生效，Creation Project 不支持该特性。**
      */
-    blockOptions?: EventBlockOptionsTypes | null | undefined
+    blockOptions?: EventBlockOptions | null | undefined
 }
 
-export interface EventSubType extends DropdownTypes {
+export type EventSubType = BriefEventSubType | PartiallyStandardEventSubType
+
+export type BriefEventSubType = [
+    /**
+     * 子类型的键名。
+     */
+    string,
+    /**
+     * 下拉选项。
+     */
+    DropdownItem[]
+]
+
+export interface PartiallyStandardEventSubType extends Dropdown {
     /**
      * 子类型的键名。
      */
     key: string
 }
 
-export interface EventParamTypes {
+export interface StandardEventSubType extends StandardDropdown {
+    /**
+     * 子类型的键名。
+     */
+    key: string
+}
+
+export type EventParamTypes = BriefEventParamTypes | StandardEventParamTypes
+
+export type BriefEventParamTypes = [
+    /**
+     * 事件参数的键名。
+     */
+    string,
+    /**
+     * 事件参数的标签，作为在编辑器中显示的名称。
+     */
+    string,
+    /**
+     * 事件参数的类型。
+     */
+    Type
+]
+
+export interface StandardEventParamTypes {
     /**
      * 事件参数的键名。
      */
@@ -312,16 +668,53 @@ export interface EventParamTypes {
     type: Type
 }
 
-export interface EventBlockOptionsTypes extends BasicBlockOptionsTypes {}
+/**
+ * @deprecated 请使用 `EventBlockOptions` 代替。
+ */
+export type EventBlockOptionsTypes = EventBlockOptions
 
-export interface DropdownTypes {
+export interface EventBlockOptions extends BasicBlockOptions {}
+
+/**
+ * @deprecated 请使用 `Dropdown` 代替。
+ */
+export type DropdownTypes = Dropdown
+
+export interface Dropdown {
     /**
      * 下拉选项。
      */
-    dropdown: DropdownItemTypes[]
+    dropdown: DropdownItem[]
 }
 
-export interface DropdownItemTypes {
+export type DropdownItem = BriefDropdownItem | StandardDropdownItem
+
+export interface BriefDropdown {
+    /**
+     * 下拉选项。
+     */
+    dropdown: BriefDropdownItem[]
+}
+
+export type BriefDropdownItem = [
+    /**
+     * 选项的标签，作为在编辑器中显示的名称。
+     */
+    string,
+    /**
+     * 选项的值。
+     */
+    string
+]
+
+export interface StandardDropdown {
+    /**
+     * 下拉选项。
+     */
+    dropdown: StandardDropdownItem[]
+}
+
+export interface StandardDropdownItem {
     /**
      * 选项的标签，作为在编辑器中显示的名称。
      */
@@ -332,7 +725,26 @@ export interface DropdownItemTypes {
     value: string
 }
 
-export interface BasicBlockOptionsTypes {
+export class BlockType<T> {
+
+    public static readonly METHOD: BlockType<"METHOD"> = new BlockType("METHOD", "方法")
+    public static readonly EVENT: BlockType<"EVENT"> = new BlockType("EVENT", "事件")
+
+    public readonly symbol: symbol
+
+    private constructor(
+        public readonly key: T,
+        public readonly name: string
+    ) {
+        this.symbol = Symbol(name)
+    }
+
+    public toString(): string {
+        return `积木类型(${this.name})`
+    }
+}
+
+export interface BasicBlockOptions {
     /**
      * 积木图标链接。设置后会在积木前显示图标。
      *
@@ -350,12 +762,14 @@ export interface BasicBlockOptionsTypes {
      */
     inline?: boolean | null | undefined
     /**
+     * @deprecated 请使用方法或事件的 `deprecated` 选项代替。
+     *
      * 是否已被弃用。
      *
      * 已弃用的方法或事件具有以下特点：
      *
      * - 积木前会显示 `[已弃用]` 标签；
-     * - 积木显示为灰色（如果可以做得的话）（覆盖 `color` 选项）；
+     * - 积木显示为灰色（如果可以做到的话）（覆盖 `color` 选项）；
      * - tooltip 中会提示弃用；
      * - 方法调用时会显示警告。
      *

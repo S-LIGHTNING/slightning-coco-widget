@@ -33,14 +33,16 @@ declare class StringType extends Type<string> {
     public constructor(props: {
         defaultValue?: string | null | undefined
         inputType?: StringInputType | null | undefined
-    } = {})
+    } | string = {})
 }
 ```
 
 描述：字符串类型和输入类型。
 
-- `defaultValue`：指定字符串的默认值
+- `defaultValue`：指定字符串的默认值；
 - `inputType`：指定字符串的输入类型，可以是 `INLINE`（单行文本），`MULTILINE`（多行文本），或 `RICH`（富文本）
+
+2.3 版本新增：当传入参数类型为字符串时，表示字符串的默认值。
 
 ## IntegerType
 
@@ -55,7 +57,7 @@ declare class IntegerType extends Type<number> {
     public constructor(props: {
         defaultValue?: number | null | undefined
         range?: Range | null | undefined
-    } = {})
+    } | number = {})
 }
 ```
 
@@ -86,6 +88,8 @@ declare class NumberType extends Type<number> {
 - `defaultValue`：指定数字的默认值，默认为 `0`；
 - `range`：可选参数，指定数字的取值范围。
 
+2.3 版本新增：当传入参数类型为数字时，表示数字的默认值。
+
 ## BooleanType
 
 定义：
@@ -97,7 +101,7 @@ declare class BooleanType extends Type<boolean> {
 
     public constructor(props: {
         defaultValue?: boolean | null | undefined
-    } = {})
+    } | boolean = {})
 }
 ```
 
@@ -105,17 +109,25 @@ declare class BooleanType extends Type<boolean> {
 
 - `defaultValue`：指定布尔值的默认值，默认为 `false`。
 
+2.3 版本新增：当传入参数类型为布尔值时，表示布尔值的默认值。
+
 ## AnyType
 
 定义：
 
 ```typescript
 declare class AnyType extends Type<any> {
-    public constructor()
+    public constructor(props: {
+        defaultValue?: any | null | undefined
+    } | string | number | boolean = {})
 }
 ```
 
 描述：任意类型，可以接受任何值。
+
+- `defaultValue`：默认值。
+
+2.3 版本新增：当传入参数类型为字符串、数字或布尔值时，表示默认值。
 
 ## StringEnumType
 
@@ -126,24 +138,31 @@ declare enum StringEnumInputType {
     DROPDOWN, OPTION_SWITCH
 }
 
-declare class StringEnumType extends Type<string> {
+type StandardEntry = { label: string, value: string }
 
-    public readonly entries: { label: string, value: string }[]
+type Entry = ({ label: string, value: string } | [string, string] | string)
+
+export class StringEnumType<T extends string> implements Type<T> {
+
+    public readonly entries: StandardEntry[]
     public readonly inputType: StringEnumInputType
     public readonly valueToLabelMap: Record<string, string>
+    public readonly values: string[]
 
     public constructor(props: {
-        entries: { label: string, value: string }[]
+        entries: Entry[]
         inputType?: StringEnumInputType | null | undefined
-    })
+    } | Entry[])
 }
 ```
 
 描述：字符串枚举类型，可以指定枚举项和显示方式。
 
-- `entries`：枚举项数组，`label` 是在编辑器中显示的选项标签，`value` 是选项的值；
+- `entries`：枚举项数组，`label` 或数组第一项是在编辑器中显示的选项标签，`value` 或数组第二项是选项的值，字符串表示选项标签和值；
 - `inputType`：枚举的输入方式，可以是 `DROPDOWN`（下拉框）或 `OPTION_SWITCH`（选项开关）；
 - `valueToLabelMap`：`value` 到 `label` 的映射。
+
+2.3 版本新增：可以直接传入枚举项数组。
 
 ## ObjectType
 
@@ -204,13 +223,15 @@ declare class ColorType extends Type<string> {
 
     public constructor(props: {
         defaultValue?: string | null | undefined
-    } = {})
+    } | string = {})
 }
 ```
 
 描述：颜色类型。
 
 - `defaultValue`：指定颜色的默认值。
+
+2.3 版本新增：当传入参数类型为字符串时，表示颜色的默认值。
 
 ## ImageType
 
@@ -223,13 +244,15 @@ declare class ImageType extends Type<string> {
 
     public constructor(props: {
         defaultValue?: string | null | undefined
-    } = {})
+    } | string = {})
 }
 ```
 
 描述：图片类型。
 
 - `defaultValue`：指定图片的默认值。
+
+2.3 版本新增：当传入参数类型为字符串时，表示图片的默认值。
 
 ## AudioType
 
@@ -242,13 +265,15 @@ declare class AudioType extends Type<string> {
 
     public constructor(props: {
         defaultValue?: string | null | undefined
-    } = {})
+    } | string = {})
 }
 ```
 
 描述：音频类型。
 
 - `defaultValue`：指定音频的默认值。
+
+2.3 版本新增：当传入参数类型为字符串时，表示音频的默认值。
 
 ## VideoType
 
@@ -261,13 +286,15 @@ declare class VideoType extends Type<string> {
 
     public constructor(props: {
         defaultValue?: string | null | undefined
-    } = {})
+    } | string = {})
 }
 ```
 
 描述：视频类型。
 
 - `defaultValue`：指定视频的默认值。
+
+2.3 版本新增：当传入参数类型为字符串时，表示视频的默认值。
 
 ## UnionType
 
@@ -288,12 +315,12 @@ declare class UnionType<T> extends Type<T> {
 - `types`：联合类型包含的类型数组；
 - `defaultValue`：联合类型的默认值，一般为第一个包含的类型的字符串、数字或布尔值类型的默认值。
 
-## InstanceType
+## InstanceOfClassType
 
 定义：
 
 ```typescript
-declare class InstanceType<T> extends Type<T> {
+declare class InstanceOfClassType<T> extends Type<T> {
 
     public readonly theClass: new (...args: any[]) => T
     public readonly defaultValue: string
@@ -301,7 +328,7 @@ declare class InstanceType<T> extends Type<T> {
     public constructor(props: {
         theClass: new (...args: any[]) => T
         defaultValue?: string | null | undefined
-    })
+    } | (new (...args: any[]) => T))
 }
 ```
 
@@ -309,6 +336,8 @@ declare class InstanceType<T> extends Type<T> {
 
 - `theClass`：类构造函数，用于实例类型检查；
 - `defaultValue`：默认值字符串。
+
+2.3 版本新增：当传入类构造函数时，表示用于实例类型检查的类构造函数。
 
 ## FunctionType
 

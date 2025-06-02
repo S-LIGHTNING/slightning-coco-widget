@@ -1,19 +1,20 @@
-import { capitalize } from "../../utils"
+import { capitalize, excludeBoolean } from "../../utils"
 import { VoidType } from "../type/void-type"
-import { BUILD_IN_PROPERTIES, Color, MethodBlockParam, MethodGroup, PropertiesTypes, Types } from "../types"
+import { BlockType, BUILD_IN_PROPERTIES, Color, MethodBlockParam, StandardMethodGroup, StandardTypes } from "../types"
 import { Widget } from "../widget"
+import { PropertyGroupNode, PropertyTypesNode, traverseTypes } from "./utils"
 
-export function generateBlockForProperties(types: Types, widget: Widget): [Types, Widget] {
+export function generateBlockForProperties(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
 
-    const gettersGroup: MethodGroup = {
+    const gettersGroup: StandardMethodGroup = {
         label: "获取",
         contents: []
     }
-    const setterGroup: MethodGroup = {
+    const setterGroup: StandardMethodGroup = {
         label: "设置",
         contents: []
     }
-    const propertyBlockGroup: MethodGroup = {
+    const propertyBlockGroup: StandardMethodGroup = {
         label: "属性",
         blockOptions: {
             color: Color.PINK
@@ -21,104 +22,95 @@ export function generateBlockForProperties(types: Types, widget: Widget): [Types
         contents: [gettersGroup, setterGroup]
     }
 
-    function addGetters(
-        properties: PropertiesTypes,
-        methodGroup: MethodGroup = gettersGroup
-    ): void {
-        for (const property of properties) {
-            if (property.blockOptions?.get == false) {
-                continue
-            }
-            if ("contents" in property) {
-                addGetters(property.contents, {
-                    label: property.label,
-                    blockOptions: property.blockOptions?.get == true ? {} : property.blockOptions?.get,
-                    contents: []
-                })
-                continue
-            }
-            if (BUILD_IN_PROPERTIES.includes(property.key)) {
-                continue
-            }
-            const propertyGetBlockKey: string =
-                typeof property.blockOptions?.get == "object" && property.blockOptions?.get?.key != null ?
-                property.blockOptions?.get.key : `get${capitalize(property.key)}`
-            methodGroup.contents.push({
-                key: propertyGetBlockKey,
-                label: `获取 ${property.label}`,
-                block: [
-                    MethodBlockParam.THIS, property.label
-                ],
-                returns: property.type,
-                blockOptions: property.blockOptions?.get == true ? {} : property.blockOptions?.get
-            })
-            if (widget.prototype[propertyGetBlockKey] == null) {
-                Object.defineProperty(widget.prototype, propertyGetBlockKey, {
-                    value: function (): unknown {
-                        return this[property.key]
-                    },
-                    writable: true,
-                    enumerable: false,
-                    configurable: true
-                })
-            }
-            property.blockOptions ??= {}
-            property.blockOptions.get = false
-        }
-    }
+    let currentGettersGroup: StandardMethodGroup = gettersGroup
+    let gettersGroupStack: StandardMethodGroup[] = []
+    let currentSettersGroup: StandardMethodGroup = setterGroup
+    let settersGroupStack: StandardMethodGroup[] = []
 
-    function addSetters(
-        properties: PropertiesTypes,
-        methodGroup: MethodGroup = gettersGroup
-    ): void {
-        for (const property of properties) {
-            if (property.blockOptions?.set == false) {
-                continue
-            }
-            if ("contents" in property) {
-                addSetters(property.contents, {
-                    label: property.label,
-                    blockOptions: property.blockOptions?.set == true ? {} : property.blockOptions?.set,
+    traverseTypes(types, {
+        PropertyGroup: {
+            entry(node: PropertyGroupNode): void {
+                gettersGroupStack.push(currentGettersGroup)
+                currentGettersGroup = {
+                    label: node.value.label,
+                    blockOptions: excludeBoolean(node.value.blockOptions?.get),
                     contents: []
+                }
+                settersGroupStack.push(currentSettersGroup)
+                currentSettersGroup = {
+                    label: node.value.label,
+                    blockOptions: excludeBoolean(node.value.blockOptions?.set),
+                    contents: []
+                }
+            },
+            exit(): void {
+                currentGettersGroup = gettersGroupStack.pop()!
+                currentSettersGroup = settersGroupStack.pop()!
+            }
+        },
+        PropertyTypes(node: PropertyTypesNode): void {
+            if (BUILD_IN_PROPERTIES.includes(node.value.key)) {
+                return
+            }
+            if (node.blockOptions?.get != false) {
+                const propertyGetBlockKey: string =
+                    excludeBoolean(node.blockOptions?.get)?.key ?? `get${capitalize(node.value.key)}`
+                currentGettersGroup.contents.push({
+                    type: BlockType.METHOD,
+                    key: propertyGetBlockKey,
+                    label: `获取 ${node.value.label}`,
+                    block: [
+                        MethodBlockParam.THIS, node.value.label
+                    ],
+                    returns: node.value.type,
+                    blockOptions: excludeBoolean(node.value.blockOptions?.get)
                 })
-                continue
+                if (widget.prototype[propertyGetBlockKey] == null) {
+                    Object.defineProperty(widget.prototype, propertyGetBlockKey, {
+                        value: function (): unknown {
+                            return this[node.value.key]
+                        },
+                        writable: true,
+                        enumerable: false,
+                        configurable: true
+                    })
+                }
             }
-            if (BUILD_IN_PROPERTIES.includes(property.key)) {
-                continue
-            }
-            const propertySetBlockKey: string =
-                typeof property.blockOptions?.set == "object" && property.blockOptions?.set?.key != null ?
-                property.blockOptions?.set.key : `set${capitalize(property.key)}`
-            methodGroup.contents.push({
-                key: propertySetBlockKey,
-                label: `设置 ${property.label}`,
-                block: [
-                    "设置", MethodBlockParam.THIS, "的", property.label, "为", {
-                        key: "value",
-                        label: property.label,
-                        type: property.type
-                    }
-                ],
-                returns: new VoidType(),
-                blockOptions: property.blockOptions?.set == true ? {} : property.blockOptions?.set
-            })
-            if (widget.prototype[propertySetBlockKey] == null) {
-                Object.defineProperty(widget.prototype, propertySetBlockKey, {
-                    value: function (value: unknown): void {
-                        this[property.key] = value
-                    },
-                    writable: true,
-                    enumerable: false,
-                    configurable: true
+            if (node.blockOptions?.set != false) {
+                const propertySetBlockKey: string =
+                    excludeBoolean(node.blockOptions?.set)?.key ?? `set${capitalize(node.value.key)}`
+                currentSettersGroup.contents.push({
+                    type: BlockType.METHOD,
+                    key: propertySetBlockKey,
+                    label: `设置 ${node.value.label}`,
+                    block: [
+                        "设置", MethodBlockParam.THIS, "的", node.value.label, "为", {
+                            key: "value",
+                            label: node.value.label,
+                            type: node.value.type
+                        }
+                    ],
+                    returns: new VoidType(),
+                    blockOptions: excludeBoolean(node.value.blockOptions?.set)
                 })
+                if (widget.prototype[propertySetBlockKey] == null) {
+                    Object.defineProperty(widget.prototype, propertySetBlockKey, {
+                        value: function (value: unknown): void {
+                            this[node.value.key] = value
+                        },
+                        writable: true,
+                        enumerable: false,
+                        configurable: true
+                    })
+                }
             }
-            property.blockOptions ??= {}
-            property.blockOptions.set = false
+            node.value.blockOptions = {
+                get: false,
+                set: false
+            }
         }
-    }
+    })
 
-    addGetters(types.properties, gettersGroup)
-    addSetters(types.properties, setterGroup)
     types.methods.push(propertyBlockGroup)
 
     return [types, widget]

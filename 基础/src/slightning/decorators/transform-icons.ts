@@ -1,50 +1,9 @@
-import { BUILD_IN_ICON_URL_MAP, MethodsTypes, PropertiesTypes, Types } from "../types"
+import { BUILD_IN_ICON_URL_MAP, StandardTypes } from "../types"
 import { Widget } from "../widget"
+import { transformIconsExceptWidgetIcon } from "./transform-icons-except-widget-icon"
 
-export function transformIcons(types: Types, widget: Widget): [Types, Widget] {
-    typesTransformIcons(types)
+export function transformIcons(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
+    [types, widget] = transformIconsExceptWidgetIcon(types, widget)
+    types.info.icon = types.info.icon = BUILD_IN_ICON_URL_MAP[types.info.icon] ?? types.info.icon
     return [types, widget]
-}
-
-function typesTransformIcons(types: Types): void {
-    transformIcon(types.info)
-    propertiesTypesTransformIcon(types.properties)
-    methodsTypesTransformIcon(types.methods)
-}
-
-function propertiesTypesTransformIcon(properties: PropertiesTypes): void {
-    for (const property of properties) {
-        if (
-            property.blockOptions?.get != null &&
-            typeof property.blockOptions?.get == "object"
-        ) {
-            transformIcon(property.blockOptions.get)
-        }
-        if (
-            property.blockOptions?.set != null &&
-            typeof property.blockOptions?.set == "object"
-        ) {
-            transformIcon(property.blockOptions.set)
-        }
-        if ("contents" in property) {
-            propertiesTypesTransformIcon(property.contents)
-        }
-    }
-}
-
-function methodsTypesTransformIcon(methods: MethodsTypes): void {
-    for (const method of methods) {
-        if (method.blockOptions != null) {
-            transformIcon(method.blockOptions)
-        }
-        if ("contents" in method) {
-            methodsTypesTransformIcon(method.contents)
-        }
-    }
-}
-
-function transformIcon(object: { icon?: string | null | undefined }): void {
-    if (object.icon != null) {
-        object.icon = BUILD_IN_ICON_URL_MAP[object.icon] ?? object.icon
-    }
 }

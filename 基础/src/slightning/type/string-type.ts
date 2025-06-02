@@ -34,15 +34,16 @@ export class StringType implements Type<string> {
     public readonly defaultValue: string
     public readonly inputType: StringInputType
 
-    public constructor({
-        defaultValue, inputType
-    }: {
+    public constructor(props: {
         defaultValue?: string | null | undefined
         inputType?: StringInputType | null | undefined
 
-    } = {}) {
-        this.defaultValue = defaultValue ?? ""
-        this.inputType = inputType ?? StringInputType.INLINE
+    } | string = {}) {
+        if (typeof props == "string") {
+            props = { defaultValue: props }
+        }
+        this.defaultValue = props.defaultValue ?? ""
+        this.inputType = props.inputType ?? StringInputType.INLINE
     }
 
     public validate(value: unknown): value is string {

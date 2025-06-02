@@ -17,7 +17,7 @@ export function merge(target: any, ...sources: any[]): any {
                     target[key] = {}
                 }
                 merge(target[key], value)
-            } else if (target[key] === undefined || value != null) {
+            } else {
                 target[key] = value
             }
         }
@@ -27,6 +27,13 @@ export function merge(target: any, ...sources: any[]): any {
 
 export function capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+export function excludeBoolean<T>(value: T | boolean): T | null {
+    if (typeof value == "boolean") {
+        return null
+    }
+    return value
 }
 
 export function XMLEscape(text: string): string {

@@ -1,6 +1,6 @@
 import * as CreationProject from "../../creation-project"
 import { convertToCreationProject } from "../convert/to-creation-project"
-import { PropertiesTypes, Types } from "../types"
+import { PropertiesTypes, StandardTypes, Types } from "../types"
 import { Widget } from "../widget"
 import { Adapter, LoggerAdapter } from "./adapter"
 import { ExportConfig } from "../export"
@@ -49,7 +49,7 @@ export const CreationProjectAdapter: Adapter = {
                     addProperties(property.contents)
                     continue
                 }
-                propertiesSet.add(property.key)
+                propertiesSet.add(Array.isArray(property) ? property[0] : property.key)
             }
         }
         addProperties(types.properties)
@@ -105,9 +105,15 @@ export const CreationProjectAdapter: Adapter = {
             }
         }
     },
-    exportWidget(types: Types, widget: Widget, config?: ExportConfig | null | undefined): void {
-        for (const decorator of config?.CreationProject?.decorators ?? []) {
-            [types, widget] = decorator(types, widget)
+    exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void {
+        for (const decorator of config?.decorators ?? []) {
+            if (typeof decorator == "object") {
+                if (decorator.CreationProject != null) {
+                    [types, widget] = decorator.CreationProject(types, widget)
+                }
+            } else {
+                [types, widget] = decorator(types, widget)
+            }
         }
         CreationProject.exportWidget(...convertToCreationProject(types, widget))
     },

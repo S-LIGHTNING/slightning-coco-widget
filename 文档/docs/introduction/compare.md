@@ -10,7 +10,7 @@ sidebar_position: 3
 - [`Creation Project`](https://cp.cocotais.cn/) 原生：Creation Project 是由 [@Cocotais Team](https://cocotais.cn/) 开发的编辑器；
 - [`SCW`](/)：由 [@SLIGHTNING](https://s-lightning.github.io/) 开发的框架；
 - [`CoCoKit`](https://www.yuque.com/yuqueyonghuslrsu6/qcqduw/uya7g9piiu5mcy28)：由 @琦琦 开发的框架；
-- [`魔盒CoCo框架`](https://xjwangdage.feishu.cn/wiki/BpBswys7Ci65mQkqxMXc8tWDnXb)：由 @XJ王大哥 开发的框架；
+- [`魔盒CoCo框架`](https://xjwangdage.feishu.cn/wiki/BpBswys7Ci65mQkqxMXc8tWDnXb)：由 @XJ王大哥 开发的框架，由于缺少具体的文档，无法对该框架进行具体的分析；
 - [`cdef`](https://github.com/liulyxandy-codemao/cdef)：由 [@刘andy](https://gitee.com/liulyxandy) 编写的 CoCo 自定义控件类型定义；
 - CoCo Widget Live Server：由 @Inventocode 开发的工具，暂不清楚具体功能。
 
@@ -24,7 +24,7 @@ sidebar_position: 3
 | :-: | :-: | :-: | :-: |
 | CoCo 原生 | 对象 | ❌ 复杂 | ❌ |
 | Creation Project 原生 | 对象 | ❌ 复杂 | ✅ |
-| **SCW** | 对象 | ❌ 复杂 | ❌ |
+| **SCW** | 对象/数组 | ✅ 可以简单 | ❌ |
 | CoCoKit | 连缀函数 | ✅ 简单 | ✅ |
 | 魔盒CoCo框架 | 对象 | ✅ 较简单 | ✅ |
 
@@ -52,12 +52,12 @@ sidebar_position: 3
 
 ### 刷新控件
 
-| 原生开发、框架或工具 | 实时生成控件 | 自动导入控件 | 导入后刷新 | 模块热更新 |
+| 原生开发、框架或工具 | 实时生成控件 | 自动导入控件 | 导入后刷新 | 模块热替换 |
 | :-: | :-: | :-: | :-: | :-: |
 | CoCo 原生 | ✅（无需生成） | ❌ | ❌（需要手动刷新编辑器） | ❌ |
 | Creation Project 原生 | ✅（无需生成） | ❌ | ✅（无需刷新） | ❌ |
-| **SCW** | ✅（通过 webpack 实时编译） | ❌ | ❌ | ❌ |
-| CoCoKit | ✅（通过 webpack 实时编译） | ❌ | ❌ | ❌ |
+| **SCW** | ✅（通过 webpack 实时编译） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ❌ |
+| CoCoKit | ✅（通过 webpack 实时编译） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ❌ |
 | 魔盒CoCo框架 | 未知 | 未知 | 未知 | 未知 |
 | CoCo Widget Live Server | | 未知 | 未知 | 未知 |
 

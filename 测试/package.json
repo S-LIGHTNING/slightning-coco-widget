@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget--test",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "file": [
     "dist",
@@ -24,10 +24,8 @@
     "编程猫"
   ],
   "devDependencies": {
-    "@babel/preset-env": "^7.0.0",
-    "@types/lodash": "^4.17.16",
+    "@types/lodash": "^4.0.0",
     "@types/react": "^19.0.0",
-    "babel-loader": "^9.0.0",
     "fork-ts-checker-webpack-plugin": "^9.0.0",
     "slightning-coco-widget": "file:../基础",
     "slightning-coco-widget--webpack": "file:../打包",
@@ -38,8 +36,5 @@
     "webpack-cli": "^5.0.0",
     "webpack-dev-server": "^5.0.0",
     "webpack-visualizer-plugin2": "^1.0.0"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
   }
 }

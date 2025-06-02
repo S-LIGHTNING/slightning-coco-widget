@@ -22,72 +22,54 @@ const types: Types = {
         {
             key: "__width",
             label: "宽度",
-            type: new IntegerType({
-                defaultValue: 300
-            })
+            type: new IntegerType(300)
         }, {
             key: "__height",
             label: "高度",
-            type: new IntegerType({
-                defaultValue: 300
-            })
+            type: new IntegerType(300)
         }
     ],
-    methods: [
+    methods: [{ blockOptions: {
+        color: Color.RED
+    }, contents: [
         {
-            blockOptions: {
-                color: Color.RED
-            },
+            label: "弃用的一组方法",
             contents: [
                 {
-                    label: "弃用的一组方法",
-                    blockOptions: {
-                        deprecated: true
-                    },
-                    contents: [
-                        {
-                            key: "deprecated_method",
-                            label: "弃用的方法",
-                            block: [MethodBlockParam.METHOD]
-                        }
-                    ]
-                }, {
-                    label: "出错测试",
-                    contents: [
-                        {
-                            key: "nonExistentMethod",
-                            label: "不存在的方法",
-                            block: [MethodBlockParam.METHOD]
-                        }, {
-                            key: "throwError",
-                            label: "抛出异常",
-                            block: [
-                                MethodBlockParam.METHOD, {
-                                    key: "message",
-                                    label: "消息",
-                                    type: new AnyType({
-                                        defaultValue: "抛出异常消息"
-                                    })
-                                }
-                            ]
-                        }, {
-                            key: "asyncThrowError",
-                            label: "异步抛出异常",
-                            block: [
-                                MethodBlockParam.METHOD, {
-                                    key: "message",
-                                    label: "消息",
-                                    type: new AnyType({
-                                        defaultValue: "异步抛出异常消息"
-                                    })
-                                }
-                            ]
-                        }
-                    ]
+                    key: "deprecated_method",
+                    label: "弃用的方法",
+                    block: [MethodBlockParam.METHOD],
+                    deprecated: true
                 }
             ]
-        }
-    ],
+        }, { label: "出错测试", contents: [
+            {
+                key: "nonExistentMethod",
+                label: "不存在的方法",
+                block: [MethodBlockParam.METHOD]
+            }, {
+                key: "throwError",
+                label: "抛出异常",
+                block: [
+                    MethodBlockParam.METHOD, {
+                        key: "message",
+                        label: "消息",
+                        type: new AnyType("抛出异常消息")
+                    }
+                ]
+            }, {
+                key: "asyncThrowError",
+                label: "异步抛出异常",
+                block: [
+                    MethodBlockParam.METHOD, {
+                        key: "message",
+                        label: "消息",
+                        type: new AnyType("异步抛出异常消息")
+                    }
+                ]
+            }
+        ]}
+    ]}],
     events: []
 }
 
@@ -125,19 +107,9 @@ class TestErrorWidget extends getSuperWidget(types) {
 
 exportWidget(types, TestErrorWidget, {
     decorators: [
-        generateBlockForProperties
-    ],
-    CoCo: {
-        decorators: [
-            addThisForMethods,
-            addCheck
-        ]
-    },
-    CreationProject: {
-        decorators: [
-            addThisForMethods,
-            addCheck,
-            transformIcons
-        ]
-    }
+        generateBlockForProperties,
+        addThisForMethods,
+        addCheck,
+        { CreationProject: transformIcons }
+    ]
 })

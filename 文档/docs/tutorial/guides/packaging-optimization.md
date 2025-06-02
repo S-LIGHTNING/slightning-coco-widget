@@ -14,6 +14,8 @@ sidebar_position: 1
 
 ## 优化打包速度
 
+### 监视模式
+
 在开发过程中，可以使用监视模式来提升打包速度。监视模式下，webpack 只会编译发生变化的文件，而不会重新编译整个项目。
 
 使用：
@@ -21,6 +23,38 @@ sidebar_position: 1
 ```sh
 npx webpack --watch
 ```
+
+### 提取类型检查
+
+如果你使用 TypeScript，则可以使用 ForkTsCheckerWebpackPlugin 把耗时的类型检查任务提取出来，避免拖慢编译进程。
+
+安装 ForkTsCheckerWebpackPlugin：
+
+```sh
+npm install fork-ts-checker-webpack-plugin --save-dev
+```
+
+配置 webpack：
+
+```javascript
+// webpack.config.js
+
+const path = require("path")
+const { merge } = require("webpack-merge")
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
+const SCW = require("slightning-coco-widget--webpack")
+
+module.exports = module.exports = merge(SCW.config, {
+    //...
+    plugins: [
+        // ...
+        new ForkTsCheckerWebpackPlugin(),
+        // ...
+    ]
+    //...
+})
+```
+
 
 ## 优化打包大小
 
@@ -31,6 +65,7 @@ CoCo 和 Creation Project 都提供了一些库，使用由编辑器提供的库
 ```js
 // webpack.config.js
 
+const path = require("path")
 const { merge } = require("webpack-merge")
 const SCW = require("slightning-coco-widget--webpack")
 
@@ -50,6 +85,47 @@ module.exports = module.exports = merge(SCW.config, {
 :::tip 提示
 由于这些库可能存在版本兼容问题，SCW 没有默认排除这些库。
 :::
+
+### 启用代码压缩
+
+可以使用生产模式以启用代码压缩。要启用生产模式，请修改 webpack 配置中的 `mode` 为 `production`。
+
+:::tip 提示
+生产模式并不适用于开发环境，不建议在开发时使用生产环境。
+:::
+
+除此之外，你还可以手动配置压缩。
+
+修改你的 webpack 配置：
+
+```javascript
+// webpack.config.js
+
+const path = require("path")
+const { merge } = require("webpack-merge")
+const SCW = require("slightning-coco-widget--webpack")
+const TerserPlugin = require("terser-webpack-plugin")
+
+module.exports = merge(SCW.config, {
+    // ...
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                test: /\.js$/,         // 对 .js 文件启用压缩。
+                terserOptions: {
+                    format: {
+                        comments: false// 不保留注释。
+                    }
+                },
+                extractComments: false // 不把注释提取到单独的文件中。
+            })
+        ]
+    },
+    // ...
+})
+```
+
+有关于 TerserPlugin 的更多信息请参考 [webpack 文档 TerserWebpackPlugin](https://webpack.js.org/plugins/terser-webpack-plugin/)。
 
 ## 优化开发体验
 
@@ -157,7 +233,7 @@ npx webpack serve
 ```
 <i> [webpack-dev-server] Project is running at:
 <i> [webpack-dev-server] Loopback: http://localhost:8080/, http://[::1]:8080/
-<i> [webpack-dev-server] On Your Network (IPv4): http://172.27.16.1:8080/
+<i> [webpack-dev-server] On Your Network (IPv4): http://172.37.16.1:8080/
 <i> [webpack-dev-server] Content not from webpack is served from 'path/to/your/project/dist' directory
 ```
 
@@ -167,7 +243,11 @@ npx webpack serve
 
 控件实时重载是一个自定义控件，它可以在编辑器中实时重载自定义控件。
 
-<p><a href="/slightning-coco-widget/download/控件实时重载.min.js" target="_blank" download="控件实时重载.min.js">点击下载控件实时重载控件</a></p>
+<p>
+<a href="/slightning-coco-widget/download/控件实时重载.min.js" target="_blank" download="控件实时重载.min.js">点击下载 控件实时重载 控件</a>
+
+[点击查看 控件实时重载 控件源码](https://gitee.com/slightning/slightning-coco-widget/blob/main/%E6%89%93%E5%8C%85/widget-live-reload/src/widget-live-reload.ts)
+</p>
 
 将下载的控件导入到编辑器中，并添加到舞台上，调用 `启动`（在控件积木盒中）方法以启动实时重载，注意下开发服务地址的端口是否正确，控件文件地址填写为刚才复制的地址。
 
@@ -178,7 +258,7 @@ npx webpack serve
 :::
 
 :::tip 提示
-你可以打开开发者工具，在「控制台」标签下，查看实时重载的日志。
+你可以打开浏览器的开发者工具，在「控制台」标签下，查看实时重载的日志。
 :::
 
 #### 关闭实时重载

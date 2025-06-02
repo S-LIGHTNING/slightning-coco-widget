@@ -9,12 +9,13 @@ export class BooleanType implements Type<boolean> {
 
     public readonly defaultValue: boolean
 
-    public constructor({
-        defaultValue
-    }: {
+    public constructor(props: {
         defaultValue?: boolean | null | undefined
-    } = {}) {
-        this.defaultValue = defaultValue ?? false
+    } | boolean = {}) {
+        if (typeof props == "boolean") {
+            props = { defaultValue: props }
+        }
+        this.defaultValue = props.defaultValue ?? false
     }
 
     public validate(value: unknown): value is boolean {

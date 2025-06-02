@@ -1,11 +1,11 @@
 import { ExportConfig } from "../export"
-import { Types } from "../types"
+import { StandardTypes, Types } from "../types"
 import { Utils } from "../utils/utils"
 import { Widget } from "../widget"
 
 export interface Adapter {
     getSuperWidget(types: Types): Widget,
-    exportWidget(types: Types, widget: Widget, config?: ExportConfig | null | undefined): void
+    exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void
     emit(this: {}, key: string, ...args: unknown[]): void
     Logger: new (types: Types, widget: {}) => LoggerAdapter
     utils: Utils

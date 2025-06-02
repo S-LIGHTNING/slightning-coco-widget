@@ -1,7 +1,7 @@
-import { Types } from "../types"
+import { StandardTypes } from "../types"
 import { Widget } from "../widget"
 
-export type Decorator = (types: Types, widget: Widget) => [Types, Widget]
+export type Decorator = (types: StandardTypes, widget: Widget) => [StandardTypes, Widget]
 
 export * from "./transform-methods-throws"
 export * from "./add-transform-methods-throws"
@@ -17,3 +17,5 @@ export * from "./add-flatten-event-sub-types"
 export * from "./transform-icons-except-widget-icon"
 export * from "./transform-icons"
 export * from "./add-check"
+
+export * from "./utils"
