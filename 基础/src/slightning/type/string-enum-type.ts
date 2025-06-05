@@ -10,25 +10,30 @@ export enum StringEnumInputType {
     OPTION_SWITCH = "OPTION_SWITCH"
 }
 
-type StandardEntry = { label: string, value: string }
+type StandardEntry<T extends string> = { label: string, value: T }
 
-type Entry = ({ label: string, value: string } | [string, string] | string)
+type Entry<T extends string> = ({ label: string, value: T } | [string, T] | T)
 
 export class StringEnumType<T extends string> implements Type<T> {
 
-    public readonly entries: StandardEntry[]
+    public readonly entries: StandardEntry<T>[]
     public readonly inputType: StringEnumInputType
-    public readonly valueToLabelMap: Record<string, string>
-    public readonly values: string[]
+    public readonly valueToLabelMap: Record<T, string>
+    public readonly values: T[]
 
+    public constructor(entries: Entry<T>[])
     public constructor(props: {
-        entries: Entry[]
+        entries: Entry<T>[]
         inputType?: StringEnumInputType | null | undefined
-    } | Entry[]) {
+    } | Entry<T>[])
+    public constructor(props: {
+        entries: Entry<T>[]
+        inputType?: StringEnumInputType | null | undefined
+    } | Entry<T>[]) {
         if (Array.isArray(props)) {
             props = { entries: props }
         }
-        this.entries = props.entries.map((entry: Entry): StandardEntry => {
+        this.entries = props.entries.map((entry: Entry<T>): StandardEntry<T> => {
             if (typeof entry == "string") {
                 return { label: entry, value: entry }
             } else if (Array.isArray(entry)) {
@@ -38,54 +43,56 @@ export class StringEnumType<T extends string> implements Type<T> {
             }
         })
         this.inputType = props.inputType ?? StringEnumInputType.DROPDOWN
+        // @ts-ignore
         this.valueToLabelMap = {}
         for (const entry of this.entries) {
             this.valueToLabelMap[entry.value] = entry.label
         }
-        this.values = this.entries.map((entry: StandardEntry): string => entry.value)
+        this.values = this.entries.map((entry: StandardEntry<T>): T => entry.value)
     }
 
-    public validate(value: unknown): value is T {
+    public validate(this: this, value: unknown): value is T {
+        // @ts-ignore
         if (typeof value != "string" || !this.values.includes(value)) {
             throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         return true
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             editorType: this.inputType == StringEnumInputType.DROPDOWN ? undefined : "OptionSwitch",
             dropdown: this.entries
         }
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         return {
             dropdown: this.entries
         }
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         return {
             valueType: "string"
         }
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         return {
             valueType: "string"
         }
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         return {
             valueType: "dropdown",
             dropdown: this.entries.map(
@@ -95,7 +102,7 @@ export class StringEnumType<T extends string> implements Type<T> {
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         return {
             valueType: "dropdown",
             dropdown: this.entries.map(
@@ -105,13 +112,13 @@ export class StringEnumType<T extends string> implements Type<T> {
         }
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {
             valueType: "string"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         return {
             valueType: "string"
         }

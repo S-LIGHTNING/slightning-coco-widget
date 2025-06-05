@@ -36,9 +36,7 @@ module.exports = merge(SCW.config, {
         return entry
     },
     devServer: {
-        static: {
-            directory: path.join(__dirname, "dist")
-        },
+        static: false,
         allowedHosts: [
             "coco.codemao.cn",
             "cp.cocotais.cn"

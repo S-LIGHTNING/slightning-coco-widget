@@ -20,7 +20,7 @@ export class ArrayType<T> implements Type<T[]> {
         this.defaultValue = defaultValue ?? typeToString(this)
     }
 
-    public validate(value: unknown): value is T[] {
+    public validate(this: this, value: unknown): value is T[] {
         if (!Array.isArray(value)) {
             throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
@@ -54,7 +54,7 @@ export class ArrayType<T> implements Type<T[]> {
         return true
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         return this.itemType == null ? [] : [{
             key: "__slightning_coco_widget_array_item__",
             label: "数组项",
@@ -62,11 +62,11 @@ export class ArrayType<T> implements Type<T[]> {
         }]
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: ["string", "array"],
             checkType: "string",
@@ -74,7 +74,7 @@ export class ArrayType<T> implements Type<T[]> {
         }
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         return {
             valueType: ["string", "array"],
             checkType: "string",
@@ -82,39 +82,39 @@ export class ArrayType<T> implements Type<T[]> {
         }
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         return {
             valueType: "array"
         }
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         return {
             valueType: "array"
         }
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         return {
             valueType: "array",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         return {
             valueType: "array",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {
             valueType: "array"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         return {
             valueType: "array"
         }

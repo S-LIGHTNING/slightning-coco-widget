@@ -32,7 +32,7 @@ export class UnionType<T> implements Type<T> {
         return this.types.length == 0 ? "（不存在）" : this.types.join(" | ")
     }
 
-    public validate(value: unknown): value is T {
+    public validate(this: this, value: unknown): value is T {
         const errors: TypeValidateError<T>[] = []
         for (const type of this.types) {
             try {
@@ -58,7 +58,7 @@ export class UnionType<T> implements Type<T> {
         )
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         const result: ChildTypeInfo[] = []
         for (let i: number = 0; i < this.types.length; i++) {
             const type: Type | undefined = this.types[i]
@@ -73,11 +73,11 @@ export class UnionType<T> implements Type<T> {
         return result
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         const valueTypes: CoCo.SignalValueType[] = []
         for (const type of this.types) {
             const { valueType } = type.toCoCoMethodValueTypes()
@@ -93,7 +93,7 @@ export class UnionType<T> implements Type<T> {
         }
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         const valueTypes: CoCo.SignalValueType[] = []
         for (const type of this.types) {
             const { valueType } = type.toCoCoMethodValueTypes()
@@ -109,7 +109,7 @@ export class UnionType<T> implements Type<T> {
         }
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         const valueTypes: CoCo.SignalValueType[] = []
         for (const type of this.types) {
             const { valueType } = type.toCoCoMethodValueTypes()
@@ -124,7 +124,7 @@ export class UnionType<T> implements Type<T> {
         }
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         const valueTypes: CoCo.SignalValueType[] = []
         for (const type of this.types) {
             const { valueType } = type.toCoCoMethodValueTypes()
@@ -139,24 +139,24 @@ export class UnionType<T> implements Type<T> {
         }
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 转为 Creation Project 属性类型`)
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         return {
             valueType: "any",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {
             valueType: "any"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         return {
             valueType: "any"
         }

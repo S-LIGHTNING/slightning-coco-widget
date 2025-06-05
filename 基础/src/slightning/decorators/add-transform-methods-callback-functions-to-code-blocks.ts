@@ -56,13 +56,11 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                 }
                 const callDataType: ObjectType<callData> = new ObjectType<callData>({
                     propertiesType: {
-                        state: new StringEnumType({
-                            entries: [
-                                { label: "未完成", value: "undone" },
-                                { label: "已解决", value: "resolved" },
-                                { label: "已拒绝", value: "rejected" }
-                            ]
-                        }),
+                        state: new StringEnumType([
+                            ["未完成", "undone" ],
+                            ["已解决", "resolved" ],
+                            ["已拒绝", "rejected" ]
+                        ]),
                         resolve: new InstanceOfClassType({
                             theClass: ResolveRef
                         }),

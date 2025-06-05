@@ -9,18 +9,18 @@ export interface ChildTypeInfo {
 
 export interface Type<T = unknown> {
 
-    validate(value: unknown): value is T
+    validate(this: this, value: unknown): value is T
 
-    getSameDirectionChildren(): ChildTypeInfo[]
-    getReverseDirectionChildren(): ChildTypeInfo[]
+    getSameDirectionChildren(this: this): ChildTypeInfo[]
+    getReverseDirectionChildren(this: this): ChildTypeInfo[]
 
-    toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes
-    toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes
-    toCoCoMethodValueTypes(): CoCo.MethodValueTypes
-    toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes
+    toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes
+    toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes
+    toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes
+    toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes
 
-    toCreationProjectPropValueTypes(): CreationProject.PropValueTypes
-    toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes
-    toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes
-    toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes
+    toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes
+    toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes
+    toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes
+    toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes
 }

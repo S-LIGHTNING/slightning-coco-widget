@@ -7,50 +7,50 @@ import { typeToString } from "./utils"
 
 export class VoidType implements Type<void> {
 
-    public validate(value: unknown): value is void {
+    public validate(this: this, value: unknown): value is void {
         if (typeof value != "undefined") {
             throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         return true
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为方法参数类型`)
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         return {}
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为事件参数类型`)
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为方法参数类型`)
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {}
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
     }
 }

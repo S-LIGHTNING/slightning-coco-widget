@@ -9,6 +9,10 @@ export class BooleanType implements Type<boolean> {
 
     public readonly defaultValue: boolean
 
+    public constructor(defaultValue: boolean)
+    public constructor(props?: {
+        defaultValue?: boolean | null | undefined
+    } | boolean)
     public constructor(props: {
         defaultValue?: boolean | null | undefined
     } | boolean = {}) {
@@ -18,68 +22,68 @@ export class BooleanType implements Type<boolean> {
         this.defaultValue = props.defaultValue ?? false
     }
 
-    public validate(value: unknown): value is boolean {
+    public validate(this: this, value: unknown): value is boolean {
         if (typeof value != "boolean") {
             throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         return true
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: "boolean",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         return {
             valueType: "boolean",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         return {
             valueType: "boolean"
         }
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         return {
             valueType: "boolean"
         }
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         return {
             valueType: "boolean",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         return {
             valueType: "boolean",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {
             valueType: "boolean"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         return {
             valueType: "boolean"
         }

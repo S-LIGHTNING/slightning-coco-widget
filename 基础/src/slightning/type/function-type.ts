@@ -38,14 +38,14 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         this.raw = raw ?? false
     }
 
-    public validate(value: unknown): value is (...args: A) => R {
+    public validate(this: this, value: unknown): value is (...args: A) => R {
         if (typeof value != "function") {
             throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         return true
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         const result: {
             key: string
             label: string
@@ -68,7 +68,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         return result
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         const result: {
             key: string
             label: string
@@ -87,7 +87,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         return result
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: ["string", "number", "boolean", "array", "object"],
             checkType: "string",
@@ -95,7 +95,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         }
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         return {
             valueType: ["string", "number", "boolean", "array", "object"],
             checkType: "string",
@@ -103,26 +103,26 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         }
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         return {
             valueType: ["string", "number", "boolean", "array", "object"]
         }
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         return {
             valueType: ["string", "number", "boolean", "array", "object"]
         }
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         return {
             valueType: "object",
             defaultValue: this.defaultValue ?? typeToString(this)
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         if (
             !this.raw &&
             (this.returns == null || this.returns instanceof VoidType) &&
@@ -150,13 +150,13 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         }
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {
             valueType: "object"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         return {
             valueType: "object"
         }

@@ -10,6 +10,11 @@ export class NumberType implements Type<number> {
     public readonly defaultValue: number
     public readonly range: Range | null | undefined
 
+    public constructor(defaultValue: number)
+    public constructor(props?: {
+        defaultValue?: number | null | undefined
+        range?: Range | null | undefined
+    } | number)
     public constructor(props: {
         defaultValue?: number | null | undefined
         range?: Range | null | undefined
@@ -21,7 +26,7 @@ export class NumberType implements Type<number> {
         this.range = props.range
     }
 
-    public validate(value: unknown): value is number {
+    public validate(this: this, value: unknown): value is number {
         if (typeof value != "number") {
             throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
@@ -31,61 +36,61 @@ export class NumberType implements Type<number> {
         return true
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: "number",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         return {
             valueType: "number",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         return {
             valueType: "number"
         }
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         return {
             valueType: "number"
         }
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         return {
             valueType: "number",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         return {
             valueType: "number",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {
             valueType: "number"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         return {
             valueType: "number"
         }

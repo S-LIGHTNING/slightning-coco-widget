@@ -10,6 +10,11 @@ export class InstanceOfClassType<T> implements Type<T> {
     public readonly theClass: new (...args: any[]) => T
     public readonly defaultValue: string
 
+    public constructor(theClass: new (...args: any[]) => T)
+    public constructor(props: {
+        theClass: new (...args: any[]) => T
+        defaultValue?: string | null | undefined
+    })
     public constructor(props: {
         theClass: new (...args: any[]) => T
         defaultValue?: string | null | undefined
@@ -21,22 +26,22 @@ export class InstanceOfClassType<T> implements Type<T> {
         this.defaultValue = props.defaultValue ?? `实例<${props.theClass.name}>`
     }
 
-    public validate(value: unknown): value is T {
+    public validate(this: this, value: unknown): value is T {
         if (!(value instanceof this.theClass)) {
             throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
         }
         return true
     }
 
-    public getSameDirectionChildren(): ChildTypeInfo[] {
+    public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public getReverseDirectionChildren(): ChildTypeInfo[] {
+    public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
     }
 
-    public toCoCoPropertyValueTypes(): CoCo.PropertyValueTypes {
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: ["string", "object"],
             checkType: "string",
@@ -44,7 +49,7 @@ export class InstanceOfClassType<T> implements Type<T> {
         }
     }
 
-    public toCoCoMethodParamValueTypes(): CoCo.MethodParamValueTypes {
+    public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {
         return {
             valueType: ["string", "object"],
             checkType: "string",
@@ -52,39 +57,39 @@ export class InstanceOfClassType<T> implements Type<T> {
         }
     }
 
-    public toCoCoMethodValueTypes(): CoCo.MethodValueTypes {
+    public toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes {
         return {
             valueType: "object"
         }
     }
 
-    public toCoCoEventParamValueTypes(): CoCo.EventParamValueTypes {
+    public toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes {
         return {
             valueType: "object"
         }
     }
 
-    public toCreationProjectPropValueTypes(): CreationProject.PropValueTypes {
+    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         return {
             valueType: "object",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(): CreationProject.MethodParamValueTypes {
+    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         return {
             valueType: "object",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodValueTypes(): CreationProject.MethodValueTypes {
+    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
         return {
             valueType: "object"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(): CreationProject.EmitParamValueTypes {
+    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
         return {
             valueType: "object"
         }
