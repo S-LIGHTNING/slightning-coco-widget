@@ -39,25 +39,25 @@ const path = require("path")
 const { merge } = require("webpack-merge")
 const SCW = require("slightning-coco-widget--webpack")
 
-module.exports = merge(SCW.config, {   // 合并 SCW 配置
-    mode: "development",               // 开发模式，在开发阶段建议使用，生产模式请改为 "production"
-    stats: "minimal",                  // 在控制台输出更少的日志
-    entry: "./path-to-you-widget.ts",  // 入口文件，请替换为你的自定义控件路径
-    devtool: "eval-source-map",        // 生成 source map，方便调试
-    output: {                          // 输出配置
-        path: path.resolve(__dirname, "dist"),                 // 输出目录
-        filename: "output-widget.js"   // 输出文件名
+module.exports = merge(SCW.config, {   // 合并 SCW 配置。
+    mode: "development",               // 开发模式，在开发阶段建议使用，生产模式请改为 "production"。
+    stats: "minimal",                  // 在控制台输出更少的日志。
+    entry: "./path-to-you-widget.ts",  // 入口文件，请替换为你的自定义控件路径。
+    devtool: "eval-source-map",        // 生成 source map，方便调试。
+    output: {                          // 输出配置。
+        path: path.resolve(__dirname, "dist"),                 // 输出目录。
+        filename: "output-widget.js"   // 输出文件名。
     },
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
-                use: "ts-loader"       // 使用 ts-loader 编译 TypeScript 文件，如果使用 JavaScript 则不需要
+                use: "ts-loader"       // 使用 ts-loader 编译 TypeScript 文件，如果使用 JavaScript 则不需要。
             }
         ]
     },
-    resolve: {                         // 解析配置
+    resolve: {                         // 解析配置。
         extensions: [".ts", ".tsx", ".js", ".jsx"]
     }
 })
@@ -70,23 +70,23 @@ const SCW = require("slightning-coco-widget--webpack")
 
 module.exports = {
     output: {
-        library: {                     // 导出配置
+        library: {                     // 导出配置。
             type: "commonjs"
         }
     },
     module: {
         rules: [
-            {                          // 绕过 CoCo 自定义控件的限制
+            {                          // 绕过 CoCo 自定义控件的限制。
                 test: /\.(j|t)sx?$/,
                 use: "slightning-coco-widget--webpack/loader/bypass-restrictions-loader",
             }
         ]
     },
-    externals: {                       // 外部依赖配置
-        react: "var React"             // 使用 CoCo 提供的 React，避免将 React 打包进自定义控件
+    externals: {                       // 外部依赖配置。
+        react: "var React"             // 使用 CoCo 提供的 React，避免将 React 打包进自定义控件。
     },
     plugins: [
-        new SCW.WrapperPlugin()        // 控件包装插件，用于包装控件，以绕过一些限制，并防止 CoCo 吞错误信息
+        new SCW.WrapperPlugin()        // 控件包装插件，用于包装控件，以绕过一些限制，并防止 CoCo 吞错误信息。
     ]
 }
 ```

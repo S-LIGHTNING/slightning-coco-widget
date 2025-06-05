@@ -21,7 +21,7 @@ sidebar_position: 1
 使用：
 
 ```sh
-npx webpack --watch
+npx webpack --watch --config webpack.dev.js
 ```
 
 ### 提取类型检查
@@ -37,7 +37,7 @@ npm install fork-ts-checker-webpack-plugin --save-dev
 配置 webpack：
 
 ```javascript
-// webpack.config.js
+// webpack.common.js
 
 const path = require("path")
 const { merge } = require("webpack-merge")
@@ -63,7 +63,7 @@ module.exports = module.exports = merge(SCW.config, {
 CoCo 和 Creation Project 都提供了一些库，使用由编辑器提供的库而非将库打包到自定义控件中可以减少打包大小。
 
 ```js
-// webpack.config.js
+// webpack.common.js
 
 const path = require("path")
 const { merge } = require("webpack-merge")
@@ -99,14 +99,13 @@ module.exports = module.exports = merge(SCW.config, {
 修改你的 webpack 配置：
 
 ```javascript
-// webpack.config.js
+// webpack.prod.js
 
-const path = require("path")
 const { merge } = require("webpack-merge")
-const SCW = require("slightning-coco-widget--webpack")
 const TerserPlugin = require("terser-webpack-plugin")
+const common = require("./webpack.common.js")
 
-module.exports = merge(SCW.config, {
+module.exports = merge(common, {
     // ...
     optimization: {
         minimizer: [
@@ -136,12 +135,13 @@ Source Map 是一个映射关系表，它将编译后的代码映射回源代码
 在 webpack 配置文件中，可以通过 `devtool` 属性来指定 Source Map 的类型。
 
 ```js
-// webpack.config.js
+// webpack.dev.js
 
 const { merge } = require("webpack-merge")
-const SCW = require("slightning-coco-widget--webpack")
+const TerserPlugin = require("terser-webpack-plugin")
+const common = require("./webpack.common.js")
 
-module.exports = module.exports = merge(SCW.config, {
+module.exports = merge(common, {
     //...
     devtool: "eval-source-map",
     //...
@@ -179,18 +179,15 @@ npm install webpack-dev-server --save-dev
 在 webpack 配置文件中，通过 `devServer` 属性来配置实时重载。
 
 ```js
-// webpack.config.js
-const path = require("path")
-const webpack = require("webpack")
-const { merge } = require("webpack-merge")
-const SCW = require("slightning-coco-widget--webpack")
+// webpack.dev.js
 
-module.exports = module.exports = merge(SCW.config, {
+const { merge } = require("webpack-merge")
+const common = require("./webpack.common.js")
+
+module.exports = merge(common, {
     //...
     devServer: {
-        static: {
-            directory: path.join(__dirname, "dist")
-        },
+        static: false,                 // 没有静态文件。
         allowedHosts: [                // 允许 CoCo 和 Creation Project 编辑器访问。
             "coco.codemao.cn",
             "cp.cocotais.cn"
@@ -233,11 +230,10 @@ npx webpack serve
 ```
 <i> [webpack-dev-server] Project is running at:
 <i> [webpack-dev-server] Loopback: http://localhost:8080/, http://[::1]:8080/
-<i> [webpack-dev-server] On Your Network (IPv4): http://172.37.16.1:8080/
-<i> [webpack-dev-server] Content not from webpack is served from 'path/to/your/project/dist' directory
+<i> [webpack-dev-server] On Your Network (IPv4): http://0.0.0.0:8080/
 ```
 
-其中 `http://localhost:8080/` 是开发服务器的地址，你的地址可能与示例中的不同，请根据输出中的提示确定你的地址。打开这个地址，找到你的自定义控件，点击右键，点击「复制链接地址」。
+其中 `http://localhost:8080/` 是开发服务器的地址，你的地址可能与示例中的不同，请根据输出中的提示确定你的地址。打开这个地址并路由到 `/webpack-dev-server`（在这个示例中是 `http://localhost:8080/webpack-dev-server`），找到你的自定义控件，点击右键，点击「复制链接地址」。
 
 #### 配置控件实时重载
 

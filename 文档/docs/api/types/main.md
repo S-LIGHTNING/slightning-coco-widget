@@ -4,6 +4,10 @@ sidebar_position: 1
 
 # 主体
 
+:::caution 注意
+文档中描述的是面向用户的简化过的控件类型定义。要获取完整的控件类型定义，请参考 [SCW 控件类型定义源码](https://gitee.com/slightning/slightning-coco-widget/blob/main/%E5%9F%BA%E7%A1%80/src/slightning/types.ts)。
+:::
+
 ## Types
 
 ### Types.type
