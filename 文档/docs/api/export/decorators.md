@@ -127,6 +127,18 @@ declare class BlockBoxOptionsNode extends TypesNode<BlockBoxOptions, StandardMet
 
 该装饰器类似于 [`transformMethodsCallbackFunctionsToCodeBlocks`](#transformmethodscallbackfunctionstocodeblocks)，除了不会删除转换前的方法。
 
+### transformMutator
+
+2.4 版本新增。
+
+功能：将使用变更器的方法转换为多个方法。
+
+### addTransformMutator
+
+2.4 版本新增。
+
+该装饰器类似于 [`transformMutator`](#transformmutator)，除了不会删除转换前的方法。
+
 ### flattenEventSubTypes
 
 功能：拉平事件子类型，使用多个事件替换事件子类型。

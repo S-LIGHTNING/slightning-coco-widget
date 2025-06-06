@@ -3,7 +3,7 @@ import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
 import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
-import { typeToString, validate } from "./utils"
+import { inlineTypeToString, typeToString, validate } from "./utils"
 
 export class ArrayType<T> implements Type<T[]> {
 
@@ -17,7 +17,7 @@ export class ArrayType<T> implements Type<T[]> {
         defaultValue?: T[] | string | null | undefined
     } = {}) {
         this.itemType = itemType
-        this.defaultValue = defaultValue ?? typeToString(this)
+        this.defaultValue = defaultValue ?? inlineTypeToString(this)
     }
 
     public validate(this: this, value: unknown): value is T[] {

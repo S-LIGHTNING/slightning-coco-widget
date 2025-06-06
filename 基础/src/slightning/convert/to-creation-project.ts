@@ -1,6 +1,6 @@
 import * as CreationProject from "../../creation-project"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
-import { IntegerType, NumberType, VoidType } from "../type"
+import { IntegerType, MutatorType, NumberType, VoidType } from "../type"
 import { Color, StandardEventParamTypes, MethodBlockParam, StandardTypes, StandardMethodBlockItem } from "../types"
 import { Widget } from "../widget"
 
@@ -16,7 +16,6 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
         width?: number | undefined
         height?: number | undefined
     } = {}
-    console.log(types)
     const result: CreationProject.Types = {
         type: types.type,
         label: types.info.title,
@@ -150,6 +149,7 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                         }
                         if (labelsAfterLastParam.length > 0) {
                             lastParam.labelAfter = labelsAfterLastParam.join(" ")
+                            labelsAfterLastParam = []
                         }
                         transformed.params.unshift(lastParam)
                     }
@@ -187,11 +187,22 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                     if (typeof part != "object") {
                         continue
                     }
-                    transformed.params.push({
-                        key: part.key,
-                        label: `\n${part.label}`,
-                        ...part.type.toCreationProjectMethodParamValueTypes()
-                    })
+                    if (part.type instanceof MutatorType) {
+                        const mutatorValueType: CreationProject.MutatorTypes = part.type.toCreationProjectMethodParamValueTypes()
+                        for (const mutatorParam of mutatorValueType.mutator ?? []) {
+                            mutatorParam.label = `\n${mutatorParam.label ?? ""}`
+                        }
+                        transformed.params.push({
+                            key: part.key,
+                            ...mutatorValueType
+                        })
+                    } else {
+                        transformed.params.push({
+                            key: part.key,
+                            label: `\n${part.label}`,
+                            ...part.type.toCreationProjectMethodParamValueTypes()
+                        })
+                    }
                 }
             }
             if (addSpace != false) {

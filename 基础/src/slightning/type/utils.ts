@@ -30,7 +30,7 @@ export function validate<T>(name: string | null, value: unknown, type: Type<T>):
         message = error.message
     }
     if (!result && message == null) {
-        message = `不能将 ${betterToString(value)} 分配给 ${type.toString()}`
+        message = `不能将 ${betterToString(value)} 分配给 ${typeToString(type)}`
     }
     if (message != null) {
         if (name != null) {
@@ -40,7 +40,7 @@ export function validate<T>(name: string | null, value: unknown, type: Type<T>):
     }
 }
 
-export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] = []): string {
+export function typeToString(type: Type<unknown>, rules: stringify.Rule<Type<unknown>>[] = []): string {
     return stringify.default(type, {
         rules: [
             ...rules, {
@@ -115,11 +115,15 @@ export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] 
                         }
                     }
                 },
-                toString(data: ObjectType<{}>, __config: stringify.RequiredConfig): string {
+                toString(
+                    data: ObjectType<{}>,
+                    config: stringify.RequiredConfig,
+                    context: stringify.ToStringContext
+                ): string {
                     let result: string = "字典"
                     if (data.propertiesType != null) {
-                        const properties: string = Object.entries<Type<T[keyof T]>>(data.propertiesType)
-                            .map(([key, type]: [string, Type<T[keyof T]>]): string => `${key}: ${type.toString()}`)
+                        const properties: string = Object.entries<Type<unknown>>(data.propertiesType)
+                            .map(([key, type]: [string, Type<unknown>]): string => `${key}: ${new stringify.AnythingRule().toString(type, config, context)}`)
                             .join("\n")
                         result += ` {\n${properties}\n}`
                     }
@@ -138,10 +142,14 @@ export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] 
                         new stringify.AnythingRule().prepare(data.itemType, config, context)
                     }
                 },
-                toString(data: ArrayType<unknown>, __config: stringify.RequiredConfig): string {
+                toString(
+                    data: ArrayType<unknown>,
+                    config: stringify.RequiredConfig,
+                    context: stringify.ToStringContext
+                ): string {
                     let result: string = "列表"
                     if (data.itemType != null) {
-                        result += `<${data.itemType.toString()}>`
+                        result += `<${new stringify.AnythingRule().toString(data.itemType, config, context)}>`
                     }
                     return result
                 }
@@ -186,8 +194,12 @@ export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] 
                         new stringify.AnythingRule().prepare(type, config, context)
                     }
                 },
-                toString(data: UnionType<unknown>, __config: stringify.RequiredConfig): string {
-                    return `(${data.types.map((type: Type<unknown>): string => typeToString(type)).join(" | ")})`
+                toString(
+                    data: UnionType<unknown>,
+                    config: stringify.RequiredConfig,
+                    context: stringify.ToStringContext
+                ): string {
+                    return `(${data.types.map((type: Type<unknown>): string => new stringify.AnythingRule().toString(type, config, context)).join(" | ")})`
                 }
             }, {
                 test(data: unknown): data is InstanceOfClassType<unknown> {
@@ -220,7 +232,11 @@ export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] 
                         new stringify.AnythingRule().prepare(data.throws, config, context)
                     }
                 },
-                toString(data: FunctionType<unknown[], unknown>, __config: stringify.RequiredConfig): string {
+                toString(
+                    data: FunctionType<unknown[], unknown>,
+                    config: stringify.RequiredConfig,
+                    context: stringify.ToStringContext
+                ): string {
                     let result: string = "("
                     let isFirst: boolean = true
                     for (const part of data.block) {
@@ -232,15 +248,52 @@ export function typeToString<T>(type: Type<T>, rules: stringify.Rule<Type<T>>[] 
                         } else {
                             result += ", "
                         }
-                        result += `${part.label}: ${part.type.toString()}`
+                        result += `${part.label}: ${new stringify.AnythingRule().toString(part.type, config, context)}`
                     }
-                    result += `) => ${(data.returns ?? new VoidType()).toString()}`
+                    result += `) => ${new stringify.AnythingRule().toString(data.returns ?? new VoidType(), config, context)}`
                     if (data.throws != null) {
-                        result += ` 抛出 ${data.throws.toString()}`
+                        result += ` 抛出 ${new stringify.AnythingRule().toString(data.throws, config, context)}`
                     }
                     return result
                 }
             }
         ]
     })
+}
+
+export function inlineTypeToString(type: Type<unknown>, rules: stringify.Rule<Type<unknown>>[] = []): string {
+    return typeToString(type, [
+        ...rules, {
+            test(data: unknown): data is ObjectType<{}> {
+                return data instanceof ObjectType
+            },
+            prepare(
+                data: ObjectType<{}>,
+                config: stringify.RequiredConfig,
+                context: stringify.PrepareContext
+            ): void {
+                if (data.propertiesType != null) {
+                    for (const propertyType of Object.values(data.propertiesType)) {
+                        new stringify.AnythingRule().prepare(propertyType, config, context)
+                    }
+                }
+            },
+            toString(
+                data: ObjectType<{}>,
+                config: stringify.RequiredConfig,
+                context: stringify.ToStringContext
+            ): string {
+                let result: string = "字典"
+                if (data.propertiesType != null) {
+                    const properties: string = Object.entries<Type<unknown>>(data.propertiesType)
+                        .map(([key, type]: [string, Type<unknown>]): string => `${key}: ${
+                            new stringify.AnythingRule().toString(type, config, context)
+                        }`)
+                        .join("; ")
+                    result += ` { ${properties} }`
+                }
+                return result
+            }
+        }
+    ])
 }

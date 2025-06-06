@@ -373,3 +373,49 @@ declare class FunctionType<A extends unknown[], R> extends Type<(...args: A) => 
 :::tip 提示
 你可能需要结合 [`generateMethodForFunctions`](../export/decorators.md#generatemethodforfunctions)、[`transformMethodsCallbackFunctionsToEvents`](../export/decorators.md#transformmethodscallbackfunctionstoevents)、[`transformMethodsCallbackFunctionsToCodeBlocks`](../export/decorators.md#transformmethodscallbackfunctionstocodeblocks) 这几个装饰器以更好地使用函数类型。
 :::
+
+## MutatorType
+
+2.4 版本新增。
+
+定义：
+
+```typescript
+declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayType<T> {
+
+    public readonly block: StandardMethodBlock
+    public readonly min: number
+    public readonly max: number
+    public readonly defaultNumber: number
+    public readonly transformMin: number
+    public readonly transformMax: number
+
+    public constructor(props: {
+        block: MethodBlock,
+        min?: number | null | undefined
+        max?: number | null | undefined
+        defaultNumber?: number | null | undefined
+        transformMin?: number | null | undefined
+        transformMax?: number | null | undefined
+    })
+}
+```
+
+描述：变更器类型，用在函数参数中表示可变数量的单元。
+
+- `block`：可变部分单元，类似于控件方法类型定义中的 `block` 属性；
+- `min`：可变部分最小重复数量；
+- `max`：可变部分最大重复数量；
+- `defaultNumber`：默认值重复数量；
+- `transformMin`：转换时可变部分最小重复次数；
+- `transformMax`：转换时可变部分最大重复次数。
+
+变更器实参是一个对象数组，数组的每一项是以变更器单元的参数键名称为键的对象。
+
+:::caution 注意
+Creation Project 编辑器提供的变更器有 BUG，建议使用 [`transformMutator`](../export/decorators.md#transformmutator) 装饰器转换变更器。
+:::
+
+:::tip 提示
+你可能需要结合 [`transformMutator`](../export/decorators.md#transformmutator) 装饰器以更好地使用变更器类型。
+:::

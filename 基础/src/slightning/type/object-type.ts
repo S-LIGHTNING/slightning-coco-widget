@@ -1,10 +1,9 @@
-import * as stringify from "@slightning/anything-to-string"
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
 import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
-import { typeToString, validate } from "./utils"
+import { inlineTypeToString, typeToString, validate } from "./utils"
 
 export class ObjectType<T extends {}> implements Type<T> {
 
@@ -22,42 +21,7 @@ export class ObjectType<T extends {}> implements Type<T> {
         defaultValue?: T | string | null | undefined
     } = {}) {
         this.propertiesType = propertiesType
-        this.defaultValue = defaultValue ?? this.toInlineString()
-    }
-
-    public toInlineString(this: this): string {
-        return typeToString(this, [{
-            test(data: unknown): data is ObjectType<{}> {
-                return data instanceof ObjectType
-            },
-            prepare(
-                data: ObjectType<{}>,
-                config: stringify.RequiredConfig,
-                context: stringify.PrepareContext
-            ): void {
-                if (data.propertiesType != null) {
-                    for (const propertyType of Object.values(data.propertiesType)) {
-                        new stringify.AnythingRule().prepare(propertyType, config, context)
-                    }
-                }
-            },
-            toString(
-                data: ObjectType<{}>,
-                config: stringify.RequiredConfig,
-                context: stringify.ToStringContext
-            ): string {
-                let result: string = "字典"
-                if (data.propertiesType != null) {
-                    const properties: string = Object.entries<Type<T[keyof T]>>(data.propertiesType)
-                        .map(([key, type]: [string, Type<T[keyof T]>]): string => `${key}: ${
-                            new stringify.AnythingRule().toString(type, config, context)
-                        }`)
-                        .join("; ")
-                    result += ` { ${properties} }`
-                }
-                return result
-            },
-        }])
+        this.defaultValue = defaultValue ?? inlineTypeToString(this)
     }
 
     public validate(this: this, value: unknown): value is T {

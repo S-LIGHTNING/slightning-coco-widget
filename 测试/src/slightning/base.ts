@@ -1,4 +1,4 @@
-import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, BooleanType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, NumberType, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, BooleanType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, NumberType, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator } from "slightning-coco-widget"
 import _ from "lodash"
 
 const types: Types = {
@@ -291,6 +291,31 @@ const types: Types = {
                         })
                     })
                 )
+            }, {
+                key: "testMethodMutatorParam",
+                label: "测试方法变更器参数",
+                block: [
+                    MethodBlockParam.THIS, MethodBlockParam.METHOD, {
+                        key: "mutator",
+                        label: "变更器",
+                        type: new MutatorType({
+                            block: [
+                                {
+                                    key: "key",
+                                    label: "键",
+                                    type: new StringType("键")
+                                }, ":", {
+                                    key: "value",
+                                    label: "值",
+                                    type: new AnyType("值")
+                                }, ","
+                            ],
+                            min: 0,
+                            defaultNumber: 1
+                        })
+                    }
+                ],
+                returns: new ObjectType()
             }
         ]}, { label: "内部", contents: [
             {
@@ -418,6 +443,16 @@ class TestBaseWidget extends getSuperWidget(types) {
         })
     }
 
+    public testMethodMutatorParam(
+        mutator: { key: string, value: unknown }[]
+    ): Record<string, unknown> {
+        const result: Record<string, unknown> = {}
+        for (const item of mutator) {
+            result[item.key] = item.value
+        }
+        return result
+    }
+
     public exportedWidgetTypes(): CoCo.Types | CreationProject.Types {
         if (exportedWidgetTypes == undefined) {
             throw new Error("找不到导出的控件类型定义")
@@ -438,6 +473,7 @@ exportWidget(types, TestBaseWidget, {
         },
         addThisForMethods,
         addCheck,
+        transformMutator,
         {
             CoCo: transformIconsExceptWidgetIcon,
             CreationProject: transformIcons

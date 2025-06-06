@@ -1,5 +1,5 @@
 import { merge } from "../../utils"
-import { FunctionType, VoidType } from "../type"
+import { FunctionType, MutatorType, VoidType } from "../type"
 import { BlockBoxOptions, BlockType, BUILD_IN_ICON_URL_MAP, StandardEventTypes, StandardMethodBlockItem, StandardMethodGroup, StandardMethodParamTypes, StandardMethodsItem, StandardMethodTypes, StandardPropertiesItem, StandardPropertyGroup, StandardPropertyTypes, StandardTypes } from "../types"
 
 export function traverseTypes(types: StandardTypes, visitors: TypesVisitors): void {
@@ -128,6 +128,10 @@ export abstract class TypesNode<T, U = T> {
         this.isRemoved = true
     }
 
+    public removeNext(this: this): void {
+        this.groupContents.splice(this.index.value + 1, 1)
+    }
+
     public replaceWith(this: this, ...values: (T | U)[]): void {
         this.remove()
         this.insertAfter(...values)
@@ -154,10 +158,7 @@ export class PropertyGroupNode extends TypesNode<StandardPropertyGroup, Standard
                 new PropertyGroupNode({
                     groupContents: this.value.contents,
                     index,
-                    blockOptions: {
-                        ...this.blockOptions,
-                        ...this.value.blockOptions
-                    },
+                    blockOptions: merge({}, this.blockOptions, property.blockOptions ?? {}),
                     value: property
                 }).traverse(visitors)
                 continue
@@ -165,7 +166,7 @@ export class PropertyGroupNode extends TypesNode<StandardPropertyGroup, Standard
             new PropertyTypesNode({
                 groupContents: this.value.contents,
                 index,
-                blockOptions: merge({}, this.blockOptions, this.value.blockOptions ?? {}),
+                blockOptions: merge({}, this.blockOptions, property.blockOptions ?? {}),
                 value: property
             }).traverse(visitors)
         }
@@ -198,7 +199,7 @@ export class MethodGroupNode extends TypesNode<StandardMethodGroup, StandardMeth
                     index,
                     blockOptions: {
                         ...this.blockOptions,
-                        ...this.value.blockOptions
+                        ...method.blockOptions
                     },
                     value: method
                 }).traverse(visitors)
@@ -212,7 +213,7 @@ export class MethodGroupNode extends TypesNode<StandardMethodGroup, StandardMeth
                             index,
                             blockOptions: {
                                 ...this.blockOptions,
-                                ...this.value.blockOptions
+                                ...method.blockOptions
                             },
                             value: method as StandardMethodTypes
                         }).traverse(visitors)
@@ -223,7 +224,7 @@ export class MethodGroupNode extends TypesNode<StandardMethodGroup, StandardMeth
                             index,
                             blockOptions: {
                                 ...this.blockOptions,
-                                ...this.value.blockOptions
+                                ...method.blockOptions
                             },
                             value: method as StandardEventTypes
                         }).traverse(visitors)
@@ -307,6 +308,17 @@ export function methodParamNeedsTransformToCodeBlocks(
             (part.type.returns != null && !(part.type.returns instanceof VoidType)) ||
             (part.type.throws != null && !(part.type.throws instanceof VoidType))
         )
+}
+
+export function methodParamTypeIsMutator(
+    part: StandardMethodBlockItem
+): part is StandardMethodParamTypes & {
+    type: MutatorType
+} {
+    if (typeof part != "object") {
+        return false
+    }
+    return part.type instanceof MutatorType
 }
 
 export function transformIcon(object?: { icon?: string | null | undefined } | null | undefined): void {

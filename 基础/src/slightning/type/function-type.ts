@@ -5,7 +5,7 @@ import { standardizeMethodBlock } from "../convert/standardize-types"
 import { MethodBlock, StandardMethodBlock } from "../types"
 import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
-import { typeToString } from "./utils"
+import { inlineTypeToString, typeToString } from "./utils"
 import { VoidType } from "./void-type"
 
 export class FunctionType<A extends unknown[], R> implements Type<(...args: A) => R> {
@@ -91,7 +91,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         return {
             valueType: ["string", "number", "boolean", "array", "object"],
             checkType: "string",
-            defaultValue: XMLEscape(this.defaultValue ?? typeToString(this))
+            defaultValue: XMLEscape(this.defaultValue ?? inlineTypeToString(this))
         }
     }
 
@@ -99,7 +99,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         return {
             valueType: ["string", "number", "boolean", "array", "object"],
             checkType: "string",
-            defaultValue: XMLEscape(this.defaultValue ?? typeToString(this))
+            defaultValue: XMLEscape(this.defaultValue ?? inlineTypeToString(this))
         }
     }
 
@@ -118,7 +118,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
     public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
         return {
             valueType: "object",
-            defaultValue: this.defaultValue ?? typeToString(this)
+            defaultValue: this.defaultValue ?? inlineTypeToString(this)
         }
     }
 
@@ -146,7 +146,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         }
         return {
             valueType: "object",
-            defaultValue: this.defaultValue ?? typeToString(this)
+            defaultValue: this.defaultValue ?? inlineTypeToString(this)
         }
     }
 
