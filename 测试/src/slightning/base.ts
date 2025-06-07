@@ -122,6 +122,16 @@ const types: Types = {
             color: Color.CYAN
         }, contents: [
             {
+                key: "testMethodText",
+                label: "测试方法说明文本",
+                block: [
+                    "0", MethodBlockParam.METHOD, "1", MethodBlockParam.THIS, "2", MethodBlockParam.METHOD, "3", {
+                        key: "string",
+                        label: "字符串",
+                        type: new StringType("字符串")
+                    }, "4", MethodBlockParam.METHOD, "5"
+                ]
+            }, {
                 key: "testMethodParams",
                 label: "测试方法参数",
                 block: [

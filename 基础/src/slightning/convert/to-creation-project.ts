@@ -121,12 +121,12 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                 let labelsAfterLastParam: string[] = []
                 function addText(text: string): void {
                     if (lastParam == null) {
-                        labelsAfterLastParam.push(text)
+                        labelsAfterLastParam.unshift(text)
                     } else {
                         if (lastParam.label == null) {
                             lastParam.label = text
                         } else {
-                            lastParam.label += " " + text
+                            lastParam.label = text + " " + lastParam.label
                         }
                     }
                 }
