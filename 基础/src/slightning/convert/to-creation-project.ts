@@ -157,6 +157,9 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                 if (node.value.block[i] != MethodBlockParam.THIS) {
                     throw new Error(`方法 ${node.value.label} 缺少 this 参数`)
                 }
+                if (labelsAfterLastParam.length > 0) {
+                    transformed.label = labelsAfterLastParam.join(" ")
+                }
                 i--
                 let labelsBeforeThis: string[] = []
                 for (; i >= 0; i--) {

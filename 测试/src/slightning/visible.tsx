@@ -50,7 +50,7 @@ class TestVisibleWidget extends getSuperWidget(types) {
     public increaseCount(this: this): void {
         setInterval((): void => {
             this.count++
-        })
+        }, 100)
     }
 
     public render(this: this): JSX.Element {

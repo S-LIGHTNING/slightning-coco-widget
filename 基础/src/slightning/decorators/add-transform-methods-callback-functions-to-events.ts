@@ -30,7 +30,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                     continue
                 }
                 const key = `${transformedMethod.key}${capitalize(part.key)}`
-                const label = `${transformedMethod.label}·${part.label}`
+                const label = `${transformedMethod.label}·${part.label}被调用`
                 const type = part.type
                 class ResolveRef {
                     public readonly name: string = "解决函数引用"
@@ -83,13 +83,13 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         type: part.type
                     })
                 }
-                transformedMethod.block.splice(i, 1, `${part.label}上下文`, {
+                transformedMethod.block.splice(i, 1, part.label, "（上下文", {
                     key: `__slightning_coco_widget_call_context__${part.key}`,
-                    label: `${part.label}上下文`,
+                    label: `${part.label}（上下文）`,
                     type: new AnyType({
                         defaultValue: `${part.label}上下文`
                     })
-                })
+                }, "）")
                 i++
                 argumentsTransformers.push(function (this: any, context: unknown): (...args: unknown[]) => unknown {
                     const widget: any = this
