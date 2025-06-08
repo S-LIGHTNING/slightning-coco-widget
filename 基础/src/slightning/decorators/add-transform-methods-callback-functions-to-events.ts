@@ -30,7 +30,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                     continue
                 }
                 const key = `${transformedMethod.key}${capitalize(part.key)}`
-                const label = `${transformedMethod.label}·${part.label}被调用`
+                const label = `${transformedMethod.label}·${part.label}`
                 const type = part.type
                 class ResolveRef {
                     public readonly name: string = "解决函数引用"
@@ -65,7 +65,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                 const eventParams: StandardEventParamTypes[] = [
                     {
                         key: "__slightning_coco_widget_call_data__",
-                        label: label,
+                        label: part.label,
                         type: callDataType
                     }, {
                         key: "__slightning_coco_widget_call_context__",
@@ -144,7 +144,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         block: [
                             {
                                 key: "__slightning_coco_widget_call_data__",
-                                label: label,
+                                label,
                                 type: callDataType
                             }, "抛出", {
                                 key: "exception",
@@ -178,7 +178,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         block: [
                             {
                                 key: "__slightning_coco_widget_call_data__",
-                                label: label,
+                                label,
                                 type: callDataType
                             }, "返回", ...(type.returns instanceof VoidType ? [] : [{
                                 key: "returnValue",
@@ -205,7 +205,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                 node.insertAfter({
                     type: BlockType.EVENT,
                     key,
-                    label,
+                    label: `${label}被调用`,
                     params: eventParams
                 })
             }
