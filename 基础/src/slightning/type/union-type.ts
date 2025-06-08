@@ -37,6 +37,7 @@ export class UnionType<T> implements Type<T> {
         for (const type of this.types) {
             try {
                 validate(null, value, type)
+                return true
             } catch (error) {
                 if (!(error instanceof TypeValidateError)) {
                     throw error
