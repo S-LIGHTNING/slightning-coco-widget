@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import useBaseUrl from "@docusaurus/useBaseUrl"
+
 # 打包优化
 
 :::caution 注意
@@ -240,9 +242,9 @@ npx webpack serve
 控件实时重载是一个自定义控件，它可以在编辑器中实时重载自定义控件。
 
 <p>
-<a href="/slightning-coco-widget/download/控件实时重载.min.js" target="_blank" download="控件实时重载.min.js">点击下载 控件实时重载 控件</a>
+<a href={useBaseUrl("/download/控件实时重载.min.js")} target="_blank" download="控件实时重载.min.js">点击下载 控件实时重载 控件</a>
 
-[点击查看 控件实时重载 控件源码](https://gitee.com/slightning/slightning-coco-widget/blob/main/%E6%89%93%E5%8C%85/widget-live-reload/src/widget-live-reload.ts)
+[点击查看 控件实时重载 控件源码](https://gitee.com/slightning/slightning-coco-widget/blob/main/%E6%8E%A7%E4%BB%B6/%E6%8E%A7%E4%BB%B6%E5%AE%9E%E6%97%B6%E9%87%8D%E8%BD%BD/src/widget-live-reload.ts)
 </p>
 
 将下载的控件导入到编辑器中，并添加到舞台上，调用 `启动`（在控件积木盒中）方法以启动实时重载，注意下开发服务地址的端口是否正确，控件文件地址填写为刚才复制的地址。

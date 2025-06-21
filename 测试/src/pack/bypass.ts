@@ -2,3 +2,5 @@
 
 export const MyFetch = fetch
 export const MyWebSocket = WebSocket
+
+parent.location.reload()

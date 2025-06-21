@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "outDir": "dist/runtime/cjs",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext"
+    },
+    "include": ["runtime/**/*"],
+    "exclude": ["node_modules"]
+}

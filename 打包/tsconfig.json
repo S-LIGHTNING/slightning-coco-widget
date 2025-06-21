@@ -1,10 +1,6 @@
 {
     "compilerOptions": {
         "target": "ES2017",
-        "outDir": "dist",
-        "declaration": true,
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
         "jsx": "react",
         "lib": ["ESNext", "DOM"],
         "skipLibCheck": true,
@@ -19,7 +15,5 @@
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+    }
 }

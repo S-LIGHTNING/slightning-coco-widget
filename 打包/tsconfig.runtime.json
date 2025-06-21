@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "outDir": "dist/runtime/esm",
+        "declaration": true,
+        "declarationDir": "dist/runtime/types",
+        "module": "ESNext",
+        "moduleResolution": "bundler"
+    },
+    "include": ["runtime/**/*"],
+    "exclude": ["node_modules"]
+}

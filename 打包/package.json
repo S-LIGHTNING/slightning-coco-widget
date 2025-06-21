@@ -1,17 +1,56 @@
 {
   "name": "slightning-coco-widget--webpack",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "exports": {
-    ".": "./dist/index.js",
-    "./config": "./dist/config.js",
-    "./bypass/xml-http-request": "./dist/bypass/xml-http-request.js",
-    "./bypass/xml-http-request-upload": "./dist/bypass/xml-http-request-upload.js",
-    "./bypass/xml-http-request-event-target": "./dist/bypass/xml-http-request-event-target.js",
-    "./bypass/fetch": "./dist/bypass/fetch.js",
-    "./bypass/web-socket": "./dist/bypass/web-socket.js",
-    "./bypass/web-socket-error": "./dist/bypass/web-socket-error.js",
-    "./bypass/web-socket-stream": "./dist/bypass/web-socket-stream.js",
-    "./loader/bypass-restrictions-loader": "./dist/loader/bypass-restrictions-loader.js"
+    ".": {
+      "default": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./config": {
+      "default": "./dist/cjs/config.js",
+      "import": "./dist/esm/config.js",
+      "types": "./dist/types/config.d.ts"
+    },
+    "./bypass": {
+      "default": "./dist/cjs/bypass.js",
+      "import": "./dist/esm/bypass.js",
+      "types": "./dist/types/bypass.d.ts"
+    },
+    "./loader/bypass-restrictions-loader": {
+      "default": "./dist/cjs/loader/bypass-restrictions-loader.js",
+      "types": "./dist/types/loader/bypass-restrictions-loader.d.ts"
+    },
+    "./runtime/bypass/xml-http-request-upload": {
+      "default": "./dist/runtime/esm/bypass/xml-http-request-upload.js",
+      "require": "./dist/runtime/cjs/bypass/xml-http-request-upload.js",
+      "types": "./dist/runtime/types/bypass/xml-http-request-upload.d.ts"
+    },
+    "./runtime/bypass/xml-http-request-event-target": {
+      "default": "./dist/runtime/esm/bypass/xml-http-request-event-target.js",
+      "require": "./dist/runtime/cjs/bypass/xml-http-request-event-target.js",
+      "types": "./dist/runtime/types/bypass/xml-http-request-event-target.d.ts"
+    },
+    "./runtime/bypass/fetch": {
+      "default": "./dist/runtime/esm/bypass/fetch.js",
+      "require": "./dist/runtime/cjs/bypass/fetch.js",
+      "types": "./dist/runtime/types/bypass/fetch.d.ts"
+    },
+    "./runtime/bypass/web-socket": {
+      "default": "./dist/runtime/esm/bypass/web-socket.js",
+      "require": "./dist/runtime/cjs/bypass/web-socket.js",
+      "types": "./dist/runtime/types/bypass/web-socket.d.ts"
+    },
+    "./runtime/bypass/web-socket-error": {
+      "default": "./dist/runtime/esm/bypass/web-socket-error.js",
+      "require": "./dist/runtime/cjs/bypass/web-socket-error.js",
+      "types": "./dist/runtime/types/bypass/web-socket-error.d.ts"
+    },
+    "./runtime/bypass/web-socket-stream": {
+      "default": "./dist/runtime/esm/bypass/web-socket-stream.js",
+      "require": "./dist/runtime/cjs/bypass/web-socket-stream.js",
+      "types": "./dist/runtime/types/bypass/web-socket-stream.d.ts"
+    }
   },
   "files": [
     "dist",
@@ -23,9 +62,13 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "start": "tsc --watch",
-    "watch": "tsc --watch",
-    "build": "cleandir ./dist && tsc",
+    "start:src": "npm run watch:src",
+    "start:runtime": "npm run watch:runtime",
+    "watch:src": "tsc -p tsconfig.src.json --watch",
+    "watch:runtime": "tsc -p tsconfig.runtime.json --watch",
+    "build:src": "tsc -p tsconfig.src.json && tsc -p tsconfig.src-esm.json",
+    "build:runtime": "tsc -p tsconfig.runtime.json && tsc -p tsconfig.runtime-cjs.json",
+    "build": "cleandir ./dist && npm run build:src && npm run build:runtime",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "SLIGHTNING",

@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "outDir": "dist/cjs",
+        "declaration": true,
+        "declarationDir": "dist/types",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext"
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+}

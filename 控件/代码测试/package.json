@@ -1,0 +1,33 @@
+{
+  "name": "slightning-coco-code-test-widget",
+  "version": "0.0.2",
+  "private": true,
+  "description": "",
+  "license": "Apache-2.0",
+  "author": "SLIGHTNING",
+  "scripts": {
+    "start": "webpack serve --env mode=development --config webpack.config.js",
+    "watch": "webpack --watch --env mode=development --config webpack.config.js",
+    "build": "webpack --env mode=production --config webpack.config.js"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.0.0",
+    "@slightning/anything-to-string": "^1.1.0",
+    "@soncodi/signal": "^2.0.0",
+    "@types/diff": "^7.0.0",
+    "@types/lodash": "^4.0.0",
+    "autoprefixer": "^10.0.0",
+    "babel-loader": "^9.0.0",
+    "diff": "^7.0.0",
+    "fork-ts-checker-webpack-plugin": "^9.0.0",
+    "postcss-loader": "^8.0.0",
+    "postcss-preset-env": "^10.0.0",
+    "slightning-coco-widget": "^2.4.3",
+    "slightning-coco-widget--webpack": "^2.3.0",
+    "ts-loader": "^9.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-server": "^5.2.2",
+    "webpack-merge": "^6.0.0"
+  }
+}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="824" height="824" viewBox="0 0 824 824">
+    <path d="M 312 130 h 200 c 64 0 0 0 0 71 v 141 c 0 64 181 227 182 291 a 61 61 0 0 1 -61 61 h -442 a 61 61 0 0 1 -61 -61 c 0 -64 182 -227 182 -291 v -141 c 0 -64 -64 -71 0 -71" fill="none" stroke="white" stroke-width="60" />
+    <circle r="30" cx="442" cy="301" fill="white" />
+    <circle r="30" cx="386" cy="382" fill="white" />
+    <circle r="30" cx="462" cy="462" fill="white" />
+    <circle r="30" cx="356" cy="482" fill="white" />
+    <circle r="30" cx="522" cy="542" fill="white" />
+    <circle r="30" cx="422" cy="562" fill="white" />
+    <circle r="30" cx="286" cy="542" fill="white" />
+    <circle r="30" cx="226" cy="622" fill="white" />
+    <circle r="30" cx="346" cy="612" fill="white" />
+    <circle r="30" cx="482" cy="622" fill="white" />
+    <circle r="30" cx="582" cy="612" fill="white" />
+    <!-- <line x1="412" x2="412" y1="0" y2="824" stroke="black" stroke-width="5" />
+    <line x1="0" x2="824" y1="412" y2="412" stroke="black" stroke-width="5" />
+    <rect x="50" y="50" width="724" height="724" fill="none" stroke="#C00000" stroke-width="100" stroke-opacity="0.5" /> -->
+</svg>

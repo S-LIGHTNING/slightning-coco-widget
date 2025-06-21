@@ -1,0 +1,120 @@
+.slightning--code-test-widget--window {
+    color: black;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFFFFE0;
+    backdrop-filter: blur(16px);
+    position: fixed;
+    inset: 10%;
+    z-index: 1000;
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: #6CCDEA;
+    border-style: solid;
+    overflow: hidden;
+    box-shadow: grey 0px 0px 16px;
+    pointer-events: none;
+    transform: scale(0.5);
+    opacity: 0;
+    transition: transform 500ms, opacity 500ms;
+}
+.slightning--code-test-widget--window--show {
+    pointer-events: auto;
+    transform: scale(1);
+    opacity: 1;
+}
+.slightning--code-test-widget--window--head {
+    display: flex;
+    align-items: center;
+}
+.slightning--code-test-widget--window--head--icon {
+    width: 24px;
+    height: 24px;
+    margin: 4px;
+}
+.slightning--code-test-widget--window--head--title {
+    font-weight: bold;
+    flex-grow: 1;
+}
+.slightning--code-test-widget--window--head--close-button {
+    width: 32px;
+    height: 32px;
+    transition: color 200ms, background-color, 200ms;
+    cursor: pointer;
+    font-size: 1.6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.slightning--code-test-widget--window--head--close-button:hover {
+    color: white;
+    background-color: red;
+}
+.slightning--code-test-widget--window--content {
+    overflow: auto;
+}
+.slightning--code-test-widget--table {
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+}
+.slightning--code-test-widget--table--head {
+    position: sticky;
+    top: 0px;
+    background-color: #FFFFFF80;
+    backdrop-filter: blur(16px);
+}
+.slightning--code-test-widget--table--row {
+    display: flex;
+}
+.slightning--code-test-widget--table--cell {
+    width: 50px;
+    height: 32px;
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+}
+.slightning--code-test-widget--table--head--cell {
+    color: black;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.slightning--code-test-widget--table--cell:first-child {
+    flex-grow: 1;
+}
+.slightning--code-test-widget--table--body--test-node-item--data-cell {
+    display: grid;
+    grid-template-areas: "content";
+}
+.slightning--code-test-widget--table--body--test-node-item--data-cell--process {
+    grid-area: content;
+    height: 100%;
+}
+.slightning--code-test-widget--table--body--test-node-item--data-cell--value {
+    grid-area: content;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.slightning--code-test-widget--table--body--test-group-item--children {
+    margin-left: 16px;
+}
+.slightning--code-test-widget--table--body--test-item-row--failures--except-failure {
+    margin: 8px;
+    overflow-x: auto;
+    font-family: monospace;
+}
+.slightning--code-test-widget--table--body--test-item-row--failures--except-equal-failure--diff--added {
+    background-color: #C6EFCE;
+}
+.slightning--code-test-widget--table--body--test-item-row--failures--except-equal-failure--diff--removed {
+    background-color: #FFC7CE;
+}
+.slightning--code-test-widget--table--body--test-item-row--failures--except-equal-failure--diff--item {
+    margin-block: 8px;
+    margin-left: 16px;
+}

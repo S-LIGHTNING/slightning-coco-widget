@@ -1,6 +1,6 @@
 import type * as webpack from "webpack"
 
-import { bypassKeyWordsCheck } from "../bypass/bypass"
+import { bypassKeyWordsCheck } from "../bypass"
 
 export const WrapperParamArray: string[] = [
     "require",
