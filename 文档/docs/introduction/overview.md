@@ -39,3 +39,9 @@ SCW 优先考虑工程需求，其次考虑简洁、易用。具体原则如下�
 - 代码不够简洁；
 - 历史包袱过重；
 - 新功能发布速度慢。
+
+## 五、许可
+
+SCW 代码遵循 [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.html)。
+
+SCW 文档遵循 [署名—非商业性使用 4.0 协议国际版](https://creativecommons.org/licenses/by-nc/4.0/legalcode.zh-hans)。

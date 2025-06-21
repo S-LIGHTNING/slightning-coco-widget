@@ -7,6 +7,7 @@ import Heading from '@theme/Heading';
 
 import styles from './index.module.css';
 import Appreciation from '../components/Appreciation'
+import useBaseUrl from '@docusaurus/useBaseUrl'
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -18,11 +19,6 @@ function HomepageHeader() {
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/docs/introduction/dissuade/">
-            劝退指南
-          </Link>
           <Link
             className="button button--secondary button--lg"
             to="/docs/introduction/overview/">
@@ -47,6 +43,16 @@ export default function Home(): JSX.Element {
       <HomepageHeader />
       <main>
         <HomepageFeatures />
+        <div className="text--center">
+          <Heading as="h2">评价</Heading>
+          <img src={useBaseUrl("/img/homepage/comments.png")}></img>
+        </div>
+        <div className="text--center">
+          <Heading as="h2">星星</Heading>
+          <a href="https://www.star-history.com/#S-LIGHTNING/slightning-coco-widget&Date">
+            <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=S-LIGHTNING/slightning-coco-widget&type=Date"></img>
+          </a>
+        </div>
         <Appreciation />
       </main>
     </Layout>

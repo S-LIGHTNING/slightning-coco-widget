@@ -65,6 +65,10 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    require.resolve('./webpack-config-plugin')
+  ],
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/logo.png',
