@@ -5,7 +5,6 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useColorMode } from '@docusaurus/theme-common';
 import { useEffect } from 'react';
 import ExampleCode from '@site/src/components/ExampleCode';
-import useIsBrowser from '@docusaurus/useIsBrowser';
 
 type FeatureItem = {
   id?: string;
@@ -36,14 +35,12 @@ if (typeof window != "undefined") {
 }
 
 export default function HomepageFeatures(): JSX.Element {
-  if (useIsBrowser()) {
+  const { colorMode } = useColorMode()
+  useEffect((): void => {
     import("monaco-editor").then((monaco: typeof import("monaco-editor")): void => {
-      const { colorMode } = useColorMode()
-      useEffect((): void => {
-        monaco.editor.setTheme(colorMode == "light" ? "vs" : "vs-dark")
-      }, [colorMode])
+      monaco.editor.setTheme(colorMode == "light" ? "vs" : "vs-dark")
     })
-  }
+  }, [colorMode])
   return (
     <section className={styles.features}>
       <div className="container">
