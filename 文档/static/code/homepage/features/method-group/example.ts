@@ -2,14 +2,8 @@ import { addThisForMethods, Color, exportWidget, getSuperWidget, MethodBlockPara
 
 const types: Types = {
     type: "SLIGHTNING_METHOD_GROUP_WIDGET",
-    info: {
-        title: "方法分组",
-        icon: "icon-widget-list-viewer"
-    },
-    options: {
-        visible: false,
-        global: true
-    },
+    info: { title: "方法分组", icon: "icon-widget-list-viewer" },
+    options: { visible: false, global: true },
     properties: [],
     methods: [
         {

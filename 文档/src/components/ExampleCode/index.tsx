@@ -35,5 +35,10 @@ export default function ExampleCode({ src }: { src: string }): JSX.Element {
             editor.setValue(await (await fetch(absoluteSrc)).text())
         })()
     }, [editor, absoluteSrc])
-    return <div className={styles.bypassPlay} ref={elementRef}>正在加载编辑器……</div>
+    return (
+        <div className={styles.bypassPlay} ref={elementRef}>
+            <noscript>你需要启用 JavaScript 才能打开代码编辑器</noscript>
+            正在加载代码编辑器……
+        </div>
+    )
 }

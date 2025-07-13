@@ -5,6 +5,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useColorMode } from '@docusaurus/theme-common';
 import { useEffect } from 'react';
 import ExampleCode from '@site/src/components/ExampleCode';
+import Fullwindowable from '../Fullwindowable'
 
 type FeatureItem = {
   id?: string;
@@ -51,21 +52,21 @@ export default function HomepageFeatures(): JSX.Element {
           description="像使用其他类型的数据一样使用函数，函数可以作为参数传递给其他函数，也可以作为其他函数的返回值。SCW 可以将这些函数转为编辑器支持的形式。"
         >
           <div className={styles.featureChildren}>
-            <div className={styles.codeArea}>
+            <Fullwindowable className={styles.codeArea}>
               <ExampleCode src="/code/homepage/features/functions-as-first-class-citizens/example.ts" />
-            </div>
-            <div className={styles.blockImageArea}>
-              <p>在 CoCo 中使用：</p>
+            </Fullwindowable>
+            <Fullwindowable className={styles.blockImageArea}>
+              <p>在 CoCo 中使用控件：</p>
               <img
                 className={styles.blockImage}
                 src={useBaseUrl("/img/homepage/features/functions-as-first-class-citizens/block-coco.png")}
               />
-              <p>在 Creation Project 中使用：</p>
+              <p>在 Creation Project 中使用控件：</p>
               <img
                 className={styles.blockImage}
                 src={useBaseUrl("/img/homepage/features/functions-as-first-class-citizens/block-creation-project.png")}
               />
-            </div>
+            </Fullwindowable>
           </div>
         </Feature>
         <Feature
@@ -74,10 +75,10 @@ export default function HomepageFeatures(): JSX.Element {
           description="SCW 可以检查方法调用是否正确，如果方法不存在或参数类型不匹配，SCW 会报错提示。此外，SCW 还可以捕获方法调用中的异常，并显示异常信息。"
         >
           <div className={styles.featureChildren}>
-            <div className={styles.codeArea}>
+            <Fullwindowable className={styles.codeArea}>
               <ExampleCode src="/code/homepage/features/call-method-check/example.ts" />
-            </div>
-            <div className={styles.blockImageArea}>
+            </Fullwindowable>
+            <Fullwindowable className={styles.blockImageArea}>
               <p>调用方法：</p>
               <img
                 className={styles.blockImage}
@@ -93,7 +94,7 @@ export default function HomepageFeatures(): JSX.Element {
                 className={styles.blockImage}
                 src={useBaseUrl("/img/homepage/features/call-method-check/browser-error.png")}
               />
-            </div>
+            </Fullwindowable>
           </div>
         </Feature>
         <Feature
@@ -106,16 +107,16 @@ export default function HomepageFeatures(): JSX.Element {
           description="为一组方法统一设置积木样式；无需手动调整积木标签和积木间距，SCW 可以根据方法分组自动调整。"
         >
           <div className={styles.featureChildren}>
-            <div className={styles.codeArea}>
+            <Fullwindowable className={styles.codeArea}>
               <ExampleCode src="/code/homepage/features/method-group/example.ts" />
-            </div>
-            <div className={styles.blockImageArea}>
+            </Fullwindowable>
+            <Fullwindowable className={styles.blockImageArea}>
               <p>生成的积木：</p>
               <img
                 className={styles.blockImage}
                 src={useBaseUrl("/img/homepage/features/method-group/block-box.png")}
               />
-            </div>
+            </Fullwindowable>
           </div>
         </Feature>
         <Feature
@@ -124,9 +125,9 @@ export default function HomepageFeatures(): JSX.Element {
           description="自动绕过 CoCo 对自定义控件的限制，如：控件关键词检查；全局对象访问限制。"
         >
           <p>下面展示了部分绕过这些限制的方式，你可以修改其中的示例代码。</p>
-          <div className={styles.bypassRestrictionsPlay}>
+          <Fullwindowable className={styles.bypassRestrictionsPlay}>
             <BypassRestrictionsPlay />
-          </div>
+          </Fullwindowable>
         </Feature>
         <Feature
           title="TypeScript 支持"

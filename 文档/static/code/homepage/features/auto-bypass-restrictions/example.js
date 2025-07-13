@@ -1,4 +1,4 @@
-// 示例：使用 WebSocket，就像在其他地方使用它一样
+// 使用 WebSocket，就像在其他地方使用它一样
 class MyWebSocket extends WebSocket {
   constructor(url, protocols) {
     super(url, protocols);
