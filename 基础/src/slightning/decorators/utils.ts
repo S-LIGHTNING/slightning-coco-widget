@@ -3,75 +3,81 @@ import { FunctionType, MutatorType, VoidType } from "../type"
 import { BlockBoxOptions, BlockType, BUILD_IN_ICON_URL_MAP, StandardEventTypes, StandardMethodBlockItem, StandardMethodGroup, StandardMethodParamTypes, StandardMethodsItem, StandardMethodTypes, StandardPropertiesItem, StandardPropertyGroup, StandardPropertyTypes, StandardTypes } from "../types"
 
 export function traverseTypes(types: StandardTypes, visitors: TypesVisitors): void {
-    for (
-        const index = { value: 0 };
-        index.value <= types.properties.length;
-        index.value++
+    if (
+        hasVisitor(visitors.PropertyGroup) ||
+        hasVisitor(visitors.PropertyTypes)
     ) {
-        const property: StandardPropertiesItem | undefined = types.properties[index.value]
-        if (property == undefined) {
-            continue
-        }
-        if ("contents" in property) {
-            new PropertyGroupNode({
+        for (
+            const index = { value: 0 };
+            index.value <= types.properties.length;
+            index.value++
+        ) {
+            const property: StandardPropertiesItem | undefined = types.properties[index.value]
+            if (property == undefined) {
+                continue
+            }
+            if ("contents" in property) {
+                new PropertyGroupNode({
+                    groupContents: types.properties,
+                    index,
+                    value: property
+                }).traverse(visitors)
+                continue
+            }
+            new PropertyTypesNode({
                 groupContents: types.properties,
                 index,
-                blockOptions: property.blockOptions ?? {},
                 value: property
             }).traverse(visitors)
-            continue
         }
-        new PropertyTypesNode({
-            groupContents: types.properties,
-            index,
-            blockOptions: property.blockOptions ?? {},
-            value: property
-        }).traverse(visitors)
     }
-    for (
-        const index = { value: 0 };
-        index.value <= types.methods.length;
-        index.value++
+    if (
+        hasVisitor(visitors.MethodGroup) ||
+        hasVisitor(visitors.MethodTypes) ||
+        hasVisitor(visitors.EventTypes) ||
+        hasVisitor(visitors.BlockBoxOptions)
     ) {
-        const method: StandardMethodsItem | undefined = types.methods[index.value]
-        if (method == undefined) {
-            continue
-        }
-        if ("contents" in method) {
-            new MethodGroupNode({
-                groupContents: types.methods,
-                index,
-                blockOptions: method.blockOptions ?? {},
-                value: method
-            }).traverse(visitors)
-            continue
-        }
-        if ("type" in method) {
-            switch (method.type) {
-                case BlockType.METHOD:
-                    new MethodTypesNode({
-                        groupContents: types.methods,
-                        index,
-                        blockOptions: method.blockOptions ?? {},
-                        value: method as StandardMethodTypes
-                    }).traverse(visitors)
-                    break
-                case BlockType.EVENT:
-                    new EventTypesNode({
-                        groupContents: types.methods,
-                        index,
-                        blockOptions: method.blockOptions ?? {},
-                        value: method as StandardEventTypes
-                    }).traverse(visitors)
-                    break
+        for (
+            const index = { value: 0 };
+            index.value <= types.methods.length;
+            index.value++
+        ) {
+            const method: StandardMethodsItem | undefined = types.methods[index.value]
+            if (method == undefined) {
+                continue
             }
-        } else {
-            new BlockBoxOptionsNode({
-                groupContents: types.methods,
-                index,
-                blockOptions: null,
-                value: method
-            }).traverse(visitors)
+            if ("contents" in method) {
+                new MethodGroupNode({
+                    groupContents: types.methods,
+                    index,
+                    value: method
+                }).traverse(visitors)
+                continue
+            }
+            if ("type" in method) {
+                switch (method.type) {
+                    case BlockType.METHOD:
+                        new MethodTypesNode({
+                            groupContents: types.methods,
+                            index,
+                            value: method as StandardMethodTypes
+                        }).traverse(visitors)
+                        break
+                    case BlockType.EVENT:
+                        new EventTypesNode({
+                            groupContents: types.methods,
+                            index,
+                            value: method as StandardEventTypes
+                        }).traverse(visitors)
+                        break
+                }
+            } else {
+                new BlockBoxOptionsNode({
+                    groupContents: types.methods,
+                    index,
+                    value: method
+                }).traverse(visitors)
+            }
         }
     }
 }
@@ -85,34 +91,68 @@ export interface TypesVisitors {
     BlockBoxOptions?: TypesNodeVisitor<BlockBoxOptionsNode> | null | undefined
 }
 
-export type TypesNodeVisitor<T extends TypesNode<unknown, unknown>> = ((node: T) => void) | {
+export type TypesNodeVisitor<T extends UnknownTypesNode> = (((node: T) => void) | {
+    enter?: ((node: T) => void) | null | undefined
+    /**
+     * @deprecated 该方法是由于早期拼写错误而保留的，请不要使用。
+     */
     entry?: ((node: T) => void) | null | undefined
+    exit?: ((node: T) => void) | null | undefined
+}) & {
+    __slightning_coco_widget_visitor_cache__?: TypesVisitorCache<T>
+}
+
+interface TypesVisitorCache<T extends UnknownTypesNode> {
+    has?: boolean | null | undefined
+    hasEnter?: boolean | null | undefined
+    hasExit?: boolean | null | undefined
+    enter?: ((node: T) => void) | null | undefined
     exit?: ((node: T) => void) | null | undefined
 }
 
 export abstract class TypesNode<T, U = T> {
 
+    public readonly group?: TypesNode<(T | U), (T | U)> | null | undefined
     public readonly groupContents: (T | U)[]
     public readonly index: { value: number }
+    /**
+     * 节点对应的类型定义。
+     */
     public readonly value: T
-    public readonly blockOptions: T extends {
-        blockOptions?: unknown | null | undefined
-    } ? NonNullable<T["blockOptions"]> : unknown
+    private __blockOptions?: (T extends {
+        blockOptions?: {} | null | undefined
+    } ? NonNullable<T["blockOptions"]> : {}) | undefined
+    /**
+     * 节点的积木选项。与`this.value.blockOptions`不同的是，该项包含从组中继承的积木选项。
+     */
+    public get blockOptions(): T extends {
+        blockOptions?: {} | null | undefined
+    } ? NonNullable<T["blockOptions"]> : {} {
+        if (this.__blockOptions !== undefined) {
+            return this.__blockOptions
+        }
+        const { value } = this
+        return this.__blockOptions = merge(
+            {},
+            (this.group ?? {}).blockOptions ?? {},
+            value != null && typeof value == "object" && "blockOptions" in value ? value.blockOptions ?? {} : {}
+        ) as T extends {
+            blockOptions?: {} | null | undefined
+        } ? NonNullable<T["blockOptions"]> : {}
+    }
     public isRemoved: boolean
 
     public constructor({
-        groupContents, index, blockOptions, value
+        group, groupContents, index, value
     }: {
+        group?: TypesNode<(T | U), (T | U)> | null | undefined
         groupContents: (T | U)[]
         index: { value: number }
-        blockOptions: T extends {
-            blockOptions?: unknown | null | undefined
-        } ? NonNullable<T["blockOptions"]> : null,
         value: T
     }) {
+        this.group = group
         this.groupContents = groupContents
         this.index = index
-        this.blockOptions = blockOptions
         this.value = value
         this.isRemoved = false
     }
@@ -142,9 +182,17 @@ export abstract class TypesNode<T, U = T> {
     }
 }
 
+export type UnknownTypesNode = TypesNode<unknown, unknown>
+
 export class PropertyGroupNode extends TypesNode<StandardPropertyGroup, StandardPropertiesItem> {
     public override traverse(this: this, visitors: TypesVisitors): void {
-        entry(this, visitors.PropertyGroup)
+        if (!(
+            hasVisitor(visitors.PropertyGroup) ||
+            hasVisitor(visitors.PropertyTypes)
+        )) {
+            return
+        }
+        enterNode(this, visitors.PropertyGroup)
         for (
             const index = { value: 0 };
             index.value <= this.value.contents.length;
@@ -156,34 +204,42 @@ export class PropertyGroupNode extends TypesNode<StandardPropertyGroup, Standard
             }
             if ("contents" in property) {
                 new PropertyGroupNode({
+                    group: this,
                     groupContents: this.value.contents,
                     index,
-                    blockOptions: merge({}, this.blockOptions, property.blockOptions ?? {}),
                     value: property
                 }).traverse(visitors)
                 continue
             }
             new PropertyTypesNode({
+                group: this,
                 groupContents: this.value.contents,
                 index,
-                blockOptions: merge({}, this.blockOptions, property.blockOptions ?? {}),
                 value: property
             }).traverse(visitors)
         }
-        exit(this, visitors.PropertyGroup)
+        exitNode(this, visitors.PropertyGroup)
     }
 }
 
 export class PropertyTypesNode extends TypesNode<StandardPropertyTypes, StandardPropertiesItem> {
     public override traverse(this: this, visitors: TypesVisitors): void {
-        entry(this, visitors.PropertyTypes)
-        exit(this, visitors.PropertyTypes)
+        enterNode(this, visitors.PropertyTypes)
+        exitNode(this, visitors.PropertyTypes)
     }
 }
 
 export class MethodGroupNode extends TypesNode<StandardMethodGroup, StandardMethodsItem> {
     public override traverse(this: this, visitors: TypesVisitors): void {
-        entry(this, visitors.MethodGroup)
+        if (!(
+            hasVisitor(visitors.MethodGroup) ||
+            hasVisitor(visitors.MethodTypes) ||
+            hasVisitor(visitors.EventTypes) ||
+            hasVisitor(visitors.BlockBoxOptions)
+        )) {
+            return
+        }
+        enterNode(this, visitors.MethodGroup)
         for (
             const index = { value: 0 };
             index.value <= this.value.contents.length;
@@ -195,12 +251,9 @@ export class MethodGroupNode extends TypesNode<StandardMethodGroup, StandardMeth
             }
             if ("contents" in method) {
                 new MethodGroupNode({
+                    group: this,
                     groupContents: this.value.contents,
                     index,
-                    blockOptions: {
-                        ...this.blockOptions,
-                        ...method.blockOptions
-                    },
                     value: method
                 }).traverse(visitors)
                 continue
@@ -209,79 +262,139 @@ export class MethodGroupNode extends TypesNode<StandardMethodGroup, StandardMeth
                 switch (method.type) {
                     case BlockType.METHOD:
                         new MethodTypesNode({
+                            group: this,
                             groupContents: this.value.contents,
                             index,
-                            blockOptions: {
-                                ...this.blockOptions,
-                                ...method.blockOptions
-                            },
                             value: method as StandardMethodTypes
                         }).traverse(visitors)
                         break
                     case BlockType.EVENT:
                         new EventTypesNode({
+                            group: this,
                             groupContents: this.value.contents,
                             index,
-                            blockOptions: {
-                                ...this.blockOptions,
-                                ...method.blockOptions
-                            },
                             value: method as StandardEventTypes
                         }).traverse(visitors)
                         break
                 }
             } else {
                 new BlockBoxOptionsNode({
+                    group: this,
                     groupContents: this.value.contents,
                     index,
-                    blockOptions: null,
                     value: method
                 }).traverse(visitors)
             }
         }
-        exit(this, visitors.MethodGroup)
+        exitNode(this, visitors.MethodGroup)
     }
 }
 
 export class MethodTypesNode extends TypesNode<StandardMethodTypes, StandardMethodsItem> {
     public override traverse(this: this, visitors: TypesVisitors): void {
-        entry(this, visitors.MethodTypes)
-        exit(this, visitors.MethodTypes)
+        enterNode(this, visitors.MethodTypes)
+        exitNode(this, visitors.MethodTypes)
     }
 }
 
 export class EventTypesNode extends TypesNode<StandardEventTypes, StandardMethodsItem> {
     public override traverse(this: this, visitors: TypesVisitors): void {
-        entry(this, visitors.EventTypes)
-        exit(this, visitors.EventTypes)
+        enterNode(this, visitors.EventTypes)
+        exitNode(this, visitors.EventTypes)
     }
 }
 
 export class BlockBoxOptionsNode extends TypesNode<BlockBoxOptions, StandardMethodsItem> {
     public override traverse(this: this, visitors: TypesVisitors): void {
-        entry(this, visitors.BlockBoxOptions)
-        exit(this, visitors.BlockBoxOptions)
+        enterNode(this, visitors.BlockBoxOptions)
+        exitNode(this, visitors.BlockBoxOptions)
     }
 }
 
-function entry<T extends TypesNode<unknown, unknown>>(node: T, visitor?: TypesNodeVisitor<T> | null | undefined): void {
-    if (visitor == null) {
-        return
-    }
-    if (typeof visitor == "function") {
-        visitor(node)
-    } else if (visitor.entry != null) {
-        visitor.entry(node)
-    }
+function hasVisitor<T extends UnknownTypesNode>(
+    visitor: TypesNodeVisitor<T> | null | undefined
+): boolean {
+    return getVisitorCache(visitor, "has", (): boolean => (hasEnter(visitor) || hasExit(visitor)))
 }
 
-function exit<T extends TypesNode<unknown, unknown>>(node: T, visitor?: TypesNodeVisitor<T> | null | undefined): void {
+function hasEnter<T extends UnknownTypesNode>(
+    visitor: TypesNodeVisitor<T> | null | undefined
+): boolean {
+    return getVisitorCache(visitor, "hasEnter", (): boolean => (
+        visitor != null && (
+            typeof visitor == "function" ||
+            visitor.enter != null ||
+            visitor.entry != null
+        )
+    ))
+}
+
+function hasExit<T extends UnknownTypesNode>(
+    visitor: TypesNodeVisitor<T> | null | undefined
+): boolean {
+    return getVisitorCache(visitor, "hasExit", (): boolean => (
+        visitor != null && typeof visitor != "function" && visitor.exit != null
+    ))
+}
+
+function NULL_TYPES_NODE_VISITOR_FUNCTION(): void {}
+
+function enterNode<T extends UnknownTypesNode>(
+    node: T,
+    visitor: TypesNodeVisitor<T> | null | undefined
+): void {
+    getVisitorCache(visitor, "enter", (): (node: T) => void => {
+        if (visitor == null) {
+            return NULL_TYPES_NODE_VISITOR_FUNCTION
+        }
+        if (typeof visitor == "function") {
+            return visitor
+        } else if (visitor.enter != null) {
+            return visitor.enter
+        } else if (visitor.entry != null) {
+            return visitor.entry
+        }
+        return NULL_TYPES_NODE_VISITOR_FUNCTION
+    })(node)
+}
+
+function exitNode<T extends UnknownTypesNode>(
+    node: T,
+    visitor: TypesNodeVisitor<T> | null | undefined
+): void {
+    getVisitorCache(visitor, "exit", (): (node: T) => void => {
+        if (visitor != null && typeof visitor == "object" && visitor.exit != null) {
+            return visitor.exit
+        }
+        return NULL_TYPES_NODE_VISITOR_FUNCTION
+    })(node)
+}
+
+const NULL_TYPES_NODE_VISITOR_CACHE: TypesVisitorCache<UnknownTypesNode> = {
+    has: false,
+    hasEnter: false,
+    hasExit: false
+}
+
+function getVisitorCache<T extends UnknownTypesNode, P extends keyof TypesVisitorCache<T>>(
+    visitor: TypesNodeVisitor<T> | null | undefined,
+    property: P,
+    loader: () => NonNullable<TypesVisitorCache<T>[P]>
+): NonNullable<TypesVisitorCache<T>[P]> {
+    let visitorCache: TypesVisitorCache<T>
     if (visitor == null) {
-        return
+        visitorCache = NULL_TYPES_NODE_VISITOR_CACHE
+    } else {
+        if (visitor.__slightning_coco_widget_visitor_cache__ == null) {
+            visitor.__slightning_coco_widget_visitor_cache__ = {}
+        }
+        visitorCache = visitor.__slightning_coco_widget_visitor_cache__
     }
-    if (typeof visitor != "function" && visitor.exit != null) {
-        visitor.exit(node)
+    const value: TypesVisitorCache<T>[P] = visitorCache[property]
+    if (value == null) {
+        return visitorCache[property] = loader()
     }
+    return value
 }
 
 export function methodParamNeedsTransformToEvent(

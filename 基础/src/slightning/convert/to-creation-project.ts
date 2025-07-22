@@ -33,7 +33,7 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
     let addSpace: boolean | number = false
     traverseTypes(types, {
         PropertyGroup: {
-            entry(node: PropertyGroupNode): void {
+            enter(node: PropertyGroupNode): void {
                 if (node.value.label != null) {
                     labels.push(node.value.label)
                     showLine = true
@@ -71,7 +71,7 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
             }
         },
         MethodGroup: {
-            entry(node: MethodGroupNode): void {
+            enter(node: MethodGroupNode): void {
                 if (node.value.label != null) {
                     labels.push(node.value.label)
                     showLine = true
@@ -87,17 +87,18 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
             }
         },
         MethodTypes(node: MethodTypesNode): void {
-            if (node.value.throws != null && !(node.value.throws instanceof VoidType)) {
-                throw new Error(`无法将方法 ${node.value.label} 的抛出类型转为 Creation Project 类型`)
+            const { value: method } = node
+            if (method.throws != null && !(method.throws instanceof VoidType)) {
+                throw new Error(`无法将方法 ${method.label} 的抛出类型转为 Creation Project 类型`)
             }
-            const deprecated: boolean | string = node.value.deprecated ?? node.blockOptions.deprecated ?? false
+            const deprecated: boolean | string = method.deprecated ?? node.blockOptions.deprecated ?? false
             const transformed: CreationProject.MethodTypes = {
-                key: node.value.key,
+                key: method.key,
                 tipBefore: "",
                 tipAfter: "",
                 params: [],
-                ...node.value.returns?.toCreationProjectMethodValueTypes(),
-                tooltip: node.value.tooltip ?? undefined,
+                ...method.returns?.toCreationProjectMethodValueTypes(),
+                tooltip: method.tooltip ?? undefined,
                 color: deprecated ? Color.GREY : node.blockOptions.color ?? undefined,
                 flyoutOptions: {
                     line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined
@@ -116,7 +117,8 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                     transformed.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法\n\n${transformed.tooltip}`
                 }
             }
-            if (node.blockOptions.inline ?? true) {
+            const inline: boolean = node.blockOptions.inline ?? true
+            if (inline || method.block.includes(MethodBlockParam.BREAK_LINE)) {
                 let lastParam: CreationProject.MethodParamTypes | null = null
                 let labelsAfterLastParam: string[] = []
                 function addText(text: string): void {
@@ -125,21 +127,28 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                     } else {
                         if (lastParam.label == null) {
                             lastParam.label = text
+                        } else if (
+                            text.endsWith("\n") ||
+                            lastParam.label.startsWith("\n")
+                        ) {
+                            lastParam.label = text + lastParam.label
                         } else {
                             lastParam.label = text + " " + lastParam.label
                         }
                     }
                 }
-                let i: number = node.value.block.length - 1
+                let i: number = method.block.length - 1
                 for (; i >= 0; i--) {
-                    const part: StandardMethodBlockItem | undefined = node.value.block[i]
+                    const part: StandardMethodBlockItem | undefined = method.block[i]
                     if (part == undefined) {
                         continue
                     }
                     if (part == MethodBlockParam.THIS) {
                         break
                     } else if (part == MethodBlockParam.METHOD) {
-                        addText(node.value.label)
+                        addText(method.label)
+                    } else if (part == MethodBlockParam.BREAK_LINE) {
+                        addText(inline ? "" : "\n")
                     } else if (typeof part == "string") {
                         addText(part)
                     } else {
@@ -154,8 +163,8 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                         transformed.params.unshift(lastParam)
                     }
                 }
-                if (node.value.block[i] != MethodBlockParam.THIS) {
-                    throw new Error(`方法 ${node.value.label} 缺少 this 参数`)
+                if (method.block[i] != MethodBlockParam.THIS) {
+                    throw new Error(`方法 ${method.label} 缺少 this 参数`)
                 }
                 if (labelsAfterLastParam.length > 0) {
                     transformed.label = labelsAfterLastParam.join(" ")
@@ -163,30 +172,32 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                 i--
                 let labelsBeforeThis: string[] = []
                 for (; i >= 0; i--) {
-                    const part: StandardMethodBlockItem | undefined = node.value.block[i]
+                    const part: StandardMethodBlockItem | undefined = method.block[i]
                     if (part == undefined) {
                         continue
                     }
                     if (part == MethodBlockParam.THIS) {
-                        throw new Error(`方法只能有一个 this 参数，而方法 ${node.value.label} 有多个 this 参数`)
+                        throw new Error(`方法只能有一个 this 参数，而方法 ${method.label} 有多个 this 参数`)
                     } else if (part == MethodBlockParam.METHOD) {
-                        labelsBeforeThis.unshift(node.value.label)
+                        labelsBeforeThis.unshift(method.label)
+                    } else if (part == MethodBlockParam.BREAK_LINE) {
+                        labelsBeforeThis.unshift(inline ? "" : "\n")
                     } else if (typeof part == "string") {
                         labelsBeforeThis.unshift(part)
                     } else {
-                        throw new Error(`方法 ${node.value.label} 的积木 this 参数前存在他参数，不能将其转为 Creation Project 类型`)
+                        throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 Creation Project 类型`)
                     }
                 }
                 if (deprecated != false) {
                     labelsBeforeThis.unshift("[已弃用]")
                 }
-                transformed.tipBefore = labelsBeforeThis.join(" ")
+                transformed.tipBefore = labelsBeforeThis.join(" ").replace(/( )?\n( )?/g, "\n")
             } else {
                 if (deprecated != false) {
                     transformed.tipBefore = "[已弃用]"
                 }
-                transformed.label = node.value.label
-                for (const part of node.value.block) {
+                transformed.label = method.label
+                for (const part of method.block) {
                     if (typeof part != "object") {
                         continue
                     }

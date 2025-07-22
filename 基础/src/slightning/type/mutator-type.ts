@@ -1,12 +1,13 @@
 import * as CreationProject from "../../creation-project/type"
 import { standardizeMethodBlock } from "../convert/standardize-types"
-import { MethodBlock, StandardMethodBlock, StandardMethodBlockItem } from "../types"
+import { MethodBlock, MethodBlockParam, StandardMethodBlock, StandardMethodBlockItem } from "../types"
 import { ArrayType } from "./array-type"
 import { ObjectType } from "./object-type"
 
 export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayType<T> {
 
     public readonly block: StandardMethodBlock
+    public readonly separator: string
     public readonly min: number
     public readonly max: number
     public readonly defaultNumber: number
@@ -14,9 +15,10 @@ export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayTy
     public readonly transformMax: number
 
     public constructor({
-        block, min, max, defaultNumber, transformMin, transformMax
+        block, separator, min, max, defaultNumber, transformMin, transformMax
     }: {
-        block: MethodBlock,
+        block: MethodBlock
+        separator?: string | null | undefined
         min?: number | null | undefined
         max?: number | null | undefined
         defaultNumber?: number | null | undefined
@@ -33,6 +35,7 @@ export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayTy
         const itemType = new ObjectType<T>({ propertiesType })
         super({ itemType })
         this.block = standardBlock
+        this.separator = separator ?? ""
         this.min = min ?? 2
         this.max = max ?? Infinity
         this.defaultNumber = defaultNumber ?? this.min
@@ -50,18 +53,26 @@ export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayTy
             } else {
                 if (mutatorLastParam.label == null) {
                     mutatorLastParam.label = text
+                } else if (
+                    mutatorLastParam.label.endsWith("\n") ||
+                    text.startsWith("\n")
+                ) {
+                    mutatorLastParam.label += text
                 } else {
                     mutatorLastParam.label += " " + text
                 }
             }
         }
-        let i: number = this.block.length - 1
+        const block: StandardMethodBlock = [...this.block, this.separator]
+        let i: number = block.length - 1
         for (; i >= 0; i--) {
-            const mutatorPart: StandardMethodBlockItem | undefined = this.block[i]
+            const mutatorPart: StandardMethodBlockItem | undefined = block[i]
             if (mutatorPart == undefined) {
                 continue
             }
-            if (typeof mutatorPart == "string") {
+            if (mutatorPart == MethodBlockParam.BREAK_LINE) {
+                mutatorAddText("\n")
+            } else if (typeof mutatorPart == "string") {
                 mutatorAddText(mutatorPart)
             } else {
                 mutatorLastParam = {

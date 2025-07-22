@@ -37,9 +37,32 @@ export function excludeBoolean<T>(value: T | boolean): T | null {
 }
 
 export function XMLEscape(text: string): string {
-    const element: HTMLElement = document.createElement("div")
-    element.innerText = text
-    return element.innerHTML
+    return text
+        .replace(/\n/g, "&#10;")
+        .replace(/\u0020/gu, "&#32;")
+        .replace(/"/g, "&#34;")
+        .replace(/'/g, "&#39;")
+        .replace(/</g, "&#60;")
+        .replace(/>/g, "&#62;")
+        .replace(/\u2002/gu, "&#8194;")
+        .replace(/\u2003/gu, "&#8195;")
+        .replace(/\u00A0/gu, "&#160;")
+        .replace(/　/g, "&#12288;")
+}
+
+export function splitArray<T>(array: T[], separator: T): T[][] {
+    const result: T[][] = []
+    let part: T[] = []
+    for (const item of array) {
+        if (item === separator) {
+            result.push(part)
+            part = []
+            continue
+        }
+        part.push(item)
+    }
+    result.push(part)
+    return result
 }
 
 export function addMessageToError(message: string, error: unknown): unknown {

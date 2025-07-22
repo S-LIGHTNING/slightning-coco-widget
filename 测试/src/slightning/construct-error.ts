@@ -1,5 +1,5 @@
 import React from "react"
-import { addCheck, addThisForMethods, Color, exportWidget, generateBlockForProperties, getSuperWidget, IntegerType, Logger, MethodBlockParam, transformIcons, Types } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, Color, exportWidget, generateBlockForProperties, getSuperWidget, Logger, MethodBlockParam, transformIcons, Types } from "slightning-coco-widget"
 
 const types: Types = {
     type: "SLIGHTNING_TEST_CONSTRUCT_ERROR_WIDGET",
@@ -7,25 +7,21 @@ const types: Types = {
         title: "测试构造错误",
         icon: "icon-widget-radio",
         category: "测试 SCW",
+        version: "2.5.0",
+        url: {
+            homepage: "https://s-lightning.github.io/slightning-coco-widget/",
+            docs: "https://s-lightning.github.io/slightning-coco-widget/",
+            repository: "https://gitee.com/slightning/slightning-coco-widget",
+            bugReport: "https://gitee.com/slightning/slightning-coco-widget/issues/new",
+        }
     },
     options: {
         visible: true,
         global: false
     },
     properties: [
-        {
-            key: "__width",
-            label: "宽度",
-            type: new IntegerType({
-                defaultValue: 300
-            })
-        }, {
-            key: "__height",
-            label: "高度",
-            type: new IntegerType({
-                defaultValue: 300
-            })
-        }
+        ["__width", "宽度", 300],
+        ["__height", "高度", 300]
     ],
     methods: [
         {
@@ -36,7 +32,7 @@ const types: Types = {
                 {
                     key: "method",
                     label: "方法",
-                    block: [MethodBlockParam.METHOD]
+                    block: [MethodBlockParam.THIS, MethodBlockParam.METHOD]
                 }
             ]
         }
@@ -67,19 +63,11 @@ class TestConstructErrorWidget extends getSuperWidget(types) {
 
 exportWidget(types, TestConstructErrorWidget, {
     decorators: [
-        generateBlockForProperties
-    ],
-    CoCo: {
-        decorators: [
+        { "CoCo|CreationProject": [
+            generateBlockForProperties,
             addThisForMethods,
-            addCheck
-        ]
-    },
-    CreationProject: {
-        decorators: [
-            addThisForMethods,
-            addCheck,
-            transformIcons
-        ]
-    }
+        ]},
+        addCheck,
+        { CreationProject: transformIcons }
+    ]
 })

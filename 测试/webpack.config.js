@@ -12,7 +12,7 @@ const SCW = require("slightning-coco-widget--webpack")
 module.exports = merge(SCW.config, {
     mode: "development",
     stats: "minimal",
-    entry: () => {
+    entry() {
         /** @type {Record<string, string>} */
         const entry = {}
 

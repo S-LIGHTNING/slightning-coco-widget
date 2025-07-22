@@ -1,4 +1,4 @@
-import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, BooleanType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, NumberType, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator, StringInputType } from "slightning-coco-widget"
 import _ from "lodash"
 
 const types: Types = {
@@ -7,41 +7,40 @@ const types: Types = {
         title: "测试基础功能",
         icon: "icon-widget-radio",
         category: "测试 SCW",
+        version: "2.5.0",
+        url: {
+            homepage: "https://s-lightning.github.io/slightning-coco-widget/",
+            docs: "https://s-lightning.github.io/slightning-coco-widget/",
+            repository: "https://gitee.com/slightning/slightning-coco-widget",
+            bugReport: "https://gitee.com/slightning/slightning-coco-widget/issues/new",
+        }
     },
     options: {
         visible: false,
         global: false
     },
     properties: [
-        {
-            key: "testPropertyDefaultKeyDefaultCalculateMethod",
-            label: "测试属性默认键默认计算函数",
-            type: new StringType("测试属性默认键默认计算函数默认值")
-        }, {
-            key: "testPropertyCustomKeyDefaultCalculateMethod",
-            label: "测试属性自定义键默认计算函数",
-            type: new StringType("测试属性自定义键默认计算函数默认值"),
-            blockOptions: {
-                get: {
-                    key: "customKeyDefaultGet"
-                },
-                set: {
-                    key: "customKeyDefaultSet"
-                }
-            }
-        }, {
-            key: "testPropertyCustomKeyCustomCalculateMethod",
-            label: "测试属性自定义键自定义计算函数",
-            type: new StringType("测试属性自定义键自定义计算函数默认值"),
-            blockOptions: {
-                get: {
-                    key: "customKeyCustomGet"
-                },
-                set: {
-                    key: "customKeyCustomSet"
-                }
-            }
-        }
+        [
+            "testPropertyDefaultKeyDefaultCalculateMethod",
+            "测试属性默认键默认计算函数",
+            "测试属性默认键默认计算函数默认值"
+        ], [
+            "testPropertyCustomKeyDefaultCalculateMethod",
+            "测试属性自定义键默认计算函数",
+            "测试属性自定义键默认计算函数默认值",
+            { blockOptions: {
+                get: { key: "customKeyDefaultGet" },
+                set: { key: "customKeyDefaultSet" }
+            } }
+        ], [
+            "testPropertyCustomKeyCustomCalculateMethod",
+            "测试属性自定义键自定义计算函数",
+            "测试属性自定义键自定义计算函数默认值",
+            { blockOptions: {
+                get: { key: "customKeyCustomGet" },
+                set: { key: "customKeyCustomSet" }
+            }}
+        ]
     ],
     methods: [{ blockOptions: {
         icon: "icon-widget-radio",
@@ -53,338 +52,165 @@ const types: Types = {
                 {
                     label: "测试子组",
                     contents: [
-                        {
-                            key: "testGroupMethod",
-                            label: "测试组方法",
-                            block: [
-                                MethodBlockParam.THIS, MethodBlockParam.METHOD
-                            ]
-                        }
+                        ["testGroupMethod", "测试组方法", [
+                            MethodBlockParam.THIS, MethodBlockParam.METHOD
+                        ]]
                     ]
                 }, {
                     label: "测试无标签组",
                     contents: [
-                        {
-                            contents: [
-                                {
-                                    key: "testGroupWithoutLabelMethod1",
-                                    label: "测试无标签组方法1",
-                                    block: [
-                                        MethodBlockParam.THIS, MethodBlockParam.METHOD
-                                    ]
-                                }
-                            ]
-                        }, {
-                            contents: [
-                                    {
-                                    key: "testGroupWithoutLabelMethod2",
-                                    label: "测试无标签组方法2",
-                                    block: [
-                                        MethodBlockParam.THIS, MethodBlockParam.METHOD
-                                    ]
-                                }
-                            ]
-                        }
+                        { contents: [
+                            ["testGroupWithoutLabelMethod1", "测试无标签组方法1", [
+                                MethodBlockParam.THIS, MethodBlockParam.METHOD
+                            ]]
+                        ]},
+                        { contents: [
+                            ["testGroupWithoutLabelMethod2", "测试无标签组方法2", [
+                                MethodBlockParam.THIS, MethodBlockParam.METHOD
+                            ]]
+                        ]}
                     ]
                 }
             ]
         }, { label: "事件", blockOptions: {
             color: Color.BLUE
         }, contents: [
-            {
-                key: "emitTestEvent",
-                label: "触发测试事件",
-                block: [
-                    MethodBlockParam.METHOD
-                ]
-            }, {
-                key: "emitTestEventSubTypes",
-                label: "触发测试事件子类型",
-                block: [
-                    "触发", "测试事件子类型", {
-                        key: "subType1",
-                        label: "子类型1",
-                        type: new StringEnumType([
-                            { label: "测试1", value: "test1" },
-                            { label: "测试2", value: "test2" }
-                        ])
-                    }, {
-                        key: "subType2",
-                        label: "子类型2",
-                        type: new StringEnumType([
-                            { label: "测试3", value: "test3" },
-                            { label: "测试4", value: "test4" }
-                        ])
-                    }
-                ]
-            }
+            ["emitTestEvent", "触发测试事件", [MethodBlockParam.METHOD]],
+            ["emitTestEventSubTypes", "触发测试事件子类型", [
+                "触发", "测试事件子类型",
+                ["subType1", "子类型1", [
+                    ["测试1", "test1"],
+                    ["测试2", "test2"]
+                ]],
+                ["subType2", "子类型2", [
+                    ["测试3", "test3"],
+                    ["测试4", "test4"]
+                ]]
+            ]]
         ]}, { label: "方法", blockOptions: {
             color: Color.CYAN
         }, contents: [
-            {
-                key: "testMethodText",
-                label: "测试方法说明文本",
-                block: [
-                    "0", MethodBlockParam.METHOD, "1", MethodBlockParam.THIS, "2", MethodBlockParam.METHOD, "3", {
-                        key: "string",
-                        label: "字符串",
-                        type: new StringType("字符串")
-                    }, "4", MethodBlockParam.METHOD, "5"
-                ]
-            }, {
-                key: "testMethodParams",
-                label: "测试方法参数",
-                block: [
-                    "字符串", {
-                        key: "string",
-                        label: "字符串",
-                        type: new StringType("字符串")
-                    }, "整数", {
-                        key: "integer",
-                        label: "整数",
-                        type: new IntegerType(0)
-                    }, "数字", {
-                        key: "number",
-                        label: "数字",
-                        type: new NumberType(0)
-                    }, "布尔", {
-                        key: "boolean",
-                        label: "布尔",
-                        type: new BooleanType(false)
-                    }, "任意", {
-                        key: "any",
-                        label: "任意",
-                        type: new AnyType({ defaultValue: null })
-                    }, "字符串枚举", {
-                        key: "stringEnum",
-                        label: "字符串枚举",
-                        type: new StringEnumType([
-                            { label: "选项1", value: "option1" },
-                            { label: "选项2", value: "option2" }
-                        ])
-                    }, "字典", {
-                        key: "object",
-                        label: "字典",
-                        type: new ObjectType({
-                            propertiesType: {
-                                property1: new StringType("属性1"),
-                                property2: new IntegerType(0)
-                            }
-                        })
-                    }, "列表", {
-                        key: "array",
-                        label: "列表",
-                        type: new ArrayType({
-                            itemType: new StringType("列表项")
-                        })
-                    }, "颜色", {
-                        key: "color",
-                        label: "颜色",
-                        type: new ColorType(Color.BLUE)
-                    }, "图片", {
-                        key: "image",
-                        label: "图片",
-                        type: new ImageType()
-                    }, "音频", {
-                        key: "audio",
-                        label: "音频",
-                        type: new AudioType()
-                    }, "视频", {
-                        key: "video",
-                        label: "视频",
-                        type: new VideoType()
-                    }, "联合", {
-                        key: "union",
-                        label: "联合",
-                        type: new UnionType<string | number>(
-                            new StringType("联合"), new IntegerType()
-                        )
-                    }, "实例", {
-                        key: "instance",
-                        label: "实例",
-                        type: new InstanceOfClassType(Object)
-                    }, "函数", {
-                        key: "function",
-                        label: "函数",
-                        type: new FunctionType({
-                            block: [
-                                {
-                                    key: "param1",
-                                    label: "参数1",
-                                    type: new StringType("参数1")
-                                }, {
-                                    key: "param2",
-                                    label: "参数2",
-                                    type: new IntegerType(0)
-                                }
-                            ],
-                            returns: new AnyType(),
-                            throws: new AnyType()
-                        })
+            ["testMethodText", "测试方法说明文本", [
+                "0", MethodBlockParam.METHOD, "1", MethodBlockParam.THIS, "2", MethodBlockParam.METHOD, "3",
+                ["string", "字符串", "字符串"],
+                "4", MethodBlockParam.METHOD, "5"
+            ]],
+            ["testMultilineMethod", "测试方法多行积木", [
+                "0", MethodBlockParam.METHOD, "1", MethodBlockParam.THIS, "2", MethodBlockParam.METHOD, "3", MethodBlockParam.BREAK_LINE,
+                MethodBlockParam.METHOD, "宽度", ["width", "宽度", 300], "px", MethodBlockParam.BREAK_LINE,
+                MethodBlockParam.METHOD, "高度", ["height", "高度", 300], "px"
+            ],, { blockOptions: { inline: false } }],
+            ["testMethodParams", "测试方法参数", [
+                ["string", "字符串", "字符串"],
+                ["multilineString", "多行字符串", new StringType({
+                    defaultValue: "多行\n字符串",
+                    inputType: StringInputType.MULTILINE
+                })],
+                ["integer", "整数", new IntegerType(0)],
+                ["number", "数字", 0],
+                ["boolean", "布尔", false],
+                ["any", "任意", new AnyType({ defaultValue: null })],
+                ["stringEnum", "字符串枚举", new StringEnumType([
+                    ["选项1", "option1"],
+                    ["选项2", "option2"]
+                ])],
+                ["object", "字典", new ObjectType({
+                    propertiesType: {
+                        property1: new StringType("属性1"),
+                        property2: new IntegerType(0)
                     }
-                ]
-            }, {
-                key: "testMethodThrowsNoReturns",
-                label: "测试方法无返回值抛出异常",
-                block: [
-                    MethodBlockParam.METHOD, {
-                        key: "type",
-                        label: "类型",
-                        type: new StringEnumType([
-                            { label: "返回", value: "returns" },
-                            { label: "抛出", value: "throws" }
-                        ])
-                    }
-                ],
-                throws: new AnyType()
-            }, {
-                key: "testMethodThrowsWithReturns",
-                label: "测试方法有返回值抛出异常",
-                block: [
-                    MethodBlockParam.METHOD, {
-                        key: "type",
-                        label: "类型",
-                        type: new StringEnumType([
-                            { label: "返回", value: "returns" },
-                            { label: "抛出", value: "throws" }
-                        ])
-                    }
-                ],
-                returns: new AnyType(),
-                throws: new AnyType()
-            }, {
-                key: "testMethodCallbackFunction",
-                label: "测试方法回调函数",
-                block: [
-                    MethodBlockParam.METHOD, {
-                        key: "callback",
-                        label: "回调",
-                        type: new FunctionType({
-                            block: [],
-                            returns: new StringType(),
-                            throws: new StringType()
-                        })
-                    }
-                ],
-                returns: new StringType(),
-            }, {
-                key: "testMethodEfferentFunction",
-                label: "测试方法传出函数",
-                block: [
-                    MethodBlockParam.METHOD, {
-                        key: "callback",
-                        label: "回调",
-                        type: new FunctionType({
-                            block: [
-                                {
-                                    key: "function",
-                                    label: "函数",
-                                    type: new FunctionType({
-                                        block: []
-                                    })
-                                }
-                            ]
-                        })
-                    }
-                ],
-                returns: new UnionType<unknown>(
-                    new ObjectType({
-                        propertiesType: {
-                            "函数": new FunctionType({
-                                block: []
-                            })
-                        }
-                    }),
-                    new ArrayType({
-                        itemType: new FunctionType({
-                            block: []
-                        })
-                    })
-                )
-            }, {
-                key: "testMethodMutatorParam",
-                label: "测试方法变更器参数",
-                block: [
-                    MethodBlockParam.THIS, MethodBlockParam.METHOD, {
-                        key: "mutator",
-                        label: "变更器",
-                        type: new MutatorType({
-                            block: [
-                                {
-                                    key: "key",
-                                    label: "键",
-                                    type: new StringType("键")
-                                }, ":", {
-                                    key: "value",
-                                    label: "值",
-                                    type: new AnyType("值")
-                                }, ","
-                            ],
-                            min: 0,
-                            defaultNumber: 1
-                        })
-                    }
-                ],
-                returns: new ObjectType()
-            }
+                })],
+                ["array", "列表", new ArrayType({
+                    itemType: new StringType("列表项")
+                })],
+                ["color", "颜色", new ColorType(Color.BLUE)],
+                ["image", "图片", new ImageType()],
+                ["audio", "音频", new AudioType()],
+                ["video", "视频", new VideoType()],
+                ["union", "联合", new UnionType<string | number>(
+                    new StringType("联合"), new IntegerType()
+                )],
+                ["instance", "实例", new InstanceOfClassType(Object)],
+                ["function", "函数", new FunctionType({
+                    block: [
+                        ["param1", "参数1", "参数1"],
+                        ["param2", "参数2", new IntegerType(0)]
+                    ],
+                    returns: new AnyType(),
+                    throws: new AnyType()
+                })]
+            ],, {
+                blockOptions: { inline: false }
+            }],
+            ["testMethodThrowsNoReturns", "测试方法无返回值抛出异常", [
+                MethodBlockParam.METHOD,
+                ["type", "类型", new StringEnumType([
+                    ["返回", "returns"],
+                    ["抛出", "throws"]
+                ])]
+            ],, { throws: new AnyType() }
+            ],
+            ["testMethodThrowsWithReturns", "测试方法有返回值抛出异常", [
+                MethodBlockParam.METHOD,
+                ["type", "类型", new StringEnumType([
+                    ["返回", "returns"],
+                    ["抛出", "throws"]
+                ])]
+            ], new AnyType(), { throws: new AnyType() }],
+            ["testMethodCallbackFunction", "测试方法回调函数", [
+                MethodBlockParam.METHOD,
+                ["callback", "回调", new FunctionType({
+                    block: [],
+                    returns: new StringType(),
+                    throws: new StringType()
+                })]
+            ], new StringType()],
+            ["testMethodEfferentFunction", "测试方法传出函数", [
+                MethodBlockParam.METHOD,
+                ["callback", "回调", new FunctionType({
+                    block: [["function", "函数", new FunctionType({ block: [] })]]
+                })]
+            ], new UnionType<unknown>(
+                new ObjectType({ propertiesType: { "函数": new FunctionType({ block: [] }) } }),
+                new ArrayType({ itemType: new FunctionType({ block: [] }) })
+            )],
+            ["testMethodMutatorParam", "测试方法变更器参数", [
+                MethodBlockParam.THIS, MethodBlockParam.BREAK_LINE,
+                MethodBlockParam.METHOD,
+                ["mutator", "变更器", new MutatorType({
+                    block: [
+                        MethodBlockParam.BREAK_LINE, ["key", "键", "键"], ":",
+                        ["value", "值", new AnyType("值")]
+                    ],
+                    separator: ",",
+                    min: 0,
+                    defaultNumber: 1
+                })]
+            ], new ObjectType(), {
+                blockOptions: { inline: false }
+            }]
         ]}, { label: "内部", contents: [
-            {
-                key: "exportedWidgetTypes",
-                label: "导出的控件类型定义",
-                block: [MethodBlockParam.METHOD],
-                returns: new ObjectType()
-            }
+            ["exportedWidgetTypes", "导出的控件类型定义", [MethodBlockParam.METHOD], new ObjectType()]
         ]}
     ]}],
     events: [
-        {
-            key: "onCustomKeyCustomGet",
-            label: "自定义键自定义获取",
-            params: []
-        }, {
-            key: "onCustomKeyCustomSet",
-            label: "自定义键自定义设置",
-            params: []
-        }, {
-            key: "onTestEvent",
-            label: "测试事件",
-            params: []
-        }, {
-            key: "onTestEventSubTypes",
-            label: "测试事件子类型",
-            subTypes: [
-                {
-                    key: "subType0",
-                    dropdown: [
-                        { label: "测试1", value: "test1" },
-                        { label: "测试2", value: "test2" }
-                    ]
-                }, {
-                    key: "subType1",
-                    dropdown: [
-                        { label: "测试3", value: "test3" },
-                        { label: "测试4", value: "test4" }
-                    ]
-                }
-            ],
-            params: []
-        }, {
-            key: "onEfferentFunctionCalled",
-            label: "传出函数被调用",
-            params: []
-        }, {
-            key: "onTestEventEfferentFunction",
-            label: "测试事件传出函数",
-            params: [
-                {
-                    key: "function",
-                    label: "函数",
-                    type: new FunctionType({
-                        block: []
-                    })
-                }
-            ]
-        }
+        ["onCustomKeyCustomGet", "自定义键自定义获取", []],
+        ["onCustomKeyCustomSet", "自定义键自定义设置", []],
+        ["onTestEvent", "测试事件", []],
+        ["onTestEventSubTypes", "测试事件子类型", [
+            ["subType0", [
+                [ "测试1", "test1" ],
+                [ "测试2", "test2" ]
+            ]],
+            ["subType1", [
+                [ "测试3", "test3" ],
+                [ "测试4", "test4" ]
+            ]]
+        ], []],
+        ["onEfferentFunctionCalled", "传出函数被调用", []],
+        ["onTestEventEfferentFunction", "测试事件传出函数", [
+            ["function", "函数", new FunctionType({ block: [] })]
+        ]]
     ]
 }
 
@@ -473,9 +299,11 @@ class TestBaseWidget extends getSuperWidget(types) {
 
 exportWidget(types, TestBaseWidget, {
     decorators: [
-        generateMethodForFunctions,
-        generateBlockForProperties,
-        transformMethodsThrows,
+        { "CoCo|CreationProject": [
+            generateBlockForProperties,
+            generateMethodForFunctions,
+            transformMethodsThrows
+        ]},
         { CreationProject: flattenEventSubTypes },
         {
             CoCo: transformMethodsCallbackFunctionsToEvents,
@@ -483,8 +311,9 @@ exportWidget(types, TestBaseWidget, {
         },
         addThisForMethods,
         addCheck,
-        transformMutator,
         {
+            "CoCo|CreationProject": transformMutator
+        }, {
             CoCo: transformIconsExceptWidgetIcon,
             CreationProject: transformIcons
         }

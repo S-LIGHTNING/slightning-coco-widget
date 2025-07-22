@@ -1,4 +1,4 @@
-import { addCheck, addThisForMethods, AnyType, Color, exportWidget, generateBlockForProperties, getSuperWidget, IntegerType, MethodBlockParam, transformIcons, Types } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, Color, exportWidget, generateBlockForProperties, getSuperWidget, MethodBlockParam, transformIcons, Types } from "slightning-coco-widget"
 
 const types: Types = {
     type: "SLIGHTNING_TEST_ERROR_WIDGET",
@@ -6,12 +6,12 @@ const types: Types = {
         title: "测试错误",
         icon: "icon-widget-radio",
         category: "测试 SCW",
-        version: "1.0.0",
+        version: "2.5.0",
         url: {
-            homepage: "",
-            docs: "",
-            repository: "",
-            bugReport: "",
+            homepage: "https://s-lightning.github.io/slightning-coco-widget/",
+            docs: "https://s-lightning.github.io/slightning-coco-widget/",
+            repository: "https://gitee.com/slightning/slightning-coco-widget",
+            bugReport: "https://gitee.com/slightning/slightning-coco-widget/issues/new",
         }
     },
     options: {
@@ -19,15 +19,8 @@ const types: Types = {
         global: false
     },
     properties: [
-        {
-            key: "__width",
-            label: "宽度",
-            type: new IntegerType(300)
-        }, {
-            key: "__height",
-            label: "高度",
-            type: new IntegerType(300)
-        }
+        ["__width", "宽度", 300],
+        ["__height", "高度", 300]
     ],
     methods: [{ blockOptions: {
         color: Color.RED
@@ -35,39 +28,20 @@ const types: Types = {
         {
             label: "弃用的一组方法",
             contents: [
-                {
-                    key: "deprecated_method",
-                    label: "弃用的方法",
-                    block: [MethodBlockParam.METHOD],
+                ["deprecated_method", "弃用的方法", [MethodBlockParam.METHOD],, {
                     deprecated: true
-                }
+                }]
             ]
         }, { label: "出错测试", contents: [
-            {
-                key: "nonExistentMethod",
-                label: "不存在的方法",
-                block: [MethodBlockParam.METHOD]
-            }, {
-                key: "throwError",
-                label: "抛出异常",
-                block: [
-                    MethodBlockParam.METHOD, {
-                        key: "message",
-                        label: "消息",
-                        type: new AnyType("抛出异常消息")
-                    }
-                ]
-            }, {
-                key: "asyncThrowError",
-                label: "异步抛出异常",
-                block: [
-                    MethodBlockParam.METHOD, {
-                        key: "message",
-                        label: "消息",
-                        type: new AnyType("异步抛出异常消息")
-                    }
-                ]
-            }
+            ["nonExistentMethod", "不存在的方法", [MethodBlockParam.METHOD]],
+            ["throwError", "抛出异常", [
+                MethodBlockParam.METHOD,
+                ["message", "消息", new AnyType("抛出异常消息")]
+            ]],
+            ["asyncThrowError", "异步抛出异常", [
+                MethodBlockParam.METHOD,
+                ["message", "消息", new AnyType("异步抛出异常消息")]
+            ]]
         ]}
     ]}],
     events: []
@@ -107,8 +81,10 @@ class TestErrorWidget extends getSuperWidget(types) {
 
 exportWidget(types, TestErrorWidget, {
     decorators: [
-        generateBlockForProperties,
-        addThisForMethods,
+        { "CoCo|CreationProject": [
+            generateBlockForProperties,
+            addThisForMethods,
+        ]},
         addCheck,
         { CreationProject: transformIcons }
     ]

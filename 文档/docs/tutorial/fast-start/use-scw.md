@@ -53,9 +53,7 @@ const types: Types = {
             label: "属性",
             type: new StringType("默认值"),
             blockOptions: {
-                get: {
-                    key: "getProperty"
-                },
+                get: { key: "getProperty" },
                 set: false
             }
         }
@@ -73,6 +71,22 @@ const types: Types = {
 | blockOptions.get.key | 获取方法名 |
 | blockOptions.set | 属性的设置方法积木选项，false 表示不可设置 |
 | blockOptions.set.key | 设置方法名 |
+
+2.3 版本新增简洁属性定义，按照简洁属性定义编写与上面等效的属性定义如下：
+
+```typescript
+const types: Types = {
+    //...
+    properties: [
+        ["property", "属性", "默认值", {
+            blockOptions: {
+                get: { key: "getProperty" },
+                set: false
+            }
+        }]
+    ]
+}
+```
 
 控件属性组
 
@@ -170,9 +184,29 @@ const types: Types = {
 | --- | --- |
 | key | 控件的方法，命名规范：英文 + 数字组成，不能以数字开头 |
 | label | 方法标签 |
-| block | 方法的积木 |
+| block | 方法的积木，由说明文本和参数构成 |
 | returns | 方法的返回值类型，详见 [方法返回 API](../../api/types/method#methodtypesreturns--methodtypes3) |
 | blockOptions | 方法的积木块选项，详见 [方法积木块选项 API](../../api/types/method#methodtypes--methodtypes4blockoptions) |
+
+2.3 版本新增简洁方法定义，按照简洁方法定义编写与上面等效的方法定义如下：
+
+```typescript
+const types: Types = {
+    //...
+    methods: [
+        ["method", "方法", [
+            "调用", MethodBlockParam.THIS, MethodBlockParam.METHOD,
+            "参数1", ["param1", "参数1", "默认值"],
+            "参数2", ["param2", "参数2", 0]
+        ], new StringType(), {
+            blockOptions: {
+                icon: "icon-widget-radio",
+                color: Color.BLUE,
+            }
+        }]
+    ]
+}
+```
 
 方法组
 
@@ -249,6 +283,20 @@ const types: Types = {
 | key | 事件的键 |
 | label | 事件标签，会在编辑器中显示 |
 | params | 事件的参数列表 |
+
+2.3 版本新增简洁事件定义，按照简洁事件定义编写与上面等效的事件定义如下：
+
+```typescript
+const types: Types = {
+    //...
+    events: [
+        ["event", "事件", [
+            ["param1", "参数1", new StringType()],
+            ["param2", "参数2", new NumberType()]
+        ]]
+    ]
+}
+```
 
 ## 二、控件实体定义
 
@@ -334,9 +382,11 @@ class MyWidget extends getSuperWidget(types) {
 ```typescript
 exportWidget(types, MtWidget, {
     decorators: [
-        generateMethodForFunctions,
-        generateBlockForProperties,
-        transformMethodsThrows,
+        { "CoCo|CreationProject":[
+            generateMethodForFunctions,
+            generateBlockForProperties,
+            transformMethodsThrows,
+        ]},
         { CreationProject: flattenEventSubTypes },
         {
             CoCo: transformMethodsCallbackFunctionsToEvents,
@@ -355,8 +405,9 @@ exportWidget(types, MtWidget, {
 | 属性 | 说明 |
 | --- | --- |
 | decorators | 装饰器列表 |
-| decorators[number].CoCo | CoCo 平台的装饰器 |
-| decorators[number].CreationProject | Creation Project 平台的装饰器 |
+| decorators[number].CoCo | CoCo 平台的装饰器或其列表 |
+| decorators[number].CreationProject | Creation Project 平台的装饰器或其列表 |
+| decorators[number]["CoCo\|CreationProject"] | CoCo 和 Creation Project 平台的装饰器或其列表 |
 
 :::tip 提示
 有关于装饰器的更多信息详见 [导出装饰器 API](../../api/export/decorators)。

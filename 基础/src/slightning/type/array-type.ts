@@ -38,7 +38,7 @@ export class ArrayType<T> implements Type<T[]> {
             }
             if (errors.length != 0) {
                 throw new TypeValidateError(
-                    `不能将 ${betterToString(value)} 分配给 ${typeToString(this)}\n` +
+                    `不能将 ${betterToString(value)} 分配给 ${typeToString(this)}：\n` +
                     errors.map(
                         (error: TypeValidateError<T[]>): string =>
                             error.message

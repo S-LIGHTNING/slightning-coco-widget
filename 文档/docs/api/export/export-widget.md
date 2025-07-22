@@ -7,11 +7,20 @@ sidebar_position: 1
 ## exportWidget
 
 ```typescript
-interface ExportConfig {
-    decorators?: (Decorator | {
-        CoCo?: Decorator | null | undefined
-        CreationProject?: Decorator | null | undefined
-    })[] | null | undefined
+type Platforms =
+    "CoCo" |
+    "CreationProject" |
+    "Node" |
+    "CoCo|CreationProject" |
+    "CoCo|NodeJS" |
+    "CreationProject|NodeJS" |
+    "CoCo|CreationProject|NodeJS"
+
+export interface ExportConfig {
+    decorators?: (
+        Decorator |
+        Partial<Record<Platforms, Decorator | Decorator[] | null | undefined>>
+    )[] | null | undefined
     CoCo?: {
         decorators?: Decorator[] | null | undefined
     } | null | undefined
@@ -49,3 +58,12 @@ declare function exportWidget(
 | --- | --- |
 | decorators[number].CoCo | CoCo 平台的装饰器 |
 | decorators[number].CreationProject | Creation Project 平台的装饰器 |
+
+2.5 版本新增：
+
+| 属性 | 说明 |
+| --- | --- |
+| decorators[number].CoCo | CoCo 平台的装饰器列表 |
+| decorators[number].CreationProject | Creation Project 平台的装饰器列表 |
+| decorators[number].NodeJS | Node.js 平台的装饰器或其列表 |
+| decorators[number]["CoCo\|CreationProject\" \| ...] | 多个平台的装饰器或其列表 |

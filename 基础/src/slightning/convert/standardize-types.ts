@@ -1,5 +1,5 @@
 import { BooleanType, NumberType, StringEnumType, StringType, Type } from "../type"
-import { BlockType, DropdownItem, EventParamTypes, EventSubType, EventTypes, MethodBlock, MethodsTypes, PropertiesTypes, StandardDropdownItem, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, StandardMethodBlock, StandardMethodsTypes, StandardMethodTypes, StandardPropertiesTypes, StandardTypes, Types, UnclearBriefEventTypes } from "../types"
+import { BlockType, BriefType, DropdownItem, EventParamTypes, EventSubType, EventTypes, MethodBlock, MethodsTypes, PropertiesTypes, StandardDropdownItem, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, StandardMethodBlock, StandardMethodsTypes, StandardMethodTypes, StandardPropertiesTypes, StandardTypes, Types, UnclearBriefEventTypes } from "../types"
 
 export function standardizeTypes(types: Types): StandardTypes {
     return {
@@ -59,7 +59,8 @@ export function standardizeMethods(methods: MethodsTypes): StandardMethodsTypes 
                         key: method[1],
                         label: method[2] as string,
                         block: standardizeMethodBlock(method[3] as MethodBlock),
-                        ...method[4]
+                        returns: inferType(method[4] as BriefType),
+                        ...method[5]
                     }
                     result.push(standardized)
                     break
@@ -171,7 +172,7 @@ export function standardizeDropdownItem(item: DropdownItem): StandardDropdownIte
 }
 
 function inferType(
-    typeOrDefaultValue: string | number | boolean | DropdownItem[] | Type
+    typeOrDefaultValue: BriefType
 ): Type {
     switch (typeof typeOrDefaultValue) {
         case "string":

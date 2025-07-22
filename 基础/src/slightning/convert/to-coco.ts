@@ -1,8 +1,8 @@
 import * as CoCo from "../../coco"
-import { capitalize } from "../../utils"
+import { capitalize, splitArray } from "../../utils"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
 import { VoidType } from "../type"
-import { Color, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, MethodBlockParam, MethodParamTypes, StandardTypes, StandardMethodBlock } from "../types"
+import { Color, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, MethodBlockParam, MethodParamTypes, StandardTypes, StandardMethodBlock, StandardMethodBlockItem, StandardMethodParamTypes } from "../types"
 import { eventKeyMap } from "../utils"
 import { Widget } from "../widget"
 
@@ -51,7 +51,7 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
     let count: number = 0
     traverseTypes(types, {
         PropertyGroup: {
-            entry(node: PropertyGroupNode): void {
+            enter(node: PropertyGroupNode): void {
                 if (node.value.label != null) {
                     labels.push(node.value.label)
                     showLine = true
@@ -91,7 +91,7 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
             showLine = false
         },
         MethodGroup: {
-            entry(node: MethodGroupNode): void {
+            enter(node: MethodGroupNode): void {
                 if (node.value.label != null) {
                     labels.push(node.value.label)
                     showLine = true
@@ -114,15 +114,16 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                 }
                 addSpace = false
             }
-            if (node.value.throws != null && !(node.value.throws instanceof VoidType)) {
-                throw new Error(`无法将方法 ${node.value.label} 的抛出类型转为 CoCo 类型`)
+            const { value: method } = node
+            if (method.throws != null && !(method.throws instanceof VoidType)) {
+                throw new Error(`无法将方法 ${method.label} 的抛出类型转为 CoCo 类型`)
             }
-            const deprecated: boolean | string = node.value.deprecated ?? node.blockOptions.deprecated ?? false
+            const deprecated: boolean | string = method.deprecated ?? node.blockOptions.deprecated ?? false
             const transformed: CoCo.MethodTypes = {
-                key: node.value.key,
+                key: method.key,
                 params: [],
-                ...node.value.returns?.toCoCoMethodValueTypes(),
-                tooltip: node.value.tooltip ?? undefined,
+                ...method.returns?.toCoCoMethodValueTypes(),
+                tooltip: method.tooltip ?? undefined,
                 blockOptions: {
                     callMethodLabel: false,
                     line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined,
@@ -146,30 +147,33 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                 }
             }
             transformed.blockOptions ??= {}
-            if (node.blockOptions.inline ?? true) {
+            const inline: boolean = node.blockOptions.inline ?? true
+            if (inline) {
                 let restParts: StandardMethodBlock | null = null
                 let labelsBeforeThis: string[] = []
                 if (deprecated != false) {
                     labelsBeforeThis.push("[已弃用]")
                 }
-                if (!node.value.block.includes(MethodBlockParam.THIS)) {
-                    throw new Error(`方法 ${node.value.label} 缺少 this 参数`)
+                if (!method.block.includes(MethodBlockParam.THIS)) {
+                    throw new Error(`方法 ${method.label} 缺少 this 参数`)
                 }
-                for (let i: number = 0; i < node.value.block.length; i++) {
-                    const part: string | MethodBlockParam | MethodParamTypes | undefined = node.value.block[i]
+                for (let i: number = 0; i < method.block.length; i++) {
+                    const part: string | MethodBlockParam | MethodParamTypes | undefined = method.block[i]
                     if (part == MethodBlockParam.METHOD) {
-                        labelsBeforeThis.push(node.value.label)
+                        labelsBeforeThis.push(method.label)
+                    } else if (part == MethodBlockParam.BREAK_LINE) {
+                        labelsBeforeThis.push("")
                     } else if (part == MethodBlockParam.THIS) {
-                        restParts = node.value.block.slice(i + 1)
+                        restParts = method.block.slice(i + 1)
                         break
                     } else if (typeof part == "string") {
                         labelsBeforeThis.push(part)
                     } else if (part != undefined) {
-                        throw new Error(`方法 ${node.value.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
+                        throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
                     }
                 }
                 if (restParts == null) {
-                    throw new Error(`方法 ${node.value.label} 缺少 this 参数`)
+                    throw new Error(`方法 ${method.label} 缺少 this 参数`)
                 }
                 if (labelsBeforeThis.length != 0) {
                     transformed.blockOptions.callMethodLabel = labelsBeforeThis.join(" ")
@@ -192,9 +196,9 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                 }
                 for (const part of restParts) {
                     if (part == MethodBlockParam.THIS) {
-                        throw new Error(`方法只能有一个 this 参数，而方法 ${node.value.label} 有多个 this 参数`)
+                        throw new Error(`方法只能有一个 this 参数，而方法 ${method.label} 有多个 this 参数`)
                     } else if (part == MethodBlockParam.METHOD) {
-                        addText(node.value.label)
+                        addText(method.label)
                     } else if (typeof part == "string") {
                         addText(part)
                     } else {
@@ -207,20 +211,75 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                     }
                 }
             } else {
-                if (deprecated != false) {
-                    transformed.blockOptions.callMethodLabel = "[已弃用]"
-                }
                 transformed.blockOptions.inputsInline = false
-                transformed.label = node.value.label
-                for (const part of node.value.block) {
-                    if (typeof part != "object") {
-                        continue
+                const blockLines: StandardMethodBlock[] = splitArray(method.block, MethodBlockParam.BREAK_LINE)
+                if (blockLines.every((line: StandardMethodBlock): boolean => {
+                    return line.filter((item: StandardMethodBlockItem): boolean => {
+                        return item == MethodBlockParam.THIS || typeof item == "object"
+                    }).length == 1
+                })) {
+                    if (!method.block.includes(MethodBlockParam.THIS)) {
+                        throw new Error(`方法 ${method.label} 缺少 this 参数`)
                     }
-                    transformed.params.push({
-                        key: part.key,
-                        label: part.label,
-                        ...part.type.toCoCoMethodParamValueTypes()
-                    })
+                    let labelsBeforeThis: string[] = []
+                    let afterThis: boolean = false
+                    let labelsAfterThis: string[] = []
+                    for (const item of blockLines[0] ?? []) {
+                        if (item == MethodBlockParam.THIS) {
+                            if (afterThis) {
+                                throw new Error(`方法只能有一个 this 参数，而方法 ${method.label} 有多个 this 参数`)
+                            } else {
+                                afterThis = true
+                            }
+                        } else if (typeof item == "string") {
+                            const text: string = item == MethodBlockParam.METHOD ? method.label : item
+                            ;(afterThis ? labelsBeforeThis : labelsAfterThis).push(text)
+                        } else {
+                            throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
+                        }
+                    }
+                    if (!afterThis) {
+                        throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
+                    }
+                    transformed.blockOptions.callMethodLabel = labelsBeforeThis.join(" ")
+                    transformed.label = labelsAfterThis.join(" ")
+                    for (const line of blockLines.slice(1)) {
+                        let labelsBeforeParam: string[] = []
+                        let param: StandardMethodParamTypes | null = null
+                        let labelsAfterParam: string[] = []
+                        for (const item of line) {
+                            if (item == MethodBlockParam.THIS) {
+                                throw new Error(`方法只能有一个 this 参数，而方法 ${method.label} 有多个 this 参数`)
+                            } else if (typeof item == "string") {
+                                const text: string = item == MethodBlockParam.METHOD ? method.label : item
+                                ;(param == null ? labelsBeforeParam : labelsAfterParam).push(text)
+                            } else {
+                                param = item
+                            }
+                        }
+                        transformed.params.push({
+                            key: param!.key,
+                            label: labelsBeforeParam.join(" "),
+                            labelAfter: labelsAfterParam.join(" "),
+                            ...param!.type.toCoCoMethodParamValueTypes()
+                        })
+                    }
+                } else {
+                    transformed.label = method.label
+                    for (const part of method.block) {
+                        if (typeof part != "object") {
+                            continue
+                        }
+                        transformed.params.push({
+                            key: part.key,
+                            label: part.label,
+                            ...part.type.toCoCoMethodParamValueTypes()
+                        })
+                    }
+                }
+                if (deprecated != false) {
+                    transformed.blockOptions.callMethodLabel =
+                        `[已弃用] ${transformed.blockOptions.callMethodLabel ?? ""}`
                 }
             }
             showLine = false

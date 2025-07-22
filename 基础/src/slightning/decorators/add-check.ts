@@ -127,9 +127,10 @@ export function addCheck(types: StandardTypes, widget: Widget): [StandardTypes, 
                                     }
                                     return __description
                                 }
-                                if (typeof method.blockOptions.deprecated == "string") {
-                                    logger.warn(...getDescription(), "该方法已弃用：", method.blockOptions.deprecated)
-                                } else if (method.blockOptions.deprecated) {
+                                const deprecated: boolean | string = method.types.deprecated ?? method.blockOptions.deprecated ?? false
+                                if (typeof deprecated == "string") {
+                                    logger.warn(...getDescription(), "该方法已弃用：" + deprecated)
+                                } else if (deprecated) {
                                     logger.warn(...getDescription(), "该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法")
                                 }
                                 const errors: TypeValidateError<unknown>[] = []
@@ -149,9 +150,9 @@ export function addCheck(types: StandardTypes, widget: Widget): [StandardTypes, 
                                     i++
                                 }
                                 if (errors.length != 0) {
-                                    logger.error(...getDescription(), "类型验证失败：", ...errors.map(
-                                        (error: TypeValidateError<unknown>):  string => `\n　${error.message}`
-                                    ))
+                                    logger.error(...getDescription(), "类型验证失败：" + errors.map(
+                                        (error: TypeValidateError<unknown>):  string => `\n　${error.message.split("\n").join("\n　")}`
+                                    ).join(""))
                                 }
                                 try {
                                     const returnValue: unknown = Reflect.apply(target, thisArg, argArray)

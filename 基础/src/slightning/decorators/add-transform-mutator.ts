@@ -36,7 +36,13 @@ export function addTransformMutator(types: StandardTypes, widget: Widget): [Stan
                         block: [...method.block]
                     }
                     const transformedBlockItems: StandardMethodBlockItem[] = []
+                    let isFirst: boolean = true
                     for (let k: number = 0; k < j; k++) {
+                        if (isFirst) {
+                            isFirst = false
+                        } else {
+                            transformedBlockItems.push(item.type.separator)
+                        }
                         transformedBlockItems.push(...item.type.block.map(
                             (mutatorItem: StandardMethodBlockItem): StandardMethodBlockItem => {
                                 if (typeof mutatorItem == "string") {

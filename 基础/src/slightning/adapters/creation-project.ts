@@ -3,7 +3,7 @@ import { convertToCreationProject } from "../convert/to-creation-project"
 import { PropertiesTypes, StandardTypes, Types } from "../types"
 import { Widget } from "../widget"
 import { Adapter, LoggerAdapter } from "./adapter"
-import { ExportConfig } from "../export"
+import { decorate, ExportConfig } from "../export"
 
 function isEditorWindow(window: Window): boolean {
     return /^https:\/\/cp\.cocotais\.cn\/(#|\?.*)?$/.test(window.location.href)
@@ -106,15 +106,7 @@ export const CreationProjectAdapter: Adapter = {
         }
     },
     exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void {
-        for (const decorator of config?.decorators ?? []) {
-            if (typeof decorator == "object") {
-                if (decorator.CreationProject != null) {
-                    [types, widget] = decorator.CreationProject(types, widget)
-                }
-            } else {
-                [types, widget] = decorator(types, widget)
-            }
-        }
+        [types, widget] = decorate(types, widget, config, "CreationProject")
         CreationProject.exportWidget(...convertToCreationProject(types, widget))
     },
     Logger: class CreationProjectLogger implements LoggerAdapter {

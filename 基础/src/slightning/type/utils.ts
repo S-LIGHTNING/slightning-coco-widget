@@ -125,6 +125,9 @@ export function typeToString(type: Type<unknown>, rules: stringify.Rule<Type<unk
                         const properties: string = Object.entries<Type<unknown>>(data.propertiesType)
                             .map(([key, type]: [string, Type<unknown>]): string => `${key}: ${new stringify.AnythingRule().toString(type, config, context)}`)
                             .join("\n")
+                            .split("\n")
+                            .map((line: string): string => `　${line}`)
+                            .join("\n")
                         result += ` {\n${properties}\n}`
                     }
                     return result

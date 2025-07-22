@@ -20,9 +20,9 @@ type Decorator = (types: StandardTypes, widget: Widget) => [StandardTypes, Widge
 
 ### 装饰器工具
 
-#### 遍历类型定义
+#### 遍历标准控件类型定义
 
-使用 `traverseTypes` 方法可以轻松遍历控件的类型定义。
+使用 `traverseTypes` 方法可以轻松遍历控件的标准类型定义。
 
 `traverseTypes` 相关定义如下：
 
@@ -39,18 +39,29 @@ interface TypesVisitors {
 }
 
 type TypesNodeVisitor<T extends TypesNode<unknown, unknown>> = ((node: T) => void) | {
+    enter?: ((node: T) => void) | null | undefined
+    /**
+     * @deprecated 该方法是由于早期拼写错误而保留的，请不要使用。
+     */
     entry?: ((node: T) => void) | null | undefined
     exit?: ((node: T) => void) | null | undefined
 }
 
 declare class TypesNode<T, U = T> {
 
+    public readonly group?: TypesNode<(T | U), (T | U)> | null | undefined
     public readonly groupContents: (T | U)[]
     public readonly index: { value: number }
+    /**
+     * 节点对应的类型定义。
+     */
     public readonly value: T
-    public readonly blockOptions: T extends {
-        blockOptions?: unknown | null | undefined
-    } ? NonNullable<T["blockOptions"]> : unknown
+    /**
+     * 节点的积木选项。与`this.value.blockOptions`不同的是，该项包含从组中继承的积木选项。
+     */
+    public get blockOptions(): T extends {
+        blockOptions?: {} | null | undefined
+    } ? NonNullable<T["blockOptions"]> : {}
     public isRemoved: boolean
 
     public traverse(this: this, visitors: TypesVisitors): void

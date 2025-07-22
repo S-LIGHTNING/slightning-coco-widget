@@ -139,7 +139,10 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                             }
                         ],
                         returns: new VoidType(),
-                        blockOptions: transformedMethod.blockOptions
+                        blockOptions: {
+                            ...transformedMethod.blockOptions,
+                            inline: true
+                        }
                     })
                     Object.defineProperty(widget.prototype, `__slightning_coco_widget_throw__${key}`, {
                         value: function (callData: callData, exception: unknown): void {
@@ -173,7 +176,10 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                             }]
                         ],
                         returns: new VoidType(),
-                        blockOptions: transformedMethod.blockOptions
+                        blockOptions: {
+                            ...transformedMethod.blockOptions,
+                            inline: true
+                        }
                     })
                     Object.defineProperty(widget.prototype, `__slightning_coco_widget_return__${key}`, {
                         value: function (callData: callData, returnValue: unknown): void {

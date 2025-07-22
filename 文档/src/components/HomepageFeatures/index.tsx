@@ -47,6 +47,29 @@ export default function HomepageFeatures(): JSX.Element {
       <div className="container">
         <Heading as="h2" className="text--center">特性</Heading>
         <Feature
+          id="feature--brief-types"
+          title="简洁的类型定义"
+          description="支持像 CoCoKit 一样简洁的类型定义。"
+        ></Feature>
+        <Feature
+          id="feature--method-group"
+          title="方法分组"
+          description="为一组方法统一设置积木样式；无需手动调整积木标签和积木间距，SCW 可以根据方法分组自动调整。"
+        >
+          <div className={styles.featureChildren}>
+            <Fullwindowable className={styles.codeArea}>
+              <ExampleCode src="/code/homepage/features/method-group/example.ts" />
+            </Fullwindowable>
+            <Fullwindowable className={styles.blockImageArea}>
+              <p>生成的积木：</p>
+              <img
+                className={styles.blockImage}
+                src={useBaseUrl("/img/homepage/features/method-group/block-box.png")}
+              />
+            </Fullwindowable>
+          </div>
+        </Feature>
+        <Feature
           id="feature--functions-as-first-class-citizens"
           title="模拟函数一等公民"
           description="像使用其他类型的数据一样使用函数，函数可以作为参数传递给其他函数，也可以作为其他函数的返回值。SCW 可以将这些函数转为编辑器支持的形式。"
@@ -101,24 +124,6 @@ export default function HomepageFeatures(): JSX.Element {
           title="Creation Project 支持"
           description="支持部分 Creation Project 特性，如：控件分类、方法回调。让你的控件在 Creation Project 中更强大。"
         ></Feature>
-        <Feature
-          id="feature--method-group"
-          title="方法分组"
-          description="为一组方法统一设置积木样式；无需手动调整积木标签和积木间距，SCW 可以根据方法分组自动调整。"
-        >
-          <div className={styles.featureChildren}>
-            <Fullwindowable className={styles.codeArea}>
-              <ExampleCode src="/code/homepage/features/method-group/example.ts" />
-            </Fullwindowable>
-            <Fullwindowable className={styles.blockImageArea}>
-              <p>生成的积木：</p>
-              <img
-                className={styles.blockImage}
-                src={useBaseUrl("/img/homepage/features/method-group/block-box.png")}
-              />
-            </Fullwindowable>
-          </div>
-        </Feature>
         <Feature
           id="feature--auto-bypass-restrictions"
           title="自动绕过限制"

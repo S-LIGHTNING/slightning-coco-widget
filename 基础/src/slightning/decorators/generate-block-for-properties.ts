@@ -29,7 +29,7 @@ export function generateBlockForProperties(types: StandardTypes, widget: Widget)
 
     traverseTypes(types, {
         PropertyGroup: {
-            entry(node: PropertyGroupNode): void {
+            enter(node: PropertyGroupNode): void {
                 gettersGroupStack.push(currentGettersGroup)
                 currentGettersGroup = {
                     label: node.value.label,

@@ -158,15 +158,8 @@ export type BriefPropertyTypes = [
     string,
     /**
      * 属性的类型或默认值。
-     *
-     * - 当类型为 `Type` 时，表示属性的类型；
-     * - 当类型为 `string`、`number`、`boolean`、`DropdownItem[]` 时，表示属性的默认值，属性的类型按照如下规则自动推断：
-     *   - `string`：类型为 `StringType`；
-     *   - `number`：类型为 `NumberType`；
-     *   - `boolean`：类型为 `BooleanType`；
-     *   - `DropdownItem[]`：类型为 `StringEnumType`。
      */
-    string | number | boolean | DropdownItem[] | Type,
+    BriefType,
     /**
      * 属性的积木选项。
      */
@@ -345,6 +338,7 @@ interface BasicStandardMethodTypes<BLOCK_TYPE> extends MethodOptions {
      *
      * - `MethodBlockParam.THIS`：`this` 参数，即控件实例本身，`this` 参数必须是第一个参数。
      * - `MethodBlockParam.METHOD`：方法标签文本。
+     * - `MethodBlockParam.BREAK_LINE`：换行标识。对于多行显示的积木，如果存在换行标识且换行方式可以实现，会按照该换行标识换行，否则一个参数一行。
      * - 字符串：说明文本。
      * - MethodParamTypes：方法参数。
      */
@@ -371,7 +365,9 @@ export type StandardMethodBlock = StandardMethodBlockItem[]
 export type StandardMethodBlockItem = string | MethodBlockParam | StandardMethodParamTypes
 
 export enum MethodBlockParam {
-    THIS = "$this", METHOD = "$method"
+    THIS = "$this",
+    METHOD = "$method",
+    BREAK_LINE = "$break_line"
 }
 
 export type MethodParamTypes = BriefMethodParamTypes | StandardMethodParamTypes
@@ -387,15 +383,8 @@ export type BriefMethodParamTypes = [
     string,
     /**
      * 参数的类型或默认值。
-     *
-     * - 当类型为 `Type` 时，表示参数的类型；
-     * - 当类型为 `string`、`number`、`boolean`、`DropdownItem[]` 时，表示参数的默认值，参数的类型按照如下规则自动推断：
-     *   - `string`：类型为 `StringType`；
-     *   - `number`：类型为 `NumberType`；
-     *   - `boolean`：类型为 `BooleanType`；
-     *   - `DropdownItem[]`：类型为 `StringEnumType`。
      */
-    string | number | boolean | DropdownItem[] | Type
+    BriefType
 ]
 
 export interface StandardMethodParamTypes {
@@ -779,6 +768,17 @@ export interface BasicBlockOptions {
      */
     deprecated?: boolean | string | null | undefined
 }
+/**
+ * 简洁类型或其默认值。
+ *
+ * - 当类型为 `Type` 时，表示属性的类型；
+ * - 当类型为 `string`、`number`、`boolean`、`DropdownItem[]` 时，表示属性的默认值，属性的类型按照如下规则自动推断：
+ *   - `string`：类型为 `StringType`；
+ *   - `number`：类型为 `NumberType`；
+ *   - `boolean`：类型为 `BooleanType`；
+ *   - `DropdownItem[]`：类型为 `StringEnumType`。
+ */
+export type BriefType = string | number | boolean | DropdownItem[] | Type
 
 export enum Color {
     GREY = "#BABABA", RED = "#DB6656", BROWN = "#D67B18", YELLOW = "#C7C100",

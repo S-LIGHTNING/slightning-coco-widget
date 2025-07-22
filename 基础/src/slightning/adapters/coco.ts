@@ -3,7 +3,7 @@ import { convertToCoCo } from "../convert/to-coco"
 import { PropertiesTypes, StandardTypes, Types } from "../types"
 import { Widget } from "../widget"
 import { Adapter, LoggerAdapter } from "./adapter"
-import { ExportConfig } from "../export"
+import { decorate, ExportConfig } from "../export"
 
 function isEditorWindow(window: Window): boolean {
     return /^https?:\/\/coco\.codemao\.cn\/editor\/((#|\?).*)?$/.test(window.location.href)
@@ -74,18 +74,7 @@ export const CoCoAdapter: Adapter = {
         }
     },
     exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void {
-        for (const decorator of config?.decorators ?? []) {
-            if (typeof decorator == "object") {
-                if (decorator.CoCo != null) {
-                    [types, widget] = decorator.CoCo(types, widget)
-                }
-            } else {
-                [types, widget] = decorator(types, widget)
-            }
-        }
-        for (const decorator of config?.CoCo?.decorators ?? []) {
-            [types, widget] = decorator(types, widget)
-        }
+        [types, widget] = decorate(types, widget, config, "CoCo")
         CoCo.exportWidget(...convertToCoCo(types, widget))
     },
     Logger: class CoCoLogger implements LoggerAdapter {

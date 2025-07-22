@@ -384,6 +384,7 @@ declare class FunctionType<A extends unknown[], R> extends Type<(...args: A) => 
 declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayType<T> {
 
     public readonly block: StandardMethodBlock
+    public readonly separator: string
     public readonly min: number
     public readonly max: number
     public readonly defaultNumber: number
@@ -392,6 +393,7 @@ declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayT
 
     public constructor(props: {
         block: MethodBlock,
+        separator?: string | null | undefined
         min?: number | null | undefined
         max?: number | null | undefined
         defaultNumber?: number | null | undefined
@@ -404,6 +406,7 @@ declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayT
 描述：变更器类型，用在函数参数中表示可变数量的单元。
 
 - `block`：可变部分单元，类似于控件方法类型定义中的 `block` 属性；
+- `separator`：可变部分单元之间的分隔符；
 - `min`：可变部分最小重复数量；
 - `max`：可变部分最大重复数量；
 - `defaultNumber`：默认值重复数量；

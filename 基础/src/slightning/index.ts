@@ -15,6 +15,11 @@ if (
     typeof CoCo.VisibleWidget != "undefined"
 ) {
     setDefaultAdapter(CoCoAdapter)
+} else if (
+    (new Function("return typeof global"))() != "undefined" &&
+    (new Function("return typeof process"))() != "undefined"
+) {
+    throw new Error("暂不支持在 Node 中运行")
 } else {
     throw new Error(`未知的平台：${location.href}`)
 }
