@@ -346,15 +346,15 @@ declare class InstanceOfClassType<T> extends Type<T> {
 ```typescript
 declare class FunctionType<A extends unknown[], R> extends Type<(...args: A) => R> {
 
-    public readonly block: MethodBlockTypes
-    public readonly returns?: Type | null | undefined
+    public readonly block: StandardMethodBlock
+    public readonly returns?: Type<R> | null | undefined
     public readonly throws?: Type | null | undefined
     public readonly defaultValue?: string | null | undefined
     public readonly raw: boolean
 
     public constructor(props: {
         block: MethodBlockTypes
-        returns?: Type | null | undefined
+        returns?: Type<R> | null | undefined
         throws?: Type | null | undefined
         defaultValue?: string | null | undefined
         raw?: boolean | null | undefined
@@ -384,6 +384,10 @@ declare class FunctionType<A extends unknown[], R> extends Type<(...args: A) => 
 declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayType<T> {
 
     public readonly block: StandardMethodBlock
+    public readonly separators: (MethodBlockParam | string)[]
+    /**
+     * @deprecated 请使用 separators 代替。
+     */
     public readonly separator: string
     public readonly min: number
     public readonly max: number
@@ -392,7 +396,11 @@ declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayT
     public readonly transformMax: number
 
     public constructor(props: {
-        block: MethodBlock,
+        block: MethodBlock
+        separators?: (MethodBlockParam | string)[] | null | undefined
+        /**
+         * @deprecated 请使用 separators 代替。
+         */
         separator?: string | null | undefined
         min?: number | null | undefined
         max?: number | null | undefined
@@ -406,12 +414,19 @@ declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayT
 描述：变更器类型，用在函数参数中表示可变数量的单元。
 
 - `block`：可变部分单元，类似于控件方法类型定义中的 `block` 属性；
-- `separator`：可变部分单元之间的分隔符；
 - `min`：可变部分最小重复数量；
 - `max`：可变部分最大重复数量；
 - `defaultNumber`：默认值重复数量；
 - `transformMin`：转换时可变部分最小重复次数；
 - `transformMax`：转换时可变部分最大重复次数。
+
+v2.5 版本新增：
+
+- ~~`separator`~~：可变部分单元之间的分隔符。
+
+v2.6 版本新增：
+
+- `separators`：可变部分单元之间的分隔符。
 
 变更器实参是一个对象数组，数组的每一项是以变更器单元的参数键名称为键的对象。
 

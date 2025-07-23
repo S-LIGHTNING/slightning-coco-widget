@@ -1,7 +1,6 @@
 import * as CoCo from "../../coco"
 import { capitalize, splitArray } from "../../utils"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
-import { VoidType } from "../type"
 import { Color, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, MethodBlockParam, MethodParamTypes, StandardTypes, StandardMethodBlock, StandardMethodBlockItem, StandardMethodParamTypes } from "../types"
 import { eventKeyMap } from "../utils"
 import { Widget } from "../widget"
@@ -115,7 +114,7 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                 addSpace = false
             }
             const { value: method } = node
-            if (method.throws != null && !(method.throws instanceof VoidType)) {
+            if (method.throws != null && !(method.throws.isVoid())) {
                 throw new Error(`无法将方法 ${method.label} 的抛出类型转为 CoCo 类型`)
             }
             const deprecated: boolean | string = method.deprecated ?? node.blockOptions.deprecated ?? false
@@ -241,7 +240,9 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                     if (!afterThis) {
                         throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
                     }
-                    transformed.blockOptions.callMethodLabel = labelsBeforeThis.join(" ")
+                    if (labelsBeforeThis.length != 0) {
+                        transformed.blockOptions.callMethodLabel = labelsBeforeThis.join(" ")
+                    }
                     transformed.label = labelsAfterThis.join(" ")
                     for (const line of blockLines.slice(1)) {
                         let labelsBeforeParam: string[] = []
@@ -279,7 +280,7 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                 }
                 if (deprecated != false) {
                     transformed.blockOptions.callMethodLabel =
-                        `[已弃用] ${transformed.blockOptions.callMethodLabel ?? ""}`
+                        `[已弃用] ${transformed.blockOptions.callMethodLabel || ""}`
                 }
             }
             showLine = false

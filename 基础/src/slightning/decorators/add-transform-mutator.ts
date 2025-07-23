@@ -41,7 +41,7 @@ export function addTransformMutator(types: StandardTypes, widget: Widget): [Stan
                         if (isFirst) {
                             isFirst = false
                         } else {
-                            transformedBlockItems.push(item.type.separator)
+                            transformedBlockItems.push(...item.type.separators)
                         }
                         transformedBlockItems.push(...item.type.block.map(
                             (mutatorItem: StandardMethodBlockItem): StandardMethodBlockItem => {

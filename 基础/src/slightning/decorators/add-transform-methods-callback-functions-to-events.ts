@@ -134,7 +134,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         })
                     }
                 })
-                if (type.throws != null && !(type.throws instanceof VoidType)) {
+                if (type.throws != null && !(type.throws.isVoid())) {
                     node.insertAfter({
                         space: 8
                     }, {
@@ -183,7 +183,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                                 key: "__slightning_coco_widget_call_data__",
                                 label,
                                 type: callDataType
-                            }, "返回", ...(type.returns instanceof VoidType ? [] : [{
+                            }, "返回", ...(type.returns.isVoid() ? [] : [{
                                 key: "returnValue",
                                 label: "返回值",
                                 type: type.returns

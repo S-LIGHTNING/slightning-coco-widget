@@ -7,6 +7,10 @@ import { ObjectType } from "./object-type"
 export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayType<T> {
 
     public readonly block: StandardMethodBlock
+    public readonly separators: (MethodBlockParam | string)[]
+    /**
+     * @deprecated 请使用 separators 代替。
+     */
     public readonly separator: string
     public readonly min: number
     public readonly max: number
@@ -15,9 +19,13 @@ export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayTy
     public readonly transformMax: number
 
     public constructor({
-        block, separator, min, max, defaultNumber, transformMin, transformMax
+        block, separators, separator, min, max, defaultNumber, transformMin, transformMax
     }: {
         block: MethodBlock
+        separators?: (MethodBlockParam | string)[] | null | undefined
+        /**
+         * @deprecated 请使用 separators 代替。
+         */
         separator?: string | null | undefined
         min?: number | null | undefined
         max?: number | null | undefined
@@ -35,7 +43,8 @@ export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayTy
         const itemType = new ObjectType<T>({ propertiesType })
         super({ itemType })
         this.block = standardBlock
-        this.separator = separator ?? ""
+        this.separators = separators ?? (typeof separator == "string" ? [separator] : [])
+        this.separator = separator ?? separators?.join(" ") ?? ""
         this.min = min ?? 2
         this.max = max ?? Infinity
         this.defaultNumber = defaultNumber ?? this.min
@@ -63,7 +72,7 @@ export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayTy
                 }
             }
         }
-        const block: StandardMethodBlock = [...this.block, this.separator]
+        const block: StandardMethodBlock = [...this.block, ...this.separators]
         let i: number = block.length - 1
         for (; i >= 0; i--) {
             const mutatorPart: StandardMethodBlockItem | undefined = block[i]

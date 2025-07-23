@@ -1,5 +1,5 @@
 import { merge } from "../../utils"
-import { FunctionType, MutatorType, VoidType } from "../type"
+import { FunctionType, MutatorType } from "../type"
 import { BlockBoxOptions, BlockType, BUILD_IN_ICON_URL_MAP, StandardEventTypes, StandardMethodBlockItem, StandardMethodGroup, StandardMethodParamTypes, StandardMethodsItem, StandardMethodTypes, StandardPropertiesItem, StandardPropertyGroup, StandardPropertyTypes, StandardTypes } from "../types"
 
 export function traverseTypes(types: StandardTypes, visitors: TypesVisitors): void {
@@ -418,8 +418,8 @@ export function methodParamNeedsTransformToCodeBlocks(
     }
     return part.type instanceof FunctionType &&
         !part.type.raw && (
-            (part.type.returns != null && !(part.type.returns instanceof VoidType)) ||
-            (part.type.throws != null && !(part.type.throws instanceof VoidType))
+            (part.type.returns != null && !(part.type.returns.isVoid())) ||
+            (part.type.throws != null && !(part.type.throws.isVoid()))
         )
 }
 

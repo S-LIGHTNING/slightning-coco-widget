@@ -67,6 +67,20 @@ export class StringEnumType<T extends string> implements Type<T> {
         return []
     }
 
+    public isVoid(this: this): boolean {
+        return this.entries.length != 0
+    }
+
+    public typeToString(this: this): string {
+        return this.values.length == 0 ? "空" : `(${this.values.map(
+            (value: string): string => JSON.stringify(value)
+        ).join(" | ")})`
+    }
+
+    public inlineTypeToString(this: this): string {
+        return this.typeToString()
+    }
+
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             editorType: this.inputType == StringEnumInputType.DROPDOWN ? undefined : "OptionSwitch",

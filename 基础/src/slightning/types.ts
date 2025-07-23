@@ -781,9 +781,39 @@ export interface BasicBlockOptions {
 export type BriefType = string | number | boolean | DropdownItem[] | Type
 
 export enum Color {
-    GREY = "#BABABA", RED = "#DB6656", BROWN = "#D67B18", YELLOW = "#C7C100",
-    CYAN = "#00ACE8", GREEN = "#6AC44C", BLUE = "#588AF6", PURPLE = "#9D80E7",
-    PINKISH_PURPLE = "#C571D8", PINK = "#D16CB0"
+
+    COCO_EVENT = "#608FEE",
+    COCO_CONTROL = "#68CDFF",
+    COCO_FUNCTION0 = "#00AFC3",
+    COCO_OPERATION = "#FEAE8A",
+    COCO_VARIABLE = "#FFBB55",
+    COCO_LIST = "#F9CC37",
+    COCO_DICTIONARY = "#A073FF",
+    COCO_FUNCTION1 = "#F88767",
+
+    CREATION_PROJECT_EVENT = "#608FEE",
+    CREATION_PROJECT_CONTROL = "#68CDFF",
+    CREATION_PROJECT_CALCULATION = "#FEAE8A",
+    CREATION_PROJECT_FUNCTION0 = "#00AFC3",
+    CREATION_PROJECT_OBJECT = "#A073FF",
+    CREATION_PROJECT_LIST = "#F9CC37",
+    CREATION_PROJECT_VARIABLE = "#FFBB55",
+    CREATION_PROJECT_FUNCTION1 = "#F88767",
+
+    GREY = "#BABABA",
+    RED = "#DB6656",
+    BROWN = "#D67B18",
+    ORANGE = "#D3A813",
+    YELLOW = "#C7C100",
+    YELLOWISH_GREEN = "#A2C028",
+    GREEN = "#6AC44C",
+    TURQUOISE = "#1BB897",
+    CYAN = "#00ACE8",
+    BLUE = "#588AF6",
+    BLUISH_VIOLET = "#7D8DF9",
+    PURPLE = "#9D80E7",
+    PINKISH_PURPLE = "#C571D8",
+    PINK = "#D16CB0"
 }
 
 export const BUILD_IN_PROPERTIES: string[] = ["__width", "__height", "__opacity", "__position", "__visible"]

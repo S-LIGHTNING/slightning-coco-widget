@@ -37,6 +37,18 @@ export class ColorType implements Type<string> {
         return []
     }
 
+    public isVoid(this: this): boolean {
+        return false
+    }
+
+    public typeToString(this: this): string {
+        return "颜色"
+    }
+
+    public inlineTypeToString(this: this): string {
+        return this.typeToString()
+    }
+
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: "color",

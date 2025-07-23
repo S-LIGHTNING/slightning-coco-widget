@@ -62,7 +62,7 @@ export function generateMethodForFunctions(types: StandardTypes, widget: Widget)
 function generateMethodsForEfferent(
     keys: string[],
     labels: string[],
-    type: Type<unknown>,
+    type: Type,
     blockOptions: MethodBlockOptions | null | undefined,
     widget: Widget
 ): StandardMethodsItem[] {
@@ -94,7 +94,7 @@ function generateMethodsForEfferent(
 function generateMethodsForAfferent(
     keys: string[],
     labels: string[],
-    type: Type<unknown>,
+    type: Type,
     blockOptions: MethodBlockOptions | null | undefined,
     widget: Widget
 ): StandardMethodsItem[] {

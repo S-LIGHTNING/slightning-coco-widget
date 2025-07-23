@@ -179,11 +179,22 @@ const types: Types = {
                 MethodBlockParam.METHOD,
                 ["mutator", "变更器", new MutatorType({
                     block: [
-                        MethodBlockParam.BREAK_LINE, ["key", "键", "键"], ":",
-                        ["value", "值", new AnyType("值")]
+                        MethodBlockParam.BREAK_LINE,
+                        ["key", "键", "键"], ":", ["value", "值", new AnyType("值")]
                     ],
-                    separator: ",",
+                    separators: [","],
                     min: 0,
+                    defaultNumber: 1
+                })]
+            ], new ObjectType(), {
+                blockOptions: { inline: false }
+            }],
+            ["testMethodMutatorParam2", "测试方法变更器参数2", [
+                ["mutator", "变更器", new MutatorType({
+                    block: [["boolean", "布尔", true]],
+                    separators: [MethodBlockParam.BREAK_LINE, "且"],
+                    min: 2,
+                    transformMax: 5,
                     defaultNumber: 1
                 })]
             ], new ObjectType(), {
@@ -297,6 +308,8 @@ class TestBaseWidget extends getSuperWidget(types) {
     }
 }
 
+export type { TestBaseWidget }
+
 exportWidget(types, TestBaseWidget, {
     decorators: [
         { "CoCo|CreationProject": [
@@ -309,11 +322,11 @@ exportWidget(types, TestBaseWidget, {
             CoCo: transformMethodsCallbackFunctionsToEvents,
             CreationProject: transformMethodsCallbackFunctionsToCodeBlocks
         },
-        addThisForMethods,
         addCheck,
-        {
-            "CoCo|CreationProject": transformMutator
-        }, {
+        { "CoCo|CreationProject": [
+            transformMutator,
+            addThisForMethods
+        ]}, {
             CoCo: transformIconsExceptWidgetIcon,
             CreationProject: transformIcons
         }

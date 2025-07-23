@@ -26,23 +26,9 @@ const PromiseType = new ObjectType<{
     defaultValue: "承诺"
 })
 
-const MethodPromiseParam: MethodParamTypes = {
-    key: "promise",
-    label: "承诺",
-    type: PromiseType
-}
-
-const MethodPromiseValueParam: MethodParamTypes = {
-    key: "value",
-    label: "结果",
-    type: new AnyType("结果")
-}
-
-const MethodPromiseReasonParam: MethodParamTypes = {
-    key: "reason",
-    label: "原因",
-    type: new AnyType("原因")
-}
+const MethodPromiseParam: MethodParamTypes = ["promise", "承诺", PromiseType]
+const MethodPromiseValueParam: MethodParamTypes = ["value", "结果", new AnyType("结果")]
+const MethodPromiseReasonParam: MethodParamTypes = ["reason", "原因", new AnyType("原因")]
 
 const types: Types = {
     type: "SLIGHTNING_COCO_WIDGET_EXAMPLE_PROMISE_WIDGET",
@@ -50,6 +36,13 @@ const types: Types = {
         title: "承诺",
         icon: "icon-widget-switch",
         category: "控制",
+        version: "2.5.0",
+        url: {
+            homepage: "https://s-lightning.github.io/slightning-coco-widget/",
+            docs: "http://localhost:3000/slightning-coco-widget/docs/example/promise#使用控件",
+            repository: "https://gitee.com/slightning/slightning-coco-widget",
+            bugReport: "https://gitee.com/slightning/slightning-coco-widget/issues/new",
+        }
     },
     options: {
         visible: false,
@@ -59,62 +52,22 @@ const types: Types = {
     methods: [{ blockOptions: {
         color: Color.CYAN
     }, contents: [
-        {
-            key: "newPromise",
-            label: "创建承诺",
-            block: [
-                MethodBlockParam.METHOD, {
-                    key: "callback",
-                    label: "回调",
-                    type: new FunctionType({
-                        block: [
-                            {
-                                key: "resolve",
-                                label: "解决",
-                                type: new FunctionType({
-                                    block: ["结果", MethodPromiseValueParam]
-                                })
-                            }, {
-                                key: "reject",
-                                label: "拒绝",
-                                type: new FunctionType({
-                                    block: ["原因", MethodPromiseReasonParam]
-                                })
-                            }
-                        ]
-                    })
-                }
-            ],
-            returns: PromiseType
-        }, {
-            key: "await",
-            label: "等待",
-            block: [MethodBlockParam.METHOD, MethodPromiseParam]
-        }, {
-            key: "then",
-            label: "然后",
-            block: [
-                MethodPromiseParam, MethodBlockParam.METHOD, {
-                    key: "callback",
-                    label: "回调",
-                    type: new FunctionType({
-                        block: [MethodPromiseValueParam]
-                    })
-                }
-            ]
-        }, {
-            key: "catch",
-            label: "捕获",
-            block: [
-                MethodPromiseParam, MethodBlockParam.METHOD, {
-                    key: "callback",
-                    label: "回调",
-                    type: new FunctionType({
-                        block: [MethodPromiseReasonParam]
-                    })
-                }
-            ]
-        }
+        ["newPromise", "创建承诺", [
+            MethodBlockParam.METHOD,
+            ["callback", "回调", new FunctionType({ block: [
+                ["resolve", "解决", new FunctionType({ block: ["结果", MethodPromiseReasonParam] })],
+                ["reject", "拒绝", new FunctionType({ block: ["原因", MethodPromiseReasonParam] })]
+            ]})]
+        ], PromiseType],
+        ["await", "等待", [MethodBlockParam.METHOD, MethodPromiseParam]],
+        ["then", "然后", [
+            MethodPromiseParam, MethodBlockParam.METHOD,
+            ["callback", "回调", new FunctionType({ block: [MethodPromiseValueParam] })]
+        ]],
+        ["catch", "捕获", [
+            MethodPromiseParam, MethodBlockParam.METHOD,
+            ["callback", "回调", new FunctionType({ block: [MethodPromiseReasonParam] }) ]
+        ]]
     ]}],
     events: []
 }
@@ -155,12 +108,12 @@ class TestBaseWidget extends getSuperWidget(types) {
 
 exportWidget(types, TestBaseWidget, {
     decorators: [
-        generateMethodForFunctions,
+        { "CoCo|CreationProject": generateMethodForFunctions},
         {
             CoCo: transformMethodsCallbackFunctionsToEvents,
             CreationProject: transformMethodsCallbackFunctionsToCodeBlocks
         },
-        addThisForMethods,
+        { "CoCo|CreationProject": addThisForMethods },
         addCheck,
         {
             CoCo: transformIconsExceptWidgetIcon,

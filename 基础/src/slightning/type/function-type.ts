@@ -1,3 +1,5 @@
+import * as stringify from "@slightning/anything-to-string"
+
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
@@ -11,7 +13,7 @@ import { VoidType } from "./void-type"
 export class FunctionType<A extends unknown[], R> implements Type<(...args: A) => R> {
 
     public readonly block: StandardMethodBlock
-    public readonly returns?: Type | null | undefined
+    public readonly returns?: Type<R> | null | undefined
     public readonly throws?: Type | null | undefined
     public readonly defaultValue?: string | null | undefined
     public readonly raw: boolean
@@ -26,7 +28,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         block, returns, throws, defaultValue, raw
     }: {
         block: MethodBlock
-        returns?: Type | null | undefined
+        returns?: Type<R> | null | undefined
         throws?: Type | null | undefined
         defaultValue?: string | null | undefined
         raw?: boolean | null | undefined
@@ -87,6 +89,72 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         return result
     }
 
+    public isVoid(this: this): boolean {
+        return false
+    }
+
+    public typeToStringPrepare(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.PrepareContext
+    ): void {
+        if (this.block != null) {
+            for (const part of this.block) {
+                if (typeof part != "object") {
+                    continue
+                }
+                new stringify.AnythingRule().prepare(part.type, config, context)
+            }
+        }
+        if (this.returns != null) {
+            new stringify.AnythingRule().prepare(this.returns, config, context)
+        }
+        if (this.throws != null) {
+            new stringify.AnythingRule().prepare(this.throws, config, context)
+        }
+    }
+
+    public typeToString(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.ToStringContext
+    ): string {
+        let result: string = "("
+        let isFirst: boolean = true
+        for (const part of this.block) {
+            if (typeof part != "object") {
+                continue
+            }
+            if (isFirst) {
+                isFirst = false
+            } else {
+                result += ", "
+            }
+            result += `${part.label}: ${new stringify.AnythingRule().toString(part.type, config, context)}`
+        }
+        result += `) => ${new stringify.AnythingRule().toString(this.returns ?? new VoidType(), config, context)}`
+        if (this.throws != null) {
+            result += ` 抛出 ${new stringify.AnythingRule().toString(this.throws, config, context)}`
+        }
+        return result
+    }
+
+    public inlineTypeToStringPrepare(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.PrepareContext
+    ): void {
+        this.typeToStringPrepare(config, context)
+    }
+
+    public inlineTypeToString(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.ToStringContext
+    ): string {
+        return this.typeToString(config, context)
+    }
+
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: ["string", "number", "boolean", "array", "object"],
@@ -125,8 +193,8 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
     public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
         if (
             !this.raw &&
-            (this.returns == null || this.returns instanceof VoidType) &&
-            (this.throws == null || this.throws instanceof VoidType)
+            (this.returns == null || this.returns.isVoid()) &&
+            (this.throws == null || this.throws.isVoid())
         ) {
             const codeParams: CreationProject.MethodParamCodeParamTypes[] = []
             for (const part of this.block) {

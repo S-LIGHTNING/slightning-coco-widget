@@ -1,4 +1,4 @@
-import { FunctionType, VoidType } from "../type"
+import { FunctionType } from "../type"
 import { MethodBlockParam, MethodParamTypes, StandardMethodTypes, StandardTypes } from "../types"
 import { Widget } from "../widget"
 import { MethodTypesNode, traverseTypes } from "./utils"
@@ -6,7 +6,7 @@ import { MethodTypesNode, traverseTypes } from "./utils"
 export function addTransformMethodsThrows(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
     traverseTypes(types, {
         MethodTypes(node: MethodTypesNode): void {
-            if (node.value.throws == null || node.value.throws instanceof VoidType) {
+            if (node.value.throws == null || node.value.throws.isVoid()) {
                 return
             }
             const transformedMethod: StandardMethodTypes = {
@@ -23,7 +23,7 @@ export function addTransformMethodsThrows(types: StandardTypes, widget: Widget):
                 key: "__slightning_coco_widget_success_callback__",
                 label: "成功回调",
                 type: new FunctionType({
-                    block: node.value.returns == null || node.value.returns instanceof VoidType? [] : [{
+                    block: node.value.returns == null || node.value.returns.isVoid()? [] : [{
                         key: "value",
                         label: "值",
                         type: node.value.returns

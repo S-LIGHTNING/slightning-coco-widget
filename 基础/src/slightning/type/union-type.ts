@@ -1,3 +1,5 @@
+import * as stringify from "@slightning/anything-to-string"
+
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString } from "../../utils"
@@ -26,10 +28,6 @@ export class UnionType<T> implements Type<T> {
             }
         }
         this.defaultValue ??= ""
-    }
-
-    public toString(): string {
-        return this.types.length == 0 ? "（不存在）" : this.types.join(" | ")
     }
 
     public validate(this: this, value: unknown): value is T {
@@ -76,6 +74,46 @@ export class UnionType<T> implements Type<T> {
 
     public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
+    }
+
+    public isVoid(this: this): boolean {
+        return this.types.every((type: Type): boolean => type.isVoid())
+    }
+
+    public typeToStringPrepare(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.PrepareContext
+    ): void {
+        for (const type of this.types) {
+            new stringify.AnythingRule().prepare(type, config, context)
+        }
+    }
+
+    public typeToString(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.ToStringContext
+    ): string {
+        return this.types.length == 0 ? "空" : `(${this.types.map(
+            (type: Type): string => new stringify.AnythingRule().toString(type, config, context)
+        ).join(" | ")})`
+    }
+
+    public inlineTypeToStringPrepare(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.PrepareContext
+    ): void {
+        this.typeToStringPrepare(config, context)
+    }
+
+    public inlineTypeToString(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.ToStringContext
+    ): string {
+        return this.typeToString(config, context)
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

@@ -65,6 +65,18 @@ export class StringType implements Type<string> {
         return []
     }
 
+    public isVoid(this: this): boolean {
+        return false
+    }
+
+    public typeToString(this: this): string {
+        return "字符串"
+    }
+
+    public inlineTypeToString(this: this): string {
+        return this.typeToString()
+    }
+
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             editorType: COCO_EDITOR_TYPE_MAP[this.inputType],

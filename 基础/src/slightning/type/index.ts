@@ -1,4 +1,8 @@
 export * from "./type"
+
+export * from "./utils"
+export * from "./type-validate-error"
+
 export * from "./void-type"
 export * from "./string-type"
 export * from "./integer-type"
@@ -16,5 +20,3 @@ export * from "./union-type"
 export * from "./instance-of-class-type"
 export * from "./function-type"
 export * from "./mutator-type"
-export * from "./utils"
-export * from "./type-validate-error"

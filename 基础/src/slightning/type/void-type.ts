@@ -1,21 +1,12 @@
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
-import { betterToString } from "../../utils"
 import { ChildTypeInfo, Type } from "./type"
-import { TypeValidateError } from "./type-validate-error"
 import { typeToString } from "./utils"
 
 export class VoidType implements Type<void> {
 
-    public validate(this: this, value: unknown): value is void {
-        if (typeof value != "undefined") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
-        }
+    public validate(this: this, __value: unknown): __value is void {
         return true
-    }
-
-    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
-        throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
@@ -24,6 +15,22 @@ export class VoidType implements Type<void> {
 
     public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
+    }
+
+    public isVoid(this: this): boolean {
+        return true
+    }
+
+    public typeToString(this: this): string {
+        return "空"
+    }
+
+    public inlineTypeToString(this: this): string {
+        return this.typeToString()
+    }
+
+    public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
+        throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
     }
 
     public toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes {

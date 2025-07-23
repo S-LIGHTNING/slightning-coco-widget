@@ -32,6 +32,18 @@ export class AnyType implements Type<any> {
         return []
     }
 
+    public isVoid(this: this): boolean {
+        return false
+    }
+
+    public typeToString(this: this): string {
+        return "任意"
+    }
+
+    public inlineTypeToString(this: this): string {
+        return this.typeToString()
+    }
+
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: ["string", "number", "boolean", "array", "object"],

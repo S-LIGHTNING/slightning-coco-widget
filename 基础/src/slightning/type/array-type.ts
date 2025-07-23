@@ -1,3 +1,5 @@
+import * as stringify from "@slightning/anything-to-string"
+
 import * as CoCo from "../../coco"
 import * as CreationProject from "../../creation-project"
 import { betterToString, XMLEscape } from "../../utils"
@@ -64,6 +66,48 @@ export class ArrayType<T> implements Type<T[]> {
 
     public getReverseDirectionChildren(this: this): ChildTypeInfo[] {
         return []
+    }
+
+    public isVoid(this: this): boolean {
+        return false
+    }
+
+    public typeToStringPrepare(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.PrepareContext
+    ): void {
+        if (this.itemType != null) {
+            new stringify.AnythingRule().prepare(this.itemType, config, context)
+        }
+    }
+
+    public typeToString(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.ToStringContext
+    ): string {
+        let result: string = "列表"
+        if (this.itemType != null) {
+            result += `<${new stringify.AnythingRule().toString(this.itemType, config, context)}>`
+        }
+        return result
+    }
+
+    public inlineTypeToStringPrepare(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.PrepareContext
+    ): void {
+        this.typeToStringPrepare(config, context)
+    }
+
+    public inlineTypeToString(
+        this: this,
+        config: stringify.RequiredConfig,
+        context: stringify.ToStringContext
+    ): string {
+        return this.typeToString(config, context)
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

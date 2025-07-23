@@ -37,6 +37,18 @@ export class ImageType implements Type<string> {
         return []
     }
 
+    public isVoid(this: this): boolean {
+        return false
+    }
+
+    public typeToString(this: this): string {
+        return "图像"
+    }
+
+    public inlineTypeToString(this: this): string {
+        return this.typeToString()
+    }
+
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: "image",

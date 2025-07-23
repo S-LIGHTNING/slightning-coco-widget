@@ -44,6 +44,18 @@ export class NumberType implements Type<number> {
         return []
     }
 
+    public isVoid(this: this): boolean {
+        return false
+    }
+
+    public typeToString(this: this): string {
+        return "数字"
+    }
+
+    public inlineTypeToString(this: this): string {
+        return this.typeToString()
+    }
+
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
         return {
             valueType: "number",

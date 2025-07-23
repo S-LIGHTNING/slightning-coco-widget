@@ -1,4 +1,3 @@
-import { VoidType } from "../type"
 import { StandardTypes } from "../types"
 import { Widget } from "../widget"
 import { addTransformMethodsThrows } from "./add-transform-methods-throws"
@@ -8,7 +7,7 @@ export function transformMethodsThrows(types: StandardTypes, widget: Widget): [S
     [types, widget] = addTransformMethodsThrows(types, widget)
     traverseTypes(types, {
         MethodTypes(node: MethodTypesNode): void {
-            if (node.value.throws != null && !(node.value.throws instanceof VoidType)) {
+            if (node.value.throws != null && !(node.value.throws.isVoid())) {
                 node.remove()
             }
         }

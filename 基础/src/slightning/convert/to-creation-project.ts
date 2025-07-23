@@ -1,6 +1,6 @@
 import * as CreationProject from "../../creation-project"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
-import { IntegerType, MutatorType, NumberType, VoidType } from "../type"
+import { IntegerType, MutatorType, NumberType } from "../type"
 import { Color, StandardEventParamTypes, MethodBlockParam, StandardTypes, StandardMethodBlockItem } from "../types"
 import { Widget } from "../widget"
 
@@ -88,7 +88,7 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
         },
         MethodTypes(node: MethodTypesNode): void {
             const { value: method } = node
-            if (method.throws != null && !(method.throws instanceof VoidType)) {
+            if (method.throws != null && !(method.throws.isVoid())) {
                 throw new Error(`无法将方法 ${method.label} 的抛出类型转为 Creation Project 类型`)
             }
             const deprecated: boolean | string = method.deprecated ?? node.blockOptions.deprecated ?? false
