@@ -5,9 +5,13 @@
         "Blockly",
         "cleandir",
         "cocotais",
+        "datawatch",
         "Movaable",
+        "openview",
         "pptui",
         "qrcode",
+        "shouqi",
+        "tabledata",
         "vika",
         "vikadata"
     ],

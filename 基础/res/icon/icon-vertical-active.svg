@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1024" height="1024" fill="currentColor" aria-hidden="true" focusable="false">
+    <path d="M864 896h-64V128h64zM224 896h-64V128h64z" fill="#6E4FF4" p-id="940"></path><path d="M640 256v512H384V256z" fill="#B6A7F9" p-id="941"></path><path d="M640 768a64 64 0 0 1-64 64H448a64 64 0 0 1-64-64V256a64 64 0 0 1 64-64h128a64 64 0 0 1 64 64v512z m-64 0V256H448v512h128z" fill="#6E4FF4" p-id="942"></path>
+</svg>
