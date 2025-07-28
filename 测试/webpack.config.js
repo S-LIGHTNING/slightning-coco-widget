@@ -68,6 +68,15 @@ module.exports = merge(SCW.config, {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: {
+                    loader: SCW.Loaders.ExternalImportLoader,
+                    options: {
+                        axios: "https://unpkg.com/axios@1/dist/axios.min.js"
+                    }
+                }
+            }, {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                use: {
                     loader: "ts-loader",
                     options: {
                         transpileOnly: true
@@ -81,7 +90,6 @@ module.exports = merge(SCW.config, {
     },
     externalsType: "commonjs",
     externals: {
-        axios: "axios",
         lodash: "lodash"
     },
     plugins: [

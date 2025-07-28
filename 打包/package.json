@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget--webpack",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "exports": {
     ".": {
       "default": "./dist/cjs/index.js",
@@ -20,6 +20,10 @@
     "./loader/bypass-restrictions-loader": {
       "default": "./dist/cjs/loader/bypass-restrictions-loader.js",
       "types": "./dist/types/loader/bypass-restrictions-loader.d.ts"
+    },
+    "./loader/external-import-loader": {
+      "default": "./dist/cjs/loader/external-import-loader.js",
+      "types": "./dist/types/loader/external-import-loader.d.ts"
     },
     "./runtime/bypass/xml-http-request-upload": {
       "default": "./dist/runtime/esm/bypass/xml-http-request-upload.js",
@@ -50,6 +54,11 @@
       "default": "./dist/runtime/esm/bypass/web-socket-stream.js",
       "require": "./dist/runtime/cjs/bypass/web-socket-stream.js",
       "types": "./dist/runtime/types/bypass/web-socket-stream.d.ts"
+    },
+    "./runtime/load-external-module": {
+      "default": "./dist/runtime/esm/load-external-module.js",
+      "require": "./dist/runtime/cjs/load-external-module.js",
+      "types": "./dist/runtime/types/load-external-module.d.ts"
     }
   },
   "files": [
@@ -86,12 +95,14 @@
   "peerDependencies": {
     "@babel/generator": "*",
     "@babel/parser": "*",
+    "@babel/template": "*",
     "@babel/traverse": "*",
     "webpack": "*"
   },
   "devDependencies": {
     "@babel/types": "^7.0.0",
     "@types/babel__generator": "^7.0.0",
+    "@types/babel__template": "^7.0.0",
     "@types/babel__traverse": "^7.0.0",
     "clean-dir": "^1.0.3",
     "typescript": "^5.0.0"

@@ -1,5 +1,6 @@
 import type * as webpack from "webpack"
 
+import Loaders from "./loaders"
 import { WrapperPlugin } from "./plugin/wrapper-plugin"
 
 export const config: webpack.Configuration = {
@@ -12,7 +13,7 @@ export const config: webpack.Configuration = {
         rules: [
             {
                 test: /\.(j|t)sx?$/,
-                use: "slightning-coco-widget--webpack/loader/bypass-restrictions-loader",
+                use: Loaders.BypassRestrictionsLoader,
             }
         ]
     },

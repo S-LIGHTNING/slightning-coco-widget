@@ -4,6 +4,8 @@
         "jsx": "react",
         "lib": ["ESNext", "DOM"],
         "skipLibCheck": true,
+        "module": "preserve",
+        "moduleResolution": "bundler",
         "strict": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,

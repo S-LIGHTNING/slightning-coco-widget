@@ -1,5 +1,5 @@
 import { bypassRestrictions } from "../bypass"
 
-export = function BypassRestrictionsLoader(source: string): string {
-    return bypassRestrictions(source)
+export = function BypassRestrictionsLoader(content: string): string {
+    return bypassRestrictions(content)
 }
