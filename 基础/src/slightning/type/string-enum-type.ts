@@ -1,5 +1,6 @@
 import * as CoCo from "../../coco"
-import * as CreationProject from "../../creation-project"
+import * as CreationProject1 from "../../creation-project-1"
+import * as CreationProject2 from "../../creation-project-2"
 import { betterToString } from "../../utils"
 import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
@@ -106,7 +107,7 @@ export class StringEnumType<T extends string> implements Type<T> {
         }
     }
 
-    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
+    public toCreationProject1PropValueTypes(this: this): CreationProject1.PropValueTypes {
         return {
             valueType: "dropdown",
             dropdown: this.entries.map(
@@ -116,7 +117,7 @@ export class StringEnumType<T extends string> implements Type<T> {
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
+    public toCreationProject1MethodParamValueTypes(this: this): CreationProject1.MethodParamValueTypes {
         return {
             valueType: "dropdown",
             dropdown: this.entries.map(
@@ -126,13 +127,45 @@ export class StringEnumType<T extends string> implements Type<T> {
         }
     }
 
-    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
+    public toCreationProject1MethodValueTypes(this: this): CreationProject1.MethodValueTypes {
         return {
             valueType: "string"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
+    public toCreationProject1EmitParamValueTypes(this: this): CreationProject1.EmitParamValueTypes {
+        return {
+            valueType: "string"
+        }
+    }
+
+    public toCreationProject2PropValueTypes(this: this): CreationProject2.PropValueTypes {
+        return {
+            valueType: "dropdown",
+            dropdown: this.entries.map(
+                (entry: { label: string, value: string }): [string, string] =>
+                    [entry.label, entry.value]
+            )
+        }
+    }
+
+    public toCreationProject2MethodParamValueTypes(this: this): CreationProject2.MethodParamValueTypes {
+        return {
+            valueType: "dropdown",
+            dropdown: this.entries.map(
+                (entry: { label: string, value: string }): [string, string] =>
+                    [entry.label, entry.value]
+            )
+        }
+    }
+
+    public toCreationProject2MethodValueTypes(this: this): CreationProject2.MethodValueTypes {
+        return {
+            valueType: "string"
+        }
+    }
+
+    public toCreationProject2EmitParamValueTypes(this: this): CreationProject2.EmitParamValueTypes {
         return {
             valueType: "string"
         }

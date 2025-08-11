@@ -40,7 +40,6 @@ export interface Widget {
     widgetLog(this: this, message: string): void
     widgetWarn(this: this, message: string): void
     widgetError(this: this, message: string): void
-    setProps(this: this, props: object): void
     emit(this: this, key: string, ...args: unknown[]): void
 }
 
@@ -49,7 +48,7 @@ declare class InvisibleWidget implements Widget {
     public widgetLog(this: this, message: string): void
     public widgetWarn(this: this, message: string): void
     public widgetError(this: this, message: string): void
-    public setProps(this: this, props: object): void
+    public widgetInterrupt(this: this, message: string): void
     public emit(this: this, key: string, ...args: unknown[]): void
 }
 
@@ -58,7 +57,7 @@ declare class VisibleWidget implements Widget {
     public widgetLog(this: this, message: string): void
     public widgetWarn(this: this, message: string): void
     public widgetError(this: this, message: string): void
-    public setProps(this: this, props: object): void
+    public setProps(this: this, props: Record<string, unknown>): void
     public emit(this: this, key: string, ...args: unknown[]): void
     public render(this: this): ReactNode
 }

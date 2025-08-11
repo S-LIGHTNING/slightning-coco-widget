@@ -1,7 +1,8 @@
 import * as stringify from "@slightning/anything-to-string"
 
 import * as CoCo from "../../coco"
-import * as CreationProject from "../../creation-project"
+import * as CreationProject1 from "../../creation-project-1"
+import * as CreationProject2 from "../../creation-project-2"
 
 export interface ChildTypeInfo {
     key: string
@@ -44,8 +45,13 @@ export interface Type<T = unknown> {
     toCoCoMethodValueTypes(this: this): CoCo.MethodValueTypes
     toCoCoEventParamValueTypes(this: this): CoCo.EventParamValueTypes
 
-    toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes
-    toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes
-    toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes
-    toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes
+    toCreationProject1PropValueTypes(this: this): CreationProject1.PropValueTypes
+    toCreationProject1MethodParamValueTypes(this: this): CreationProject1.MethodParamValueTypes
+    toCreationProject1MethodValueTypes(this: this): CreationProject1.MethodValueTypes
+    toCreationProject1EmitParamValueTypes(this: this): CreationProject1.EmitParamValueTypes
+
+    toCreationProject2PropValueTypes(this: this): CreationProject2.PropValueTypes
+    toCreationProject2MethodParamValueTypes(this: this): CreationProject2.MethodParamValueTypes
+    toCreationProject2MethodValueTypes(this: this): CreationProject2.MethodValueTypes
+    toCreationProject2EmitParamValueTypes(this: this): CreationProject2.EmitParamValueTypes
 }

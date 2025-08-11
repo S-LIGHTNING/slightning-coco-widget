@@ -1,5 +1,5 @@
 /**
- * 本文件内容来自 https://www.yuque.com/zaona/cp/widget_apis#nC37P，有修改。
+ * 本文件内容来自 https://www.yuque.com/zaona/cp/widget_apis_v1#nC37P，有修改。
  */
 
 import { widgetClass } from "./widget"
@@ -27,7 +27,6 @@ export type Types = {
     rawBlocklyWidget?: boolean | undefined
     rawBlocks?: any | undefined
     rawFlyout?: any | undefined
-    noRender?: boolean | undefined
     noContextMenu?: boolean | undefined
     noWidgetsBoxItem?: boolean | undefined
 }
@@ -36,15 +35,22 @@ export type PropTypes = {
     key: string
     label: string
     defaultValue?: string | number | boolean | any | undefined
+    compact?: boolean | undefined
     noBlock?: boolean | undefined
+    showEditor?: boolean | undefined
+    blockOptions?: {
+        group?: string | undefined
+        setter?: BlockOptions | undefined
+        getter?: BlockOptions | undefined
+    } | undefined
     rawProp?: string | undefined
-    changeCallback?: string | undefined
     extData?: any | undefined
-    noFlyout?: boolean | undefined
     justVisibleWidget?: boolean | undefined
 } & PropValueTypes
 
-export type PropValueTypes = AfferentValueTypes
+export type PropValueTypes = {
+    editorType?: ValueType | "dropdown" | undefined
+} & AfferentValueTypes
 
 export type MethodTypes = {
     key: string
@@ -52,20 +58,10 @@ export type MethodTypes = {
     valueType?: ValueType | "code" | string | undefined
     params: MethodParamTypes[]
     static?: boolean | undefined
-    noPs?: boolean | undefined
-    noNs?: boolean | undefined
-    color?: string | undefined
-    tipBefore?: string | undefined
-    tipAfter?: string | undefined
     rawBlock?: any | undefined
     fn?: ((this: widgetClass, ...arg: any[]) => any) | undefined
-    padding?: number | undefined
-    flyoutOptions?: {
-        line?: string | undefined
-        gap?: number | undefined
-    } | undefined
     rawBlocklyCheck?: any | undefined
-    tooltip?: string | undefined
+    blockOptions?: BlockOptions | undefined
 }
 
 export type MethodParamTypes = {
@@ -135,4 +131,19 @@ export type CommonAfferentValueTypes = {
 export type DropdownTypes = {
     valueType: "dropdown"
     dropdown: [string, string][] | (() => [string, string][])
+}
+
+export type BlockOptions = {
+    previousStatement?: boolean | undefined
+    nextStatement?: boolean | undefined
+    generateBlock?: boolean | undefined
+    inputsInline?: boolean | undefined
+    tooltip?: string | undefined
+    line?: string | undefined
+    gap?: number | undefined
+    padding?: number | undefined
+    color?: string | undefined
+    prefix?: string | undefined
+    suffix?: string | undefined
+    fn?: ((...args: any[]) => any) | undefined
 }

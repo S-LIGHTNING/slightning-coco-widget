@@ -1,7 +1,8 @@
 import * as stringify from "@slightning/anything-to-string"
 
 import * as CoCo from "../../coco"
-import * as CreationProject from "../../creation-project"
+import * as CreationProject1 from "../../creation-project-1"
+import * as CreationProject2 from "../../creation-project-2"
 import { betterToString, XMLEscape } from "../../utils"
 import { standardizeMethodBlock } from "../convert/standardize-types"
 import { MethodBlock, StandardMethodBlock } from "../types"
@@ -183,20 +184,20 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         }
     }
 
-    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
+    public toCreationProject1PropValueTypes(this: this): CreationProject1.PropValueTypes {
         return {
             valueType: "object",
             defaultValue: this.defaultValue ?? inlineTypeToString(this)
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
+    public toCreationProject1MethodParamValueTypes(this: this): CreationProject1.MethodParamValueTypes {
         if (
             !this.raw &&
             (this.returns == null || this.returns.isVoid()) &&
             (this.throws == null || this.throws.isVoid())
         ) {
-            const codeParams: CreationProject.MethodParamCodeParamTypes[] = []
+            const codeParams: CreationProject1.MethodParamCodeParamTypes[] = []
             for (const part of this.block) {
                 if (typeof part != "object") {
                     continue
@@ -204,7 +205,7 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
                 codeParams.push({
                     key: part.key,
                     label: part.label,
-                    ...part.type.toCreationProjectEmitParamValueTypes()
+                    ...part.type.toCreationProject1EmitParamValueTypes()
                 })
             }
             return {
@@ -218,13 +219,60 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         }
     }
 
-    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
+    public toCreationProject1MethodValueTypes(this: this): CreationProject1.MethodValueTypes {
         return {
             valueType: "object"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
+    public toCreationProject1EmitParamValueTypes(this: this): CreationProject1.EmitParamValueTypes {
+        return {
+            valueType: "object"
+        }
+    }
+
+    public toCreationProject2PropValueTypes(this: this): CreationProject2.PropValueTypes {
+        return {
+            valueType: "object",
+            defaultValue: this.defaultValue ?? inlineTypeToString(this)
+        }
+    }
+
+    public toCreationProject2MethodParamValueTypes(this: this): CreationProject2.MethodParamValueTypes {
+        if (
+            !this.raw &&
+            (this.returns == null || this.returns.isVoid()) &&
+            (this.throws == null || this.throws.isVoid())
+        ) {
+            const codeParams: CreationProject2.MethodParamCodeParamTypes[] = []
+            for (const part of this.block) {
+                if (typeof part != "object") {
+                    continue
+                }
+                codeParams.push({
+                    key: part.key,
+                    label: part.label,
+                    ...part.type.toCreationProject2EmitParamValueTypes()
+                })
+            }
+            return {
+                valueType: "code",
+                codeParams
+            }
+        }
+        return {
+            valueType: "object",
+            defaultValue: this.defaultValue ?? inlineTypeToString(this)
+        }
+    }
+
+    public toCreationProject2MethodValueTypes(this: this): CreationProject2.MethodValueTypes {
+        return {
+            valueType: "object"
+        }
+    }
+
+    public toCreationProject2EmitParamValueTypes(this: this): CreationProject2.EmitParamValueTypes {
         return {
             valueType: "object"
         }

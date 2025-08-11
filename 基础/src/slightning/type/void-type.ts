@@ -1,5 +1,6 @@
 import * as CoCo from "../../coco"
-import * as CreationProject from "../../creation-project"
+import * as CreationProject1 from "../../creation-project-1"
+import * as CreationProject2 from "../../creation-project-2"
 import { ChildTypeInfo, Type } from "./type"
 import { typeToString } from "./utils"
 
@@ -45,19 +46,35 @@ export class VoidType implements Type<void> {
         throw new Error(`不能将 ${typeToString(this)} 作为事件参数类型`)
     }
 
-    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
+    public toCreationProject1PropValueTypes(this: this): CreationProject1.PropValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
     }
 
-    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
+    public toCreationProject1MethodParamValueTypes(this: this): CreationProject1.MethodParamValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为方法参数类型`)
     }
 
-    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
+    public toCreationProject1MethodValueTypes(this: this): CreationProject1.MethodValueTypes {
         return {}
     }
 
-    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
+    public toCreationProject1EmitParamValueTypes(this: this): CreationProject1.EmitParamValueTypes {
+        throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
+    }
+
+    public toCreationProject2PropValueTypes(this: this): CreationProject2.PropValueTypes {
+        throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
+    }
+
+    public toCreationProject2MethodParamValueTypes(this: this): CreationProject2.MethodParamValueTypes {
+        throw new Error(`不能将 ${typeToString(this)} 作为方法参数类型`)
+    }
+
+    public toCreationProject2MethodValueTypes(this: this): CreationProject2.MethodValueTypes {
+        return {}
+    }
+
+    public toCreationProject2EmitParamValueTypes(this: this): CreationProject2.EmitParamValueTypes {
         throw new Error(`不能将 ${typeToString(this)} 作为属性类型`)
     }
 }

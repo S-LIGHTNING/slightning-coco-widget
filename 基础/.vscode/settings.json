@@ -1,19 +1,20 @@
 {
     "cSpell.words": [
         "antd",
-        "Aqara",
-        "Blockly",
+        "aqara",
+        "blockly",
         "cleandir",
         "cocotais",
+        "codemao",
         "datawatch",
-        "Movaable",
+        "movaable",
         "openview",
         "pptui",
         "qrcode",
         "shouqi",
+        "slightning",
         "tabledata",
         "vika",
         "vikadata"
-    ],
-    "Codegeex.RepoIndex": true
+    ]
 }

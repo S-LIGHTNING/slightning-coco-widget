@@ -4,16 +4,28 @@ import { Decorator } from "./decorators"
 import { StandardTypes, Types } from "./types"
 import { Widget } from "./widget"
 
-type Platform = "CoCo" | "CreationProject" | "NodeJS"
+type Platform = "CoCo" | "CreationProject" | "CreationProject1" | "CreationProject2" | "NodeJS"
 
 type Platforms =
     "CoCo" |
     "CreationProject" |
+    "CreationProject1" |
+    "CreationProject2" |
     "Node" |
     "CoCo|CreationProject" |
+    "CoCo|CreationProject1" |
+    "CoCo|CreationProject2" |
     "CoCo|NodeJS" |
     "CreationProject|NodeJS" |
-    "CoCo|CreationProject|NodeJS"
+    "CreationProject1|CreationProject2" |
+    "CreationProject1|NodeJS" |
+    "CreationProject2|NodeJS" |
+    "CoCo|CreationProject|NodeJS" |
+    "CoCo|CreationProject1|CreationProject2" |
+    "CoCo|CreationProject1|NodeJS" |
+    "CoCo|CreationProject2|NodeJS" |
+    "CreationProject1|CreationProject2|NodeJS" |
+    "CoCo|CreationProject1|CreationProject2|NodeJS"
 
 export interface ExportConfig {
     decorators?: (
@@ -26,8 +38,14 @@ export interface ExportConfig {
     CreationProject?: {
         decorators?: Decorator[] | null | undefined
     } | null | undefined
+    CreationProject1?: {
+        decorators?: null | undefined
+    } | null | undefined
+    CreationProject2?: {
+        decorators?: null | undefined
+    } | null | undefined
     NodeJS?: {
-        decorators?: Decorator[] | null | undefined
+        decorators?: null | undefined
     } | null | undefined
 }
 
@@ -35,14 +53,16 @@ export function decorate(
     types: StandardTypes,
     widget: Widget,
     config: ExportConfig | null | undefined,
-    platform: Platform
+    platforms: Platform[]
 ): [StandardTypes, Widget] {
     for (const decorator of config?.decorators ?? []) {
         if (typeof decorator == "object") {
-            for (const [platforms, platformDecorator] of Object.entries(decorator)) {
+            for (const [appliedPlatforms, platformDecorator] of Object.entries(decorator)) {
                 if (
                     platformDecorator == null ||
-                    !platforms.split("|").includes(platform)
+                    appliedPlatforms.split("|").every(
+                        (platform: string): boolean => !platforms.includes(platform as Platform)
+                    )
                 ) {
                     continue
                 }
@@ -58,8 +78,10 @@ export function decorate(
             [types, widget] = decorator(types, widget)
         }
     }
-    for (const decorator of config?.[platform]?.decorators ?? []) {
-        [types, widget] = decorator(types, widget)
+    for (const platform of platforms) {
+        for (const decorator of config?.[platform]?.decorators ?? []) {
+            [types, widget] = decorator(types, widget)
+        }
     }
     return [types, widget]
 }

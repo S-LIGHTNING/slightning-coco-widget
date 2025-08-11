@@ -1,12 +1,12 @@
-import * as CreationProject from "../../creation-project"
-import { convertToCreationProject } from "../convert/to-creation-project"
+import * as CreationProject2 from "../../creation-project-2"
+import { convertToCreationProject2 } from "../convert/to-creation-project-2"
 import { PropertiesTypes, StandardTypes, Types } from "../types"
 import { Widget } from "../widget"
 import { Adapter, LoggerAdapter } from "./adapter"
 import { decorate, ExportConfig } from "../export"
 
 function isEditorWindow(window: Window): boolean {
-    return /^https:\/\/cp\.cocotais\.cn\/(#|\?.*)?$/.test(window.location.href)
+    return /^https:\/\/(test-)?cp\.cocotais\.cn\/(#|\?.*)?$/.test(window.location.href)
 }
 
 function getEditorWindow(): Window | null {
@@ -40,7 +40,7 @@ function editorIsRunningWork(): boolean {
     return /^[\s]*停[\s]*止[\s]*$/.test(getEditorRunButton()?.textContent ?? "")
 }
 
-export const CreationProjectAdapter: Adapter = {
+export const CreationProject2Adapter: Adapter = {
     getSuperWidget(types: Types) {
         const propertiesSet: Set<string> = new Set()
         function addProperties(properties: PropertiesTypes): void {
@@ -53,47 +53,47 @@ export const CreationProjectAdapter: Adapter = {
             }
         }
         addProperties(types.properties)
-        return class extends CreationProject.widgetClass {
+        return class extends CreationProject2.widgetClass {
             public constructor() {
                 super()
                 return new Proxy(this, {
-                    defineProperty(target: CreationProject.widgetClass, property: string | symbol, attributes: PropertyDescriptor): boolean {
+                    defineProperty(target: CreationProject2.widgetClass, property: string | symbol, attributes: PropertyDescriptor): boolean {
                         if (typeof property == "string" && propertiesSet.has(property)) {
                             return Reflect.defineProperty(target.props, property, attributes)
                         }
                         return Reflect.defineProperty(target, property, attributes)
                     },
-                    deleteProperty(target: CreationProject.widgetClass, p: string | symbol): boolean {
+                    deleteProperty(target: CreationProject2.widgetClass, p: string | symbol): boolean {
                         if (typeof p == "string" && propertiesSet.has(p)) {
                             return Reflect.deleteProperty(target.props, p)
                         }
                         return Reflect.deleteProperty(target, p)
                     },
-                    get(target: CreationProject.widgetClass, p: string | symbol, receiver: any): any {
+                    get(target: CreationProject2.widgetClass, p: string | symbol, receiver: any): any {
                         if (typeof p == "string" && propertiesSet.has(p)) {
                             return Reflect.get(target.props, p, receiver)
                         }
                         return Reflect.get(target, p, receiver)
                     },
-                    getOwnPropertyDescriptor(target: CreationProject.widgetClass, p: string | symbol): TypedPropertyDescriptor<any> | undefined {
+                    getOwnPropertyDescriptor(target: CreationProject2.widgetClass, p: string | symbol): TypedPropertyDescriptor<any> | undefined {
                         if (typeof p == "string" && propertiesSet.has(p)) {
                             return Reflect.getOwnPropertyDescriptor(target.props, p)
                         }
                         return Reflect.getOwnPropertyDescriptor(target, p)
                     },
-                    has(target: CreationProject.widgetClass, p: string | symbol): boolean {
+                    has(target: CreationProject2.widgetClass, p: string | symbol): boolean {
                         if (typeof p == "string" && propertiesSet.has(p)) {
                             return Reflect.has(target.props, p)
                         }
                         return Reflect.has(target, p)
                     },
-                    ownKeys(target: CreationProject.widgetClass): (string | symbol)[] {
+                    ownKeys(target: CreationProject2.widgetClass): (string | symbol)[] {
                         return Reflect.ownKeys(target).concat(Reflect.ownKeys(target.props))
                     },
-                    set(target: CreationProject.widgetClass, p: string | symbol, newValue: any, receiver: any): boolean {
+                    set(target: CreationProject2.widgetClass, p: string | symbol, newValue: any, receiver: any): boolean {
                         if (typeof p == "string" && propertiesSet.has(p)) {
                             if (types.options.visible) {
-                                CreationProject.widgetClass.prototype.setProp.call(receiver, p, newValue)
+                                CreationProject2.widgetClass.prototype.setProp.call(receiver, p, newValue)
                                 return true
                             } else {
                                 return Reflect.set(target.props, p, newValue, receiver)
@@ -106,8 +106,8 @@ export const CreationProjectAdapter: Adapter = {
         }
     },
     exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void {
-        [types, widget] = decorate(types, widget, config, "CreationProject")
-        CreationProject.exportWidget(...convertToCreationProject(types, widget))
+        [types, widget] = decorate(types, widget, config, ["CreationProject", "CreationProject2"])
+        CreationProject2.exportWidget(...convertToCreationProject2(types, widget))
     },
     Logger: class CreationProjectLogger implements LoggerAdapter {
 
@@ -118,45 +118,45 @@ export const CreationProjectAdapter: Adapter = {
         }
 
         public log(messages: string): void {
-            CreationProject.widgetClass.prototype.widgetLog.call(this.widget, messages)
+            CreationProject2.widgetClass.prototype.widgetLog.call(this.widget, messages)
         }
 
         public info(messages: string): void {
-            CreationProject.widgetClass.prototype.widgetLog.call(this.widget, `[信息] ${messages}`)
+            CreationProject2.widgetClass.prototype.widgetLog.call(this.widget, `[信息] ${messages}`)
         }
 
         public warn(messages: string): void {
-            CreationProject.widgetClass.prototype.widgetWarn.call(this.widget, messages)
+            CreationProject2.widgetClass.prototype.widgetWarn.call(this.widget, messages)
         }
 
         public error(messages: string): void {
-            CreationProject.widgetClass.prototype.widgetError.call(this.widget, messages)
+            CreationProject2.widgetClass.prototype.widgetError.call(this.widget, messages)
         }
     },
     emit(this: any, key: string, ...args: unknown[]): void {
-        CreationProject.widgetClass.prototype.emit.call(this, key, ...args)
+        CreationProject2.widgetClass.prototype.emit.call(this, key, ...args)
     },
     utils: {
         inNative(): boolean {
-            return CreationProject.widgetRequire("cp_utils")?.native ?? false
+            return location.protocol == "file:"
         },
         inEditor(): boolean {
-            return !(CreationProject.widgetRequire("cp_utils")?.player ?? true)
+            return isEditorWindow(window)
         },
         inEditorWindow: function (): boolean {
-            return /^https:\/\/cp\.cocotais\.cn\/(pptui)?$/.test(location.href)
+            return /^https:\/\/(test-)?cp\.cocotais\.cn\/(pptui)?$/.test(location.href)
         },
         inEditorPlayer: function (): boolean {
-            return /^https:\/\/cp\.cocotais\.cn\/player(#|\?.*)?$/.test(location.href)
+            return /^https:\/\/(test-)?cp\.cocotais\.cn\/player(#|\?.*)?$/.test(location.href)
         },
-        getImageURLByFileName(fileName: string): string | null {
-            return CreationProject.widgetRequire("cp_utils")?.resToUrl.img(fileName) ?? null
+        getImageURLByFileName(__fileName: string): string | null {
+            return null
         },
-        getAudioURLByFileName(fileName: string): string | null {
-            return CreationProject.widgetRequire("cp_utils")?.resToUrl.audio(fileName) ?? null
+        getAudioURLByFileName(__fileName: string): string | null {
+            return null
         },
-        getVideoURLByFileName(fileName: string): string | null {
-            return CreationProject.widgetRequire("cp_utils")?.resToUrl.video(fileName) ?? null
+        getVideoURLByFileName(__fileName: string): string | null {
+            return null
         },
         editor: {
             getWindow: getEditorWindow,

@@ -1,5 +1,6 @@
 import * as CoCo from "../../coco"
-import * as CreationProject from "../../creation-project"
+import * as CreationProject1 from "../../creation-project-1"
+import * as CreationProject2 from "../../creation-project-2"
 import { betterToString, XMLEscape } from "../../utils"
 import { ChildTypeInfo, Type } from "./type"
 import { TypeValidateError } from "./type-validate-error"
@@ -23,7 +24,7 @@ const COCO_VALUE_TYPE_MAP: Record<StringInputType, CoCo.ValueType> = {
     [StringInputType.RICH]: "richTextString"
 }
 
-const CREATION_PROJECT_VALUE_TYPE_MAP: Record<StringInputType, CreationProject.ValueType> = {
+const CREATION_PROJECT_VALUE_TYPE_MAP: Record<StringInputType, CreationProject1.ValueType> = {
     [StringInputType.INLINE]: "string",
     [StringInputType.MULTILINE]: "multiline_string",
     [StringInputType.RICH]: "multiline_string"
@@ -106,27 +107,53 @@ export class StringType implements Type<string> {
         }
     }
 
-    public toCreationProjectPropValueTypes(this: this): CreationProject.PropValueTypes {
+    public toCreationProject1PropValueTypes(this: this): CreationProject1.PropValueTypes {
         return {
             valueType: "string",
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodParamValueTypes(this: this): CreationProject.MethodParamValueTypes {
+    public toCreationProject1MethodParamValueTypes(this: this): CreationProject1.MethodParamValueTypes {
         return {
             valueType: CREATION_PROJECT_VALUE_TYPE_MAP[this.inputType],
             defaultValue: this.defaultValue
         }
     }
 
-    public toCreationProjectMethodValueTypes(this: this): CreationProject.MethodValueTypes {
+    public toCreationProject1MethodValueTypes(this: this): CreationProject1.MethodValueTypes {
         return {
             valueType: "string"
         }
     }
 
-    public toCreationProjectEmitParamValueTypes(this: this): CreationProject.EmitParamValueTypes {
+    public toCreationProject1EmitParamValueTypes(this: this): CreationProject1.EmitParamValueTypes {
+        return {
+            valueType: "string"
+        }
+    }
+
+    public toCreationProject2PropValueTypes(this: this): CreationProject2.PropValueTypes {
+        return {
+            valueType: CREATION_PROJECT_VALUE_TYPE_MAP[this.inputType],
+            defaultValue: this.defaultValue
+        }
+    }
+
+    public toCreationProject2MethodParamValueTypes(this: this): CreationProject2.MethodParamValueTypes {
+        return {
+            valueType: CREATION_PROJECT_VALUE_TYPE_MAP[this.inputType],
+            defaultValue: this.defaultValue
+        }
+    }
+
+    public toCreationProject2MethodValueTypes(this: this): CreationProject2.MethodValueTypes {
+        return {
+            valueType: "string"
+        }
+    }
+
+    public toCreationProject2EmitParamValueTypes(this: this): CreationProject2.EmitParamValueTypes {
         return {
             valueType: "string"
         }

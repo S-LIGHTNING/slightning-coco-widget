@@ -74,7 +74,7 @@ export const CoCoAdapter: Adapter = {
         }
     },
     exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void {
-        [types, widget] = decorate(types, widget, config, "CoCo")
+        [types, widget] = decorate(types, widget, config, ["CoCo"])
         CoCo.exportWidget(...convertToCoCo(types, widget))
     },
     Logger: class CoCoLogger implements LoggerAdapter {

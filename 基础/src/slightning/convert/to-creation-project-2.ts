@@ -1,22 +1,22 @@
-import * as CreationProject from "../../creation-project"
+import * as CreationProject2 from "../../creation-project-2"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
 import { IntegerType, MutatorType, NumberType } from "../type"
-import { Color, StandardEventParamTypes, MethodBlockParam, StandardTypes, StandardMethodBlockItem } from "../types"
+import { Color, StandardEventParamTypes, MethodBlockParam, StandardTypes, StandardMethodBlockItem, PropertyComputeBlockOptions } from "../types"
 import { Widget } from "../widget"
 
-export function convertToCreationProject(
+export function convertToCreationProject2(
     types: StandardTypes,
     widget: Widget
-): [CreationProject.Types, new (props: Record<string, any>) => CreationProject.widgetClass] {
-    return [typesToCreationProject(types), widget as new (props: Record<string, any>) => CreationProject.widgetClass]
+): [CreationProject2.Types, new (props: Record<string, any>) => CreationProject2.widgetClass] {
+    return [typesToCreationProject2(types), widget as new (props: Record<string, any>) => CreationProject2.widgetClass]
 }
 
-export function typesToCreationProject(types: StandardTypes): CreationProject.Types {
+export function typesToCreationProject2(types: StandardTypes): CreationProject2.Types {
     const defaultPropertiesValues: {
         width?: number | undefined
         height?: number | undefined
     } = {}
-    const result: CreationProject.Types = {
+    const result: CreationProject2.Types = {
         type: types.type,
         label: types.info.title,
         icon: types.info.icon,
@@ -49,25 +49,43 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
             }
         },
         PropertyTypes(node: PropertyTypesNode): void {
-            if (node.value.key == "__width" && (node.value.type instanceof IntegerType || node.value.type instanceof NumberType)) {
-                defaultPropertiesValues.width = node.value.type.defaultValue
-            } else if (node.value.key == "__height" && (node.value.type instanceof IntegerType || node.value.type instanceof NumberType)) {
-                defaultPropertiesValues.height = node.value.type.defaultValue
+            const { value: property } = node
+            if (property.key == "__width" && (property.type instanceof IntegerType || property.type instanceof NumberType)) {
+                defaultPropertiesValues.width = property.type.defaultValue
+            } else if (property.key == "__height" && (property.type instanceof IntegerType || property.type instanceof NumberType)) {
+                defaultPropertiesValues.height = property.type.defaultValue
             } else {
-                result.props.push({
-                    key: node.value.key,
-                    label: node.value.label,
-                    ...node.value.type.toCreationProjectPropValueTypes(),
-                    noBlock: ((): boolean => {
-                        if ((node.value.blockOptions?.get ?? true == true) && (node.value.blockOptions?.set ?? true == true)) {
-                            return false
-                        } else if (node.value.blockOptions?.get == false && node.value.blockOptions.set == false) {
-                            return true
-                        } else {
-                            throw new Error(`无法将属性 ${node.value.label} 转为 Creation Project 类型`)
+                const getterBlockOption: PropertyComputeBlockOptions = node.blockOptions.get != null && typeof node.blockOptions.get == "object" ? node.blockOptions.get : {}
+                const setterBlockOption: PropertyComputeBlockOptions = node.blockOptions.get != null && typeof node.blockOptions.get == "object" ? node.blockOptions.get : {}
+                const transformed: CreationProject2.PropTypes = {
+                    key: property.key,
+                    label: property.label,
+                    ...property.type.toCreationProject2PropValueTypes(),
+                    blockOptions: {
+                        getter: {
+                            generateBlock: node.blockOptions.get != false,
+                            color: getterBlockOption.color ?? Color.PINK,
+                            inputsInline: getterBlockOption.inline ?? undefined,
+                            line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined,
+                        },
+                        setter: {
+                            generateBlock: node.blockOptions.set != false,
+                            color: setterBlockOption.color ?? Color.PINK,
+                            inputsInline: setterBlockOption.inline ?? undefined,
+                            line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined
                         }
-                    })()
-                })
+                    }
+                }
+                if (addSpace != false) {
+                    transformed.blockOptions ??= {}
+                    transformed.blockOptions.getter ??= {}
+                    transformed.blockOptions.setter ??= {}
+                    transformed.blockOptions.getter.gap = typeof addSpace == "number" ? addSpace : 40
+                    transformed.blockOptions.setter.gap = typeof addSpace == "number" ? addSpace : 40
+                    addSpace = false
+                }
+                showLine = false
+                result.props.push()
             }
         },
         MethodGroup: {
@@ -92,34 +110,35 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                 throw new Error(`无法将方法 ${method.label} 的抛出类型转为 Creation Project 类型`)
             }
             const deprecated: boolean | string = method.deprecated ?? node.blockOptions.deprecated ?? false
-            const transformed: CreationProject.MethodTypes = {
+            const transformed: CreationProject2.MethodTypes = {
                 key: method.key,
-                tipBefore: "",
-                tipAfter: "",
                 params: [],
-                ...method.returns?.toCreationProjectMethodValueTypes(),
-                tooltip: method.tooltip ?? undefined,
-                color: deprecated ? Color.GREY : node.blockOptions.color ?? undefined,
-                flyoutOptions: {
+                ...method.returns?.toCreationProject2MethodValueTypes(),
+                blockOptions: {
+                    prefix: "",
+                    suffix: "",
+                    tooltip: method.tooltip ?? undefined,
+                    color: deprecated ? Color.GREY : node.blockOptions.color ?? undefined,
                     line: typeof showLine == "string" ? showLine : showLine ? labels.join("·") : undefined
                 }
             }
+            transformed.blockOptions ??= {}
             if (typeof deprecated == "string") {
-                if (transformed.tooltip == null) {
-                    transformed.tooltip = `${deprecated}`
+                if (transformed.blockOptions.tooltip == null) {
+                    transformed.blockOptions.tooltip = `${deprecated}`
                 } else {
-                    transformed.tooltip = `${deprecated}\n\n${transformed.tooltip}`
+                    transformed.blockOptions.tooltip = `${deprecated}\n\n${transformed.blockOptions.tooltip}`
                 }
             } else if (deprecated) {
-                if (transformed.tooltip == null) {
-                    transformed.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法`
+                if (transformed.blockOptions.tooltip == null) {
+                    transformed.blockOptions.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法`
                 } else {
-                    transformed.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法\n\n${transformed.tooltip}`
+                    transformed.blockOptions.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法\n\n${transformed.blockOptions.tooltip}`
                 }
             }
             const inline: boolean = node.blockOptions.inline ?? true
             if (inline || method.block.includes(MethodBlockParam.BREAK_LINE)) {
-                let lastParam: CreationProject.MethodParamTypes | null = null
+                let lastParam: CreationProject2.MethodParamTypes | null = null
                 let labelsAfterLastParam: string[] = []
                 function addText(text: string): void {
                     if (lastParam == null) {
@@ -154,7 +173,7 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                     } else {
                         lastParam = {
                             key: part.key,
-                            ...part.type.toCreationProjectMethodParamValueTypes()
+                            ...part.type.toCreationProject2MethodParamValueTypes()
                         }
                         if (labelsAfterLastParam.length > 0) {
                             lastParam.labelAfter = labelsAfterLastParam.join(" ")
@@ -191,10 +210,10 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                 if (deprecated != false) {
                     labelsBeforeThis.unshift("[已弃用]")
                 }
-                transformed.tipBefore = labelsBeforeThis.join(" ").replace(/( )?\n( )?/g, "\n")
+                transformed.blockOptions.prefix = labelsBeforeThis.join(" ").replace(/( )?\n( )?/g, "\n")
             } else {
                 if (deprecated != false) {
-                    transformed.tipBefore = "[已弃用]"
+                    transformed.blockOptions.prefix = "[已弃用]"
                 }
                 transformed.label = method.label
                 for (const part of method.block) {
@@ -202,7 +221,7 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                         continue
                     }
                     if (part.type instanceof MutatorType) {
-                        const mutatorValueType: CreationProject.MutatorTypes = part.type.toCreationProjectMethodParamValueTypes()
+                        const mutatorValueType: CreationProject2.MutatorTypes = part.type.toCreationProject2MethodParamValueTypes()
                         for (const mutatorParam of mutatorValueType.mutator ?? []) {
                             mutatorParam.label = `\n${mutatorParam.label ?? ""}`
                         }
@@ -214,14 +233,13 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
                         transformed.params.push({
                             key: part.key,
                             label: `\n${part.label}`,
-                            ...part.type.toCreationProjectMethodParamValueTypes()
+                            ...part.type.toCreationProject2MethodParamValueTypes()
                         })
                     }
                 }
             }
             if (addSpace != false) {
-                transformed.flyoutOptions ??= {}
-                transformed.flyoutOptions.gap = typeof addSpace == "number" ? addSpace : 40
+                transformed.blockOptions.gap = typeof addSpace == "number" ? addSpace : 40
                 addSpace = false
             }
             showLine = false
@@ -235,11 +253,11 @@ export function typesToCreationProject(types: StandardTypes): CreationProject.Ty
             result.emits.push({
                 key: node.value.key,
                 label: deprecated != false ? `[已弃用] ${node.value.label}` : node.value.label,
-                params: node.value.params.map((param: StandardEventParamTypes): CreationProject.EmitParamTypes => {
+                params: node.value.params.map((param: StandardEventParamTypes): CreationProject2.EmitParamTypes => {
                     return {
                         key: param.key,
                         label: param.label,
-                        ...param.type.toCreationProjectEmitParamValueTypes()
+                        ...param.type.toCreationProject2EmitParamValueTypes()
                     }
                 })
             })

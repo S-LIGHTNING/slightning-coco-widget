@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "main": "dist/src/index.js",
   "module": "dist/src/index.js",
   "types": "dist/types/index.d.ts",
@@ -14,8 +14,16 @@
       "types": "./dist/types/coco/index.d.ts"
     },
     "./creation-project": {
-      "default": "./dist/src/creation-project/index.js",
-      "types": "./dist/types/creation-project/index.d.ts"
+      "default": "./dist/src/creation-project-1/index.js",
+      "types": "./dist/types/creation-project-1/index.d.ts"
+    },
+    "./creation-project-1": {
+      "default": "./dist/src/creation-project-1/index.js",
+      "types": "./dist/types/creation-project-1/index.d.ts"
+    },
+    "./creation-project-2": {
+      "default": "./dist/src/creation-project-2/index.js",
+      "types": "./dist/types/creation-project-2/index.d.ts"
     }
   },
   "files": [

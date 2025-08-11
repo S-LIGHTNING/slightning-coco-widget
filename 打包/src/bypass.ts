@@ -194,10 +194,11 @@ const BypassKeyWordsCheckVisitor: Visitor = {
             return
         }
         if (
-            parentPath.isObjectProperty({ key: identifier }) ||
-            parentPath.isObjectMethod({ key: identifier }) ||
-            parentPath.isClassProperty({ key: identifier }) ||
-            parentPath.isClassMethod({ key: identifier })
+            parentPath.isMemberExpression({ property: identifier, computed: false }) ||
+            parentPath.isObjectProperty({ key: identifier, computed: false }) ||
+            parentPath.isObjectMethod({ key: identifier, computed: false }) ||
+            parentPath.isClassProperty({ key: identifier, computed: false }) ||
+            parentPath.isClassMethod({ key: identifier, computed: false })
         ) {
             return
         }

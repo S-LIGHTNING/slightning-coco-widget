@@ -41,10 +41,16 @@ export type Utils = {
     }
 }
 
+/**
+ * @deprecated 此模块已弃用。将在 v2 版本中删除
+ */
 declare function __slightning_coco_widget_require__(moduleName: "cp_utils"): Utils
 declare function __slightning_coco_widget_require__(moduleName: "crypto-js"): typeof import("crypto-js")
 declare function __slightning_coco_widget_require__(moduleName: "axios"): typeof import("axios-1.7.4")
 declare function __slightning_coco_widget_require__(moduleName: "vue"): typeof import("vue")
+/**
+ * @deprecated 此模块已弃用。将在 v2 版本中删除
+ */
 declare function __slightning_coco_widget_require__(moduleName: "@ant-design/icons-vue"): typeof import("@ant-design/icons-vue")
 declare function __slightning_coco_widget_require__(moduleName: "vika"): typeof import("@vikadata/vika")
 declare function __slightning_coco_widget_require__(moduleName: "lodash"): typeof import("lodash")
@@ -55,12 +61,10 @@ export const widgetRequire: typeof __slightning_coco_widget_require__ = __slight
 const __widgetClass: typeof widgetClass = widgetClass
 type __widgetClass = widgetClass
 
-export {
-    __widgetClass as widgetClass
-}
+export { __widgetClass as widgetClass }
 
 /**
- * 以下内容来自 https://www.yuque.com/zaona/cp/widget_apis#nC37P，有修改。
+ * 以下内容来自 https://www.yuque.com/zaona/cp/widget_apis_v1#nC37P，有修改。
  */
 
 import { PropTypes, Types } from "./type"
