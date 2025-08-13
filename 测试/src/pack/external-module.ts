@@ -9,6 +9,7 @@ const types: Types = {
         icon: "icon-widget-radio",
         category: "测试 SCW",
         version: packageInfo.version,
+        author: packageInfo.author,
         url: {
             homepage: "https://s-lightning.github.io/slightning-coco-widget/",
             docs: "https://s-lightning.github.io/slightning-coco-widget/",

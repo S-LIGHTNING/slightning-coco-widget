@@ -1,12 +1,22 @@
 import React from "react"
 import { addCheck, addThisForMethods, CoCo, Color, CreationProject, exportWidget, getSuperWidget, StringEnumType, StringType, transformIcons, Types, Utils } from "slightning-coco-widget"
 
+import packageInfo from "../package.json"
+
 const types: Types = {
     type: "SLIGHTNING_WIDGET_LIVE_RELOAD_WIDGET",
     info: {
         title: "控件实时重载",
         icon: "https://creation.bcmcdn.com/716/appcraft/IMAGE_fLMaBYcwz_1748061454004.svg",
         category: "开发",
+        version: packageInfo.version,
+        author: packageInfo.author,
+        url: {
+            homepage: "https://s-lightning.github.io/slightning-coco-widget/",
+            docs: "https://s-lightning.github.io/slightning-coco-widget/",
+            repository: "https://gitee.com/slightning/slightning-coco-widget",
+            bugReport: "https://gitee.com/slightning/slightning-coco-widget/issues/new",
+        }
     },
     options: {
         visible: false,

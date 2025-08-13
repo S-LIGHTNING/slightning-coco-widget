@@ -1,7 +1,7 @@
 import * as CoCo from "../../coco"
 import { capitalize, splitArray } from "../../utils"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
-import { Color, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, MethodBlockParam, MethodParamTypes, StandardTypes, StandardMethodBlock, StandardMethodBlockItem, StandardMethodParamTypes } from "../types"
+import { Color, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, MethodBlockParam, MethodParamTypes, StandardTypes, StandardMethodBlock, StandardMethodParamTypes } from "../types"
 import { eventKeyMap } from "../utils"
 import { Widget } from "../widget"
 
@@ -32,6 +32,7 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
         title: types.info.title,
         icon: types.info.icon,
         version: types.info.version ?? undefined,
+        author: types.info.author ?? undefined,
         docs: {
             url: types.info.url?.docs ?? undefined
         },
@@ -145,6 +146,9 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                     transformed.tooltip = `该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法\n\n${transformed.tooltip}`
                 }
             }
+            if (!method.block.includes(MethodBlockParam.THIS)) {
+                throw new Error(`方法 ${method.label} 缺少 this 参数`)
+            }
             transformed.blockOptions ??= {}
             const inline: boolean = node.blockOptions.inline ?? true
             if (inline) {
@@ -152,9 +156,6 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                 let labelsBeforeThis: string[] = []
                 if (deprecated != false) {
                     labelsBeforeThis.push("[已弃用]")
-                }
-                if (!method.block.includes(MethodBlockParam.THIS)) {
-                    throw new Error(`方法 ${method.label} 缺少 this 参数`)
                 }
                 for (let i: number = 0; i < method.block.length; i++) {
                     const part: string | MethodBlockParam | MethodParamTypes | undefined = method.block[i]
@@ -212,17 +213,12 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
             } else {
                 transformed.blockOptions.inputsInline = false
                 const blockLines: StandardMethodBlock[] = splitArray(method.block, MethodBlockParam.BREAK_LINE)
-                if (blockLines.every((line: StandardMethodBlock): boolean => {
-                    return line.filter((item: StandardMethodBlockItem): boolean => {
-                        return item == MethodBlockParam.THIS || typeof item == "object"
-                    }).length == 1
-                })) {
-                    if (!method.block.includes(MethodBlockParam.THIS)) {
-                        throw new Error(`方法 ${method.label} 缺少 this 参数`)
-                    }
+                if (!((): boolean => {
+                    const transformedParams: CoCo.MethodParamTypes[] = []
                     let labelsBeforeThis: string[] = []
                     let afterThis: boolean = false
                     let labelsAfterThis: string[] = []
+                    let positionAfterThis: number = 1
                     for (const item of blockLines[0] ?? []) {
                         if (item == MethodBlockParam.THIS) {
                             if (afterThis) {
@@ -230,9 +226,11 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                             } else {
                                 afterThis = true
                             }
+                        } else if (afterThis) {
+                            return false
                         } else if (typeof item == "string") {
                             const text: string = item == MethodBlockParam.METHOD ? method.label : item
-                            ;(afterThis ? labelsBeforeThis : labelsAfterThis).push(text)
+                            labelsBeforeThis.push(text)
                         } else {
                             throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
                         }
@@ -240,32 +238,53 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
                     if (!afterThis) {
                         throw new Error(`方法 ${method.label} 的积木 this 参数前存在他参数，不能将其转为 CoCo 类型`)
                     }
-                    if (labelsBeforeThis.length != 0) {
-                        transformed.blockOptions.callMethodLabel = labelsBeforeThis.join(" ")
+                    if (blockLines[1]?.every((item): item is string => typeof item == "string")) {
+                        positionAfterThis = 2
+                        for (const item of blockLines[1]) {
+                            const text: string = item == MethodBlockParam.METHOD ? method.label : item
+                            labelsAfterThis.push(text)
+                        }
                     }
-                    transformed.label = labelsAfterThis.join(" ")
-                    for (const line of blockLines.slice(1)) {
-                        let labelsBeforeParam: string[] = []
+                    let lastTransformedParam: CoCo.MethodParamTypes | null = null
+                    for (const line of blockLines.slice(positionAfterThis)) {
+                        let labels: string[] = []
                         let param: StandardMethodParamTypes | null = null
-                        let labelsAfterParam: string[] = []
                         for (const item of line) {
                             if (item == MethodBlockParam.THIS) {
                                 throw new Error(`方法只能有一个 this 参数，而方法 ${method.label} 有多个 this 参数`)
                             } else if (typeof item == "string") {
+                                if (param != null) {
+                                    return false
+                                }
                                 const text: string = item == MethodBlockParam.METHOD ? method.label : item
-                                ;(param == null ? labelsBeforeParam : labelsAfterParam).push(text)
-                            } else {
+                                labels.push(text)
+                            } else if (param == null) {
                                 param = item
+                            } else {
+                                return false
                             }
                         }
-                        transformed.params.push({
-                            key: param!.key,
-                            label: labelsBeforeParam.join(" "),
-                            labelAfter: labelsAfterParam.join(" "),
-                            ...param!.type.toCoCoMethodParamValueTypes()
-                        })
+                        if (param != null) {
+                            lastTransformedParam = {
+                                key: param.key,
+                                label: labels.join(" "),
+                                ...param.type.toCoCoMethodParamValueTypes()
+                            }
+                            transformedParams.push(lastTransformedParam)
+                        } else if (lastTransformedParam != null) {
+                            lastTransformedParam.labelAfter = labels.join(" ")
+                            lastTransformedParam = null
+                        } else {
+                            return false
+                        }
                     }
-                } else {
+                    if (labelsBeforeThis.length != 0) {
+                        transformed.blockOptions.callMethodLabel = labelsBeforeThis.join(" ")
+                    }
+                    transformed.label = labelsAfterThis.join(" ")
+                    transformed.params = transformedParams
+                    return true
+                })()) {
                     transformed.label = method.label
                     for (const part of method.block) {
                         if (typeof part != "object") {

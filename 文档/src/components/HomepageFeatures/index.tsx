@@ -122,7 +122,7 @@ export default function HomepageFeatures(): JSX.Element {
         </Feature>
         <Feature
           title="Creation Project 支持"
-          description="支持部分 Creation Project 特性，如：控件分类、方法回调。让你的控件在 Creation Project 中更强大。"
+          description="同时支持部分 Creation Project 1.0 和 Creation Project 2.0 的特性，如：控件分类、方法回调。让你的控件在 Creation Project 中更强大。"
         ></Feature>
         <Feature
           id="feature--auto-bypass-restrictions"

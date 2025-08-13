@@ -12,9 +12,10 @@ const types: Types = {
     type: "SLIGHTNING_COCO_WIDGET_EXAMPLE_ADVANCED_LIST_OPERATIONS_WIDGET",
     info: {
         title: "高级列表操作",
-        icon: "icon-widget-list-viewer",
+        icon: "https://s-lightning.github.io/slightning-coco-widget/img/logo.png",
         category: "工具",
-        version: "2.5.0",
+        version: "2.8.0",
+        author: "SLIGHTNING",
         url: {
             homepage: "https://s-lightning.github.io/slightning-coco-widget/",
             docs: "http://localhost:3000/slightning-coco-widget/docs/example/advanced-list-operations#使用控件",

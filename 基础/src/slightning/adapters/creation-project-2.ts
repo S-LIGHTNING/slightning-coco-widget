@@ -59,6 +59,9 @@ export const CreationProject2Adapter: Adapter = {
                 return new Proxy(this, {
                     defineProperty(target: CreationProject2.widgetClass, property: string | symbol, attributes: PropertyDescriptor): boolean {
                         if (typeof property == "string" && propertiesSet.has(property)) {
+                            if (target.props == null) {
+                                return true
+                            }
                             return Reflect.defineProperty(target.props, property, attributes)
                         }
                         return Reflect.defineProperty(target, property, attributes)

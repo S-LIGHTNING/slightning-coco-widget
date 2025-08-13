@@ -24,10 +24,16 @@ const COCO_VALUE_TYPE_MAP: Record<StringInputType, CoCo.ValueType> = {
     [StringInputType.RICH]: "richTextString"
 }
 
-const CREATION_PROJECT_VALUE_TYPE_MAP: Record<StringInputType, CreationProject1.ValueType> = {
+const CREATION_PROJECT_1_VALUE_TYPE_MAP: Record<StringInputType, CreationProject1.ValueType> = {
     [StringInputType.INLINE]: "string",
     [StringInputType.MULTILINE]: "multiline_string",
     [StringInputType.RICH]: "multiline_string"
+}
+
+const CREATION_PROJECT_2_VALUE_TYPE_MAP: Record<StringInputType, CreationProject2.ValueType> = {
+    [StringInputType.INLINE]: "string",
+    [StringInputType.MULTILINE]: "multilineString",
+    [StringInputType.RICH]: "multilineString"
 }
 
 export class StringType implements Type<string> {
@@ -116,7 +122,7 @@ export class StringType implements Type<string> {
 
     public toCreationProject1MethodParamValueTypes(this: this): CreationProject1.MethodParamValueTypes {
         return {
-            valueType: CREATION_PROJECT_VALUE_TYPE_MAP[this.inputType],
+            valueType: CREATION_PROJECT_1_VALUE_TYPE_MAP[this.inputType],
             defaultValue: this.defaultValue
         }
     }
@@ -135,14 +141,14 @@ export class StringType implements Type<string> {
 
     public toCreationProject2PropValueTypes(this: this): CreationProject2.PropValueTypes {
         return {
-            valueType: CREATION_PROJECT_VALUE_TYPE_MAP[this.inputType],
+            valueType: CREATION_PROJECT_2_VALUE_TYPE_MAP[this.inputType],
             defaultValue: this.defaultValue
         }
     }
 
     public toCreationProject2MethodParamValueTypes(this: this): CreationProject2.MethodParamValueTypes {
         return {
-            valueType: CREATION_PROJECT_VALUE_TYPE_MAP[this.inputType],
+            valueType: CREATION_PROJECT_2_VALUE_TYPE_MAP[this.inputType],
             defaultValue: this.defaultValue
         }
     }

@@ -1,8 +1,8 @@
 /**
- * 本文件内容来自 https://www.yuque.com/zaona/cp/widget_apis_v1#nC37P，有修改。
+ * 本文件内容来自 https://www.yuque.com/zaona/cp/widget_apis#Wlez3，有修改
  */
 
-import { widgetClass } from "./widget"
+import { WidgetInterface } from "./widget"
 
 export type Types = {
     type: string
@@ -34,23 +34,40 @@ export type Types = {
 export type PropTypes = {
     key: string
     label: string
-    defaultValue?: string | number | boolean | any | undefined
     compact?: boolean | undefined
-    noBlock?: boolean | undefined
+    /**
+     * @deprecated 此属性已删除
+     */
+    changeCallback?: string | undefined
+    extData?: any | undefined
     showEditor?: boolean | undefined
+    noBlock?: boolean | undefined
     blockOptions?: {
         group?: string | undefined
-        setter?: BlockOptions | undefined
         getter?: BlockOptions | undefined
+        setter?: BlockOptions | undefined
     } | undefined
-    rawProp?: string | undefined
-    extData?: any | undefined
-    justVisibleWidget?: boolean | undefined
 } & PropValueTypes
 
-export type PropValueTypes = {
-    editorType?: ValueType | "dropdown" | undefined
-} & AfferentValueTypes
+export type PropValueTypes = (AfferentValueTypes | FontValueTypes | {
+    valueType: "custom"
+    defaultValue?: string | number | boolean | any | undefined
+}) & {
+    editorType?: ValueType | string | undefined
+}
+
+export type FontValueTypes = {
+    valueType: "font"
+    defaultValue?: ({
+        fontFamily?: Exclude<string, "custom"> | undefined
+    } | {
+        fontFamily: "custom"
+        customFontUrl: string
+    }) & {
+        fontSize?: number | undefined
+        fontColor?: string | undefined
+    }
+}
 
 export type MethodTypes = {
     key: string
@@ -58,18 +75,16 @@ export type MethodTypes = {
     valueType?: ValueType | "code" | string | undefined
     params: MethodParamTypes[]
     static?: boolean | undefined
-    rawBlock?: any | undefined
-    fn?: ((this: widgetClass, ...arg: any[]) => any) | undefined
-    rawBlocklyCheck?: any | undefined
+    nativeBlocklyFlyout?: any | undefined
+    fn?: ((this: WidgetInterface, ...arg: any[]) => any) | undefined
     blockOptions?: BlockOptions | undefined
-}
+} & MethodValueTypes
 
 export type MethodParamTypes = {
     key: string
     label?: string | undefined
     labelAfter?: string | undefined
     rawBlocklyCheck?: any | undefined
-    dropdown?: [string, string][] | (() => [string, string][]) | undefined
     codeNotBreakLine?: boolean | undefined
     runtimeFn?: boolean | undefined
     cclType?: "string" | "boolean" | "number" | undefined
@@ -115,12 +130,27 @@ export type EmitParamTypes = {
 
 export type EmitParamValueTypes = EfferentValueTypes
 
-export type ValueType = "string" | "number" | "boolean" | "image" | "multiline_string" | "array" | "object" | "color" | "audio" | "video"
+export type BlockOptions = {
+    nextStatement?: boolean | undefined
+    previousStatement?: boolean | undefined
+    generateBlock?: boolean | undefined
+    inputsInline?: boolean | undefined
+    tooltip?: string | undefined
+    outputCheck?: string | null | undefined
+    line?: string | undefined
+    gap?: number | undefined
+    padding?: number | undefined
+    color?: string | undefined
+    prefix?: string | undefined
+    suffix?: string | undefined
+}
+
+export type ValueType = "string" | "number" | "boolean" | "image" | "multilineString" | "array" | "object" | "color" | "audio" | "video"
 
 export type AfferentValueTypes = CommonAfferentValueTypes | DropdownTypes
 
 export type EfferentValueTypes = {
-    valueType: ValueType | "any"
+    valueType: ValueType
 }
 
 export type CommonAfferentValueTypes = {
@@ -131,19 +161,4 @@ export type CommonAfferentValueTypes = {
 export type DropdownTypes = {
     valueType: "dropdown"
     dropdown: [string, string][] | (() => [string, string][])
-}
-
-export type BlockOptions = {
-    previousStatement?: boolean | undefined
-    nextStatement?: boolean | undefined
-    generateBlock?: boolean | undefined
-    inputsInline?: boolean | undefined
-    tooltip?: string | undefined
-    line?: string | undefined
-    gap?: number | undefined
-    padding?: number | undefined
-    color?: string | undefined
-    prefix?: string | undefined
-    suffix?: string | undefined
-    fn?: ((...args: any[]) => any) | undefined
 }

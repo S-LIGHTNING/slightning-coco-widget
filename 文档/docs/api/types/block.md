@@ -65,7 +65,7 @@ sidebar_position: 5
 
 描述：是否在一行显示。
 
-如果设为 `false`，则生成的积木会显示为多行，第一行显示方法标签和 `this` 参数，后面几行显示其他参数。
+如果设为 `false`，则生成的积木会显示为多行。
 
 默认值：`true`
 
@@ -91,3 +91,27 @@ sidebar_position: 5
 设为 `string` 表示弃用说明，默认弃用说明为“该方法已弃用，并且可能在未来版本中移除，请尽快迁移到其他方法”。
 
 默认值：`false`
+
+### BlockOptions.previousStatement?
+
+2.8 版本新增。
+
+仅方法积木支持该属性。
+
+类型：`boolean`
+
+规定积木是否能与上一块积木拼接，仅在方法无返回值时生效。
+
+**仅在 Creation Project 中生效，CoCo 不支持该特性。**
+
+### BlockOptions.nextStatement?
+
+2.8 版本新增。
+
+仅方法积木支持该属性。
+
+类型：`boolean`
+
+规定积木是否能与下一块积木拼接，仅在方法无返回值时生效。
+
+**仅在 Creation Project 中生效，CoCo 不支持该特性。**

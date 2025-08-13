@@ -2,34 +2,40 @@ import { setDefaultAdapter } from "./adapters/adapter"
 import { CoCoAdapter } from "./adapters/coco"
 import * as CoCo from "../coco"
 import * as CreationProject1 from "../creation-project-1"
-import * as CreationProject2 from "../creation-project-1"
+import * as CreationProject2 from "../creation-project-2"
 import { CreationProject1Adapter } from "./adapters/creation-project-1"
 import { CreationProject2Adapter } from "./adapters/creation-project-2"
 
 if (
     typeof CreationProject1.widgetClass != "undefined" &&
     typeof CreationProject1.widgetRequire == "function" &&
-    ((): boolean => {
+    ((): CreationProject1.Utils | null => {
         try {
-            CreationProject1.widgetRequire("cp_utils")
+            return CreationProject1.widgetRequire("cp_utils")
         } catch (__ignore) {
-            return false
+            return null
         }
-        return true
-    })()
+    })() != null &&
+    ((): typeof import("@ant-design/icons-vue") | null => {
+        try {
+            return CreationProject1.widgetRequire("@ant-design/icons-vue")
+        } catch (__ignore) {
+            return null
+        }
+    })() != null
 ) {
     setDefaultAdapter(CreationProject1Adapter)
 } else if (
     typeof CreationProject2.widgetClass != "undefined" &&
     typeof CreationProject2.widgetRequire == "function" &&
-    ((): boolean => {
+    ((): unknown | null => {
         try {
-            CreationProject1.widgetRequire("cp_utils")
+            // @ts-ignore
+            return CreationProject2.widgetRequire("@ant-design/icons-vue")
         } catch (__ignore) {
-            return true
+            return null
         }
-        return false
-    })()
+    })() == null
 ) {
     setDefaultAdapter(CreationProject2Adapter)
 } else if (

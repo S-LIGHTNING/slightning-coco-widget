@@ -10,7 +10,7 @@ sidebar_position: 7
 
 ### CoCo
 
-v2.6 版本新增。
+2.6 版本新增。
 
 - `COCO_EVENT`：CoCo 事件积木的颜色。
 - `COCO_CONTROL`：CoCo 控制积木的颜色。
@@ -23,7 +23,7 @@ v2.6 版本新增。
 
 ### Creation Project
 
-v2.6 版本新增。
+2.6 版本新增。
 
 - `CREATION_PROJECT_EVENT`：Creation Project 事件积木的颜色。
 - `CREATION_PROJECT_CONTROL`：Creation Project 控制积木的颜色。
@@ -49,7 +49,7 @@ v2.6 版本新增。
 - `PINKISH_PURPLE`：粉红色。
 - `PINK`：粉色。
 
-v2.6 版本新增：
+2.6 版本新增：
 
 - `ORANGE`：橘黄色。
 - `YELLOWISH_GREEN`：黄绿色。

@@ -1,13 +1,16 @@
 import React from "react"
 import { Types, getSuperWidget, exportWidget, addCheck, generateBlockForProperties, transformIcons, transformIconsExceptWidgetIcon, Color, MethodBlockParam } from "slightning-coco-widget"
 
+import packageInfo from "../../package.json"
+
 const types: Types = {
     type: "SLIGHTNING_TEST_VISIBLE_WIDGET",
     info: {
         title: "测试可见控件",
-        icon: "icon-widget-radio",
+        icon: "https://s-lightning.github.io/slightning-coco-widget/img/logo.png",
         category: "测试 SCW",
-        version: "2.5.0",
+        version: packageInfo.version,
+        author: packageInfo.author,
         url: {
             homepage: "https://s-lightning.github.io/slightning-coco-widget/",
             docs: "https://s-lightning.github.io/slightning-coco-widget/",

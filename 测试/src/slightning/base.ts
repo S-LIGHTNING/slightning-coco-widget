@@ -1,13 +1,16 @@
 import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator, StringInputType } from "slightning-coco-widget"
 import _ from "lodash"
 
+import packageInfo from "../../package.json"
+
 const types: Types = {
     type: "SLIGHTNING_TEST_BASE_WIDGET",
     info: {
         title: "测试基础功能",
-        icon: "icon-widget-radio",
+        icon: "https://s-lightning.github.io/slightning-coco-widget/img/logo.png",
         category: "测试 SCW",
-        version: "2.5.0",
+        version: packageInfo.version,
+        author: packageInfo.author,
         url: {
             homepage: "https://s-lightning.github.io/slightning-coco-widget/",
             docs: "https://s-lightning.github.io/slightning-coco-widget/",
@@ -174,7 +177,7 @@ const types: Types = {
                 new ObjectType({ propertiesType: { "函数": new FunctionType({ block: [] }) } }),
                 new ArrayType({ itemType: new FunctionType({ block: [] }) })
             )],
-            ["testMethodMutatorParam", "测试方法变更器参数", [
+            ["testMethodMutatorParam", "测试方法变更器参数1", [
                 MethodBlockParam.THIS, MethodBlockParam.BREAK_LINE,
                 MethodBlockParam.METHOD,
                 ["mutator", "变更器", new MutatorType({
@@ -190,8 +193,10 @@ const types: Types = {
                 blockOptions: { inline: false }
             }],
             ["testMethodMutatorParam2", "测试方法变更器参数2", [
+                MethodBlockParam.THIS, MethodBlockParam.BREAK_LINE,
+                MethodBlockParam.METHOD, MethodBlockParam.BREAK_LINE,
                 ["mutator", "变更器", new MutatorType({
-                    block: [["boolean", "布尔", true]],
+                    block: [ ["boolean", "布尔", true]],
                     separators: [MethodBlockParam.BREAK_LINE, "且"],
                     min: 2,
                     transformMax: 5,
@@ -323,6 +328,7 @@ exportWidget(types, TestBaseWidget, {
             CreationProject: transformMethodsCallbackFunctionsToCodeBlocks
         },
         addCheck,
+        { "CoCo|CreationProject1": transformMutator },
         { "CoCo|CreationProject": [
             transformMutator,
             addThisForMethods

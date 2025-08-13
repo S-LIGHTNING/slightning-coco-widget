@@ -85,7 +85,7 @@ export function typesToCreationProject2(types: StandardTypes): CreationProject2.
                     addSpace = false
                 }
                 showLine = false
-                result.props.push()
+                result.props.push(transformed)
             }
         },
         MethodGroup: {
@@ -115,6 +115,8 @@ export function typesToCreationProject2(types: StandardTypes): CreationProject2.
                 params: [],
                 ...method.returns?.toCreationProject2MethodValueTypes(),
                 blockOptions: {
+                    previousStatement: node.blockOptions.previousStatement ?? undefined,
+                    nextStatement: node.blockOptions.nextStatement ?? undefined,
                     prefix: "",
                     suffix: "",
                     tooltip: method.tooltip ?? undefined,

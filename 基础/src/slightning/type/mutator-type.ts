@@ -139,7 +139,7 @@ export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayTy
             } else {
                 mutatorLastParam = {
                     key: mutatorPart.key,
-                    ...mutatorPart.type.toCreationProject1MethodParamValueTypes()
+                    ...mutatorPart.type.toCreationProject2MethodParamValueTypes()
                 }
                 if (mutatorLabelsAfterLastParam.length > 0) {
                     mutatorLastParam.labelAfter = mutatorLabelsAfterLastParam.join(" ")

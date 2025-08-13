@@ -58,6 +58,16 @@ sidebar_position: 1
 
 推荐使用语义化版本：https://semver.org/lang/zh-CN/。
 
+#### Types.info.author?
+
+2.8 版本新增。
+
+类型：`string`
+
+描述：控件作者。
+
+**仅在耶椰椰中生效，CoCo 和 Creation Project 不支持该属性。**
+
 #### Types.info.url?
 
 类型：`object`
@@ -77,6 +87,8 @@ sidebar_position: 1
 描述：控件文档链接。
 
 设置后可在控件属性面板下方点击“如何使用？”跳转到文档。
+
+**仅在 CoCo 中生效，Creation Project 不支持该特性。**
 
 ##### Types.info.url.repository?
 

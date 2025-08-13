@@ -155,7 +155,9 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         returns: new VoidType(),
                         blockOptions: {
                             ...transformedMethod.blockOptions,
-                            inline: true
+                            inline: true,
+                            previousStatement: true,
+                            nextStatement: false
                         }
                     })
                     Object.defineProperty(widget.prototype, `__slightning_coco_widget_throw__${key}`, {
@@ -192,7 +194,9 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         returns: new VoidType(),
                         blockOptions: {
                             ...transformedMethod.blockOptions,
-                            inline: true
+                            inline: true,
+                            previousStatement: true,
+                            nextStatement: false
                         }
                     })
                     Object.defineProperty(widget.prototype, `__slightning_coco_widget_return__${key}`, {

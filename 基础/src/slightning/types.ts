@@ -46,6 +46,12 @@ interface BasicTypes {
          * 推荐使用语义化版本：https://semver.org/lang/zh-CN/。
          */
         version?: `${number}.${number}.${number}` | string | null | undefined
+        /**
+         * 控件作者。
+         *
+         * **仅在耶椰椰中生效，CoCo 和 Creation Project 不支持该属性。**
+         */
+        author?: string | null | undefined
         url?: {
             /**
              * 控件主页链接。
@@ -55,6 +61,8 @@ interface BasicTypes {
              * 控件文档链接。
              *
              * 设置后可在控件属性面板下方点击“如何使用？”跳转到文档。
+             *
+             * **仅在 CoCo 中生效，Creation Project 不支持该特性。**
              */
             docs?: string | null | undefined
             /**
@@ -439,7 +447,20 @@ export interface MethodOptions {
  */
 export type MethodBlockOptionsTypes = MethodBlockOptions
 
-export interface MethodBlockOptions extends BasicBlockOptions {}
+export interface MethodBlockOptions extends BasicBlockOptions {
+    /**
+     * 规定积木是否能与上一块积木拼接，仅在方法无返回值时生效。
+     *
+     * **仅在 Creation Project 中生效，CoCo 不支持该特性。**
+     */
+    previousStatement?: boolean | null | undefined
+    /**
+     * 规定积木是否能与下一块积木拼接，仅在方法无返回值时生效。
+     *
+     * **仅在 Creation Project 中生效，CoCo 不支持该特性。**
+     */
+    nextStatement?: boolean | null | undefined
+}
 
 export interface BlockBoxOptions {
     /**

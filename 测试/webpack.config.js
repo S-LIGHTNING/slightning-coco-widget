@@ -101,5 +101,6 @@ module.exports = merge(SCW.config, {
         new VisualizerPlugin2({
             filename: "./stats.html"
         })
-    ]
+    ],
+    cache: false
 })

@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'SLIGHTNING CoCo 控件框架文档',
+  title: 'SLIGHTNING CoCo 控件框架',
   tagline: '工程化 CoCo 自定义控件开发解决方案',
   favicon: 'img/logo.png',
 

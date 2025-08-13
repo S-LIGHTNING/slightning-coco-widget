@@ -420,11 +420,11 @@ declare class MutatorType<T extends {} = Record<string, unknown>> extends ArrayT
 - `transformMin`：转换时可变部分最小重复次数；
 - `transformMax`：转换时可变部分最大重复次数。
 
-v2.5 版本新增：
+2.5 版本新增：
 
 - ~~`separator`~~：可变部分单元之间的分隔符。
 
-v2.6 版本新增：
+2.6 版本新增：
 
 - `separators`：可变部分单元之间的分隔符。
 

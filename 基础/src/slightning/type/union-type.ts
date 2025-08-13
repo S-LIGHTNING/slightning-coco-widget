@@ -180,7 +180,10 @@ export class UnionType<T> implements Type<T> {
     }
 
     public toCreationProject1PropValueTypes(this: this): CreationProject1.PropValueTypes {
-        throw new Error(`不能将 ${typeToString(this)} 转为 Creation Project 属性类型`)
+        return {
+            valueType: "string",
+            defaultValue: this.defaultValue
+        }
     }
 
     public toCreationProject1MethodParamValueTypes(this: this): CreationProject1.MethodParamValueTypes {
@@ -192,18 +195,21 @@ export class UnionType<T> implements Type<T> {
 
     public toCreationProject1MethodValueTypes(this: this): CreationProject1.MethodValueTypes {
         return {
-            valueType: "any"
+            valueType: "string"
         }
     }
 
     public toCreationProject1EmitParamValueTypes(this: this): CreationProject1.EmitParamValueTypes {
         return {
-            valueType: "any"
+            valueType: "string"
         }
     }
 
     public toCreationProject2PropValueTypes(this: this): CreationProject2.PropValueTypes {
-        throw new Error(`不能将 ${typeToString(this)} 转为 Creation Project 属性类型`)
+        return {
+            valueType: "string",
+            defaultValue: this.defaultValue
+        }
     }
 
     public toCreationProject2MethodParamValueTypes(this: this): CreationProject2.MethodParamValueTypes {
@@ -215,13 +221,13 @@ export class UnionType<T> implements Type<T> {
 
     public toCreationProject2MethodValueTypes(this: this): CreationProject2.MethodValueTypes {
         return {
-            valueType: "any"
+            valueType: "string"
         }
     }
 
     public toCreationProject2EmitParamValueTypes(this: this): CreationProject2.EmitParamValueTypes {
         return {
-            valueType: "any"
+            valueType: "string"
         }
     }
 }

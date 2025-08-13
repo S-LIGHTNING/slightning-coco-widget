@@ -16,6 +16,7 @@ module.exports = function (env, __argv) {
     const mode = env.mode
     const comments = [
         "==CoCoWidget==",
+        "@type " + "SLIGHTNING_CODE_TEST_WIDGET",
         "@name " + "代码测试",
         "@author " + package.author,
         "@version " + package.version,

@@ -1,11 +1,21 @@
 import { addCheck, addThisForMethods, Color, exportWidget, getSuperWidget, Logger, MethodBlockParam, transformIcons, Types } from "slightning-coco-widget"
 
+import packageInfo from "../../package.json"
+
 const types: Types = {
     type: "SLIGHTNING_TEST_HOT_UPDATE_WIDGET",
     info: {
         title: "测试热更新",
         icon: "icon-widget-radio",
         category: "测试 SCW",
+        version: packageInfo.version,
+        author: packageInfo.author,
+        url: {
+            homepage: "https://s-lightning.github.io/slightning-coco-widget/",
+            docs: "https://s-lightning.github.io/slightning-coco-widget/",
+            repository: "https://gitee.com/slightning/slightning-coco-widget",
+            bugReport: "https://gitee.com/slightning/slightning-coco-widget/issues/new",
+        }
     },
     options: {
         visible: false,

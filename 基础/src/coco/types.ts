@@ -3,6 +3,10 @@ export type Types = {
     title: string
     icon: string
 	version?: `${number}.${number}.${number}` | string | undefined
+    /**
+     * **注意：该属性是非标准属性！**
+     */
+	author?: string | undefined
     docs?: {
         url?: string | undefined
     } | undefined

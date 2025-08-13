@@ -1,12 +1,15 @@
 import { addThisForMethods, Color, exportWidget, getSuperWidget, MethodBlockParam, MethodTypes, Types } from "slightning-coco-widget"
 
+import packageInfo from "../../package.json"
+
 const types: Types = {
     type: "SLIGHTNING_TEST_COLOR_WIDGET",
     info: {
         title: "测试颜色",
-        icon: "icon-widget-radio",
+        icon: "https://s-lightning.github.io/slightning-coco-widget/img/logo.png",
         category: "测试 SCW",
-        version: "2.5.0",
+        version: packageInfo.version,
+        author: packageInfo.author,
         url: {
             homepage: "https://s-lightning.github.io/slightning-coco-widget/",
             docs: "https://s-lightning.github.io/slightning-coco-widget/",

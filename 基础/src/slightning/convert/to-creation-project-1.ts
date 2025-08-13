@@ -97,6 +97,8 @@ export function typesToCreationProject1(types: StandardTypes): CreationProject1.
                 tipBefore: "",
                 tipAfter: "",
                 params: [],
+                noPs: !(node.blockOptions.previousStatement ?? true),
+                noNs: !(node.blockOptions.nextStatement ?? true),
                 ...method.returns?.toCreationProject1MethodValueTypes(),
                 tooltip: method.tooltip ?? undefined,
                 color: deprecated ? Color.GREY : node.blockOptions.color ?? undefined,

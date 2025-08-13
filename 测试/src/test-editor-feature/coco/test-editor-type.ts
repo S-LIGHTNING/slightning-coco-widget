@@ -1,9 +1,9 @@
 import { CoCo } from "slightning-coco-widget"
 
 const types: CoCo.Types = {
-    type: "SLIGHTNING_COCO_WIDGET_TEST_EDITOR_FEATURE_TEST_EDITOR_TYPE_WIDGET",
+    type: "SLIGHTNING_COCO_WIDGET_TEST_COCO_EDITOR_TYPE_WIDGET",
     title: "测试编辑器类型",
-    icon: "icon-widget-radio",
+    icon: "https://s-lightning.github.io/slightning-coco-widget/img/logo.png",
     isInvisibleWidget: true,
     isGlobalWidget: true,
     properties: [

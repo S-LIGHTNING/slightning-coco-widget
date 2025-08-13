@@ -1,6 +1,6 @@
 {
   "name": "coco-widget-live-reload",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "file": [
     "dist",
@@ -29,8 +29,8 @@
     "@types/react": "^19.0.0",
     "babel-loader": "^9.0.0",
     "fork-ts-checker-webpack-plugin": "^9.0.0",
-    "slightning-coco-widget": "../../基础",
-    "slightning-coco-widget--webpack": "..",
+    "slightning-coco-widget": "^2.8.0",
+    "slightning-coco-widget--webpack": "^2.0.0",
     "terser-webpack-plugin": "^5.0.0",
     "ts-loader": "^9.0.0",
     "typescript": "^5.0.0",

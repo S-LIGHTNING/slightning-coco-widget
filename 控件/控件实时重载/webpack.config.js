@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 const path = require("path")
 const webpack = require("webpack")
 const { merge } = require("webpack-merge")
@@ -13,6 +11,7 @@ const TerserPlugin = require("terser-webpack-plugin")
 module.exports = function (env, argv) {
     const comments = [
         "==CoCoWidget==",
+        "@type " + "SLIGHTNING_WIDGET_LIVE_RELOAD_WIDGET",
         "@name " + "控件实时重载",
         "@author " + package.author,
         "@version " + package.version,
@@ -29,7 +28,10 @@ module.exports = function (env, argv) {
             static: {
                 directory: path.join(__dirname, "dist")
             },
-            allowedHosts: ["coco.codemao.cn"],
+            allowedHosts: [
+                "coco.codemao.cn",
+                "cp.cocotais.cn"
+            ],
             headers: {
                 "Access-Control-Allow-Origin": "https://coco.codemao.cn",
                 "Access-Control-Allow-Headers": "*",

@@ -13,29 +13,15 @@ type __widgetClass = widgetClass
 export { __widgetClass as widgetClass }
 
 /**
- * 以下内容来自 https://www.yuque.com/zaona/cp/widget_apis_v1#nC37P，有修改。
+ * 以下内容来自 https://www.yuque.com/zaona/cp/widget_apis#Wlez3，有修改。
  */
 
-export interface execProp extends Record<string, any> {
-    WIDGET_ID: string;
-    METHOD: string;
-    STATIC?: string;
-    WIDGET_TYPE?: string;
-    PARAMS: [
-        string,
-        (...arg: any[]) => any,
-        {
-            runtimeFn?: boolean;
-            valueType: string;
-            cclType?: string;
-        }
-    ][];
-    BLOCK: string;
-}
-
-declare class widgetClass {
-    props: Record<string, any>;
+export declare class WidgetInterface {
     _id: string;
+    props: Record<string, any>;
+    [key: string]: any;
+    constructor();
+    render(): null | any;
     setProp(key: string, value: any): void;
     emit(emitKey: string, ...arg: any[]): Promise<void>;
     widgetLog(...arg: any[]): void;
@@ -43,3 +29,6 @@ declare class widgetClass {
     widgetError(...arg: any[]): void;
     widgetInfo(...arg: any[]): void;
 }
+
+declare const widgetClass: typeof WidgetInterface
+declare type widgetClass = WidgetInterface

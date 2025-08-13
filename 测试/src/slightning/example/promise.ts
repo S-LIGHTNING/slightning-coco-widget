@@ -17,9 +17,10 @@ const types: Types = {
     type: "SLIGHTNING_COCO_WIDGET_EXAMPLE_PROMISE_WIDGET",
     info: {
         title: "承诺",
-        icon: "icon-widget-switch",
+        icon: "https://s-lightning.github.io/slightning-coco-widget/img/logo.png",
         category: "控制",
-        version: "2.5.0",
+        version: "2.8.0",
+        author: "SLIGHTNING",
         url: {
             homepage: "https://s-lightning.github.io/slightning-coco-widget/",
             docs: "http://localhost:3000/slightning-coco-widget/docs/example/promise#使用控件",

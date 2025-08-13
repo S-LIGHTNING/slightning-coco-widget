@@ -38,7 +38,6 @@ export type Types = {
 export type PropTypes = {
     key: string
     label: string
-    defaultValue?: string | number | boolean | any | undefined
     noBlock?: boolean | undefined
     rawProp?: string | undefined
     /**
@@ -58,7 +57,6 @@ export type PropValueTypes = AfferentValueTypes
 export type MethodTypes = {
     key: string
     label?: string | undefined
-    valueType?: ValueType | "code" | string | undefined
     params: MethodParamTypes[]
     static?: boolean | undefined
     /**
@@ -105,7 +103,7 @@ export type MethodTypes = {
      * @deprecated 此属性已弃用。将在 v2 版本中删除
      */
     tooltip?: string | undefined
-}
+} & MethodValueTypes
 
 export type MethodParamTypes = {
     key: string
@@ -163,7 +161,7 @@ export type ValueType = "string" | "number" | "boolean" | "image" | "multiline_s
 export type AfferentValueTypes = CommonAfferentValueTypes | DropdownTypes
 
 export type EfferentValueTypes = {
-    valueType: ValueType | "any"
+    valueType: ValueType
 }
 
 export type CommonAfferentValueTypes = {

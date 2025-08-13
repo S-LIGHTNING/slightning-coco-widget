@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-code-test-widget",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "",
   "license": "Apache-2.0",
@@ -22,7 +22,7 @@
     "fork-ts-checker-webpack-plugin": "^9.0.0",
     "postcss-loader": "^8.0.0",
     "postcss-preset-env": "^10.0.0",
-    "slightning-coco-widget": "^2.4.3",
+    "slightning-coco-widget": "^2.8.0",
     "slightning-coco-widget--webpack": "^2.3.0",
     "ts-loader": "^9.0.0",
     "webpack": "^5.0.0",

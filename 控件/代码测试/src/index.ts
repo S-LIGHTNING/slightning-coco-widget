@@ -3,6 +3,8 @@ import { TestGroup } from "./test-group"
 import { Test } from "./test"
 import { TestWindow } from "./ui/test-window"
 
+import packageInfo from "../package.json"
+
 class TestItemReference {
     public constructor(public readonly name: string) {}
 }
@@ -65,6 +67,14 @@ const types: Types = {
         title: "代码测试",
         icon: "https://creation.bcmcdn.com/716/appcraft/IMAGE_25TZKwykP_1746069500083.svg",
         category: "测试",
+        version: packageInfo.version,
+        author: packageInfo.author,
+        url: {
+            homepage: "https://s-lightning.github.io/slightning-coco-widget/",
+            docs: "https://s-lightning.github.io/slightning-coco-widget/",
+            repository: "https://gitee.com/slightning/slightning-coco-widget",
+            bugReport: "https://gitee.com/slightning/slightning-coco-widget/issues/new",
+        }
     },
     options: {
         visible: false,
