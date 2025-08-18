@@ -1,4 +1,4 @@
-import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator, StringInputType } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator, StringInputType, Logger } from "slightning-coco-widget"
 import _ from "lodash"
 
 import packageInfo from "../../package.json"
@@ -205,6 +205,12 @@ const types: Types = {
             ], new ObjectType(), {
                 blockOptions: { inline: false }
             }]
+        ]}, { label: "日志", contents: [
+            ["testLog", "测试日志", [
+                "输出",
+                ["type", "类型", [["日志", "log"], ["信息", "info"], ["警告", "warn"], ["错误", "error"]]],
+                ["message", "消息", "消息"]
+            ]]
         ]}, { label: "内部", contents: [
             ["exportedWidgetTypes", "导出的控件类型定义", [MethodBlockParam.METHOD], new ObjectType()]
         ]}
@@ -236,8 +242,11 @@ class TestBaseWidget extends getSuperWidget(types) {
 
     public testPropertyCustomKeyCustomCalculateMethod!: string
 
+    private logger: Logger
+
     public constructor(props: unknown) {
         super(props)
+        this.logger = new Logger(types, this)
     }
 
     public customKeyCustomGet(this: this): string {
@@ -305,6 +314,14 @@ class TestBaseWidget extends getSuperWidget(types) {
         return result
     }
 
+    public testLog(
+        this: this,
+        type: "log" | "info" | "warn" | "error",
+        message: unknown
+    ): void {
+        this.logger[type](message)
+    }
+
     public exportedWidgetTypes(): CoCo.Types | CreationProject.Types {
         if (exportedWidgetTypes == undefined) {
             throw new Error("找不到导出的控件类型定义")
@@ -339,7 +356,7 @@ exportWidget(types, TestBaseWidget, {
     ]
 })
 
-exportedWidgetTypes = _ == undefined ? undefined : _.cloneDeep(
+exportedWidgetTypes = (structuredClone ?? _?.cloneDeep)(
     CoCo.widgetExports.types ??
     CreationProject.widgetExports.type ??
     undefined

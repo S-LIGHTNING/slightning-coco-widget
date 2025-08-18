@@ -1,6 +1,7 @@
 export type Types = {
     type: string
     title: string
+    contentTextField?: string
     icon: string
 	version?: `${number}.${number}.${number}` | string | undefined
     /**

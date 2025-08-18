@@ -19,6 +19,7 @@ export function addCheck(types: StandardTypes, widget: Widget): [StandardTypes, 
             }
         }
     })
+    let isFirstRenderError: boolean = true
     return [types, new Proxy(widget, {
         construct(target: Widget, argArray: any[], newTarget: Function): object {
             let widget: any, logger: Logger
@@ -186,7 +187,10 @@ export function addCheck(types: StandardTypes, widget: Widget): [StandardTypes, 
                                 try {
                                     return Reflect.apply(target, thisArg, argArray)
                                 } catch (error) {
-                                    logger.error("渲染", "出错：", ...errorToArray(error))
+                                    if (isFirstRenderError) {
+                                        logger.error("渲染", "出错：", ...errorToArray(error))
+                                        isFirstRenderError = false
+                                    }
                                     return React.createElement("div", {
                                         style: {
                                             width: "100%",

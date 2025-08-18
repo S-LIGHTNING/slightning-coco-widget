@@ -109,7 +109,7 @@ export const CreationProject1Adapter: Adapter = {
         [types, widget] = decorate(types, widget, config, ["CreationProject", "CreationProject2"])
         CreationProject1.exportWidget(...convertToCreationProject1(types, widget))
     },
-    Logger: class CreationProjectLogger implements LoggerAdapter {
+    Logger: class CreationProject1Logger implements LoggerAdapter {
 
         private readonly widget: any
 
@@ -122,7 +122,7 @@ export const CreationProject1Adapter: Adapter = {
         }
 
         public info(messages: string): void {
-            CreationProject1.widgetClass.prototype.widgetLog.call(this.widget, `[信息] ${messages}`)
+            CreationProject1.widgetClass.prototype.widgetInfo.call(this.widget, messages)
         }
 
         public warn(messages: string): void {
@@ -274,7 +274,7 @@ export const CreationProject1Adapter: Adapter = {
                     }
                     importButton.click()
                 })
-            },
+            }
         }
     }
 }
