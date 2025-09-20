@@ -1,6 +1,42 @@
 import { merge } from "../../utils"
+import { buildTimeRecordData } from "../build-time-convert"
 import { FunctionType, MutatorType } from "../type"
 import { BlockBoxOptions, BlockType, BUILD_IN_ICON_URL_MAP, StandardEventTypes, StandardMethodBlockItem, StandardMethodGroup, StandardMethodParamTypes, StandardMethodsItem, StandardMethodTypes, StandardPropertiesItem, StandardPropertyGroup, StandardPropertyTypes, StandardTypes } from "../types"
+import { Widget } from "../widget"
+
+export interface DecoratorOperation {
+    __slightning_coco_widget_decorator_operation__?: boolean
+    runtime?: {
+        func?: string | null | undefined
+        data?: unknown | null | undefined
+    } | null | undefined
+    add?: {
+        methods?: Record<string, DecoratorAddMethodConfig> | null | undefined
+    } | null | undefined
+}
+
+export interface DecoratorAddMethodConfig {
+    overwrite?: boolean | null | undefined
+    async?: boolean | null | undefined
+    args: string[]
+}
+
+export function recordDecoratorOperation(widget: Widget, operation?: DecoratorOperation | null | undefined): void {
+    operation ??= {}
+    operation.__slightning_coco_widget_decorator_operation__ = true
+    buildTimeRecordData(operation)
+    for (const [key, { overwrite, args }] of Object.entries(operation.add?.methods ?? {})) {
+        if (!(overwrite ?? true) && key in widget.prototype) {
+            continue
+        }
+        Object.defineProperty(widget.prototype, key, {
+            value: new Function(...args),
+            writable: true,
+            enumerable: false,
+            configurable: true
+        })
+    }
+}
 
 export function traverseTypes(types: StandardTypes, visitors: TypesVisitors): void {
     if (

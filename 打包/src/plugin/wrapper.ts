@@ -48,11 +48,11 @@ export class WrapperPlugin implements webpack.WebpackPluginInstance {
     public apply(compiler: webpack.Compiler): void {
         const { webpack } = compiler
         compiler.hooks.compilation.tap(
-            WrapperPlugin.name,
+            "WrapperPlugin",
             (compilation: webpack.Compilation): void => {
                 compilation.hooks.processAssets.tap(
                     {
-                        name: WrapperPlugin.name,
+                        name: "WrapperPlugin",
                         stage: webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONS,
                     },
                     (assets: typeof compilation.assets): void => {

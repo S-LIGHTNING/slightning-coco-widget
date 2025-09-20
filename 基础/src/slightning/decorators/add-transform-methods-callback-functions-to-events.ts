@@ -1,71 +1,63 @@
 import { capitalize } from "../../utils"
-import { AnyType, InstanceOfClassType, ObjectType, StringEnumType, VoidType } from "../type"
+import { RuntimeData, getNewMethodKey, getReturnMethodKey, getThrowMethodKey, CallData, RuntimeMethodParam, runtimeAddTransformMethodsCallbackFunctionsToEvents } from "../runtime/decorators/add-transform-methods-callback-functions-to-events"
+import { AnyType, FunctionType, ObjectType, StringEnumType, VoidType } from "../type"
 import { StandardEventParamTypes, MethodBlockParam, MethodParamTypes, StandardMethodTypes, StandardTypes, BlockType } from "../types"
-import { emit } from "../utils"
 import { Widget } from "../widget"
-import { methodParamNeedsTransformToEvent, MethodTypesNode, traverseTypes } from "./utils"
+import { methodParamNeedsTransformToEvent, MethodTypesNode, recordDecoratorOperation, traverseTypes } from "./utils"
 
 export function addTransformMethodsCallbackFunctionsToEvents(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
+    const runtimeData: RuntimeData = {
+        transform: []
+    }
     traverseTypes(types, {
         MethodTypes(node: MethodTypesNode): void {
-            if (!node.value.block.some(methodParamNeedsTransformToEvent)) {
+            const { value: method } = node
+            if (!method.block.some(methodParamNeedsTransformToEvent)) {
                 return
             }
-            const argumentsTransformers: ((arg: unknown) => unknown)[] = []
-            const transformedMethod: StandardMethodTypes = {
-                ...node.value,
-                key: `__slightning_coco_widget_transformed_callback_function_to_events__${node.value.key}`,
-                block: [...node.value.block]
+            const runtimeParams: (RuntimeMethodParam | null | undefined)[] = []
+            const newMethodKey = getNewMethodKey(method.key)
+            const newMethod: StandardMethodTypes = {
+                ...method,
+                key: newMethodKey,
+                block: [...method.block]
             }
-            for (let i: number = 0; i < transformedMethod.block.length; i++) {
-                const part: string | MethodBlockParam | MethodParamTypes | undefined = transformedMethod.block[i]
-                if (part == undefined) {
+            for (let i: number = 0; i < newMethod.block.length; i++) {
+                const param: string | MethodBlockParam | MethodParamTypes | undefined = newMethod.block[i]
+                if (param == undefined) {
                     continue
                 }
-                if (typeof part != "object") {
+                if (typeof param != "object") {
                     continue
                 }
-                if (!methodParamNeedsTransformToEvent(part)) {
-                    argumentsTransformers.push((arg: unknown): unknown => arg)
+                if (!methodParamNeedsTransformToEvent(param)) {
+                    runtimeParams.push(null)
                     continue
                 }
-                const key = `${transformedMethod.key}${capitalize(part.key)}`
-                const label = `${transformedMethod.label}·${part.label}`
-                const type = part.type
-                class ResolveRef {
-                    public readonly name: string = "解决函数引用"
-                }
-                class RejectRef {
-                    public readonly name: string = "拒绝函数引用"
-                }
-                const resolveMap: WeakMap<ResolveRef, (value: unknown) => void> = new WeakMap()
-                const rejectMap: WeakMap<RejectRef, (reason: unknown) => void> = new WeakMap()
-                type callData = {
-                    state: "undone" | "resolved" | "rejected"
-                    value?: unknown
-                    resolve: ResolveRef
-                    reject: RejectRef
-                }
-                const callDataType: ObjectType<callData> = new ObjectType<callData>({
+                const runtimeParam: RuntimeMethodParam = { key: param.key }
+                const fullParamKey = `${newMethodKey}${capitalize(param.key)}`
+                const fullParamLabel = `${newMethod.label}·${param.label}`
+                const paramType = param.type
+                const callDataType: ObjectType<CallData> = new ObjectType<CallData>({
                     propertiesType: {
                         state: new StringEnumType([
                             ["未完成", "undone" ],
                             ["已解决", "resolved" ],
                             ["已拒绝", "rejected" ]
                         ]),
-                        resolve: new InstanceOfClassType({
-                            theClass: ResolveRef
+                        resolve: new FunctionType({
+                            block: [["value", "值", paramType.returns ?? new VoidType()]]
                         }),
-                        reject: new InstanceOfClassType({
-                            theClass: RejectRef
+                        reject: new FunctionType({
+                            block: [["reason", "原因", paramType.throws ?? new VoidType()]]
                         })
                     },
-                    defaultValue: label
+                    defaultValue: fullParamLabel
                 })
                 const eventParams: StandardEventParamTypes[] = [
                     {
                         key: "__slightning_coco_widget_call_data__",
-                        label: part.label,
+                        label: param.label,
                         type: callDataType
                     }, {
                         key: "__slightning_coco_widget_call_context__",
@@ -73,7 +65,7 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         type: new AnyType()
                     }
                 ]
-                for (const part of type.block) {
+                for (const part of paramType.block) {
                     if (typeof part != "object") {
                         continue
                     }
@@ -83,156 +75,90 @@ export function addTransformMethodsCallbackFunctionsToEvents(types: StandardType
                         type: part.type
                     })
                 }
-                transformedMethod.block.splice(i, 1, part.label, "（上下文", {
-                    key: `__slightning_coco_widget_call_context__${part.key}`,
-                    label: `${part.label}（上下文）`,
+                newMethod.block.splice(i, 1, param.label, "（上下文", {
+                    key: `__slightning_coco_widget_call_context__${param.key}`,
+                    label: `${param.label}（上下文）`,
                     type: new AnyType({
-                        defaultValue: `${part.label}上下文`
+                        defaultValue: `${param.label}上下文`
                     })
                 }, "）")
                 i++
-                argumentsTransformers.push(function (this: any, context: unknown): (...args: unknown[]) => unknown {
-                    const widget: any = this
-                    return function (...args: unknown[]): unknown {
-                        let promiseResolve: ((result: unknown) => void) | null = null
-                        let promiseReject: ((reason: unknown) => void) | null = null
-                        function resolve(result: unknown): void {
-                            if (callData.state == "undone") {
-                                callData.state = "resolved"
-                                callData.value = result
-                                promiseResolve?.(result)
-                            }
-                        }
-                        function reject(reason: unknown): void {
-                            if (callData.state == "undone") {
-                                callData.state = "rejected"
-                                callData.value = reason
-                                promiseReject?.(reason)
-                            }
-                        }
-                        const resolveRef: ResolveRef = new ResolveRef()
-                        const rejectRef: RejectRef = new RejectRef()
-                        resolveMap.set(resolveRef, resolve)
-                        rejectMap.set(rejectRef, reject)
-                        const callData: callData = {
-                            state: "undone",
-                            resolve: resolveRef,
-                            reject: rejectRef
-                        }
-                        emit.call(widget, key, callData, context, ...args)
-                        if (callData.state == "resolved") {
-                            return callData.value
-                        } else if (callData.state == "rejected") {
-                            throw callData.value
-                        }
-                        return new Promise((
-                            resolve: (value: unknown) => void,
-                            reject: (reason: unknown) => void
-                        ): void => {
-                            promiseResolve = resolve
-                            promiseReject = reject
-                        })
-                    }
-                })
-                if (type.throws != null && !(type.throws.isVoid())) {
+                if (paramType.throws != null && !(paramType.throws.isVoid())) {
+                    runtimeParam.throws = true
+                    const throwMethodKey = getThrowMethodKey(fullParamKey)
                     node.insertAfter({
                         space: 8
                     }, {
                         type: BlockType.METHOD,
-                        key: `__slightning_coco_widget_throw__${key}`,
-                        label: `${label}抛出`,
+                        key: throwMethodKey,
+                        label: `${fullParamLabel}抛出`,
                         block: [
                             {
                                 key: "__slightning_coco_widget_call_data__",
-                                label,
+                                label: fullParamLabel,
                                 type: callDataType
                             }, "抛出", {
                                 key: "exception",
                                 label: "异常",
-                                type: type.throws
+                                type: paramType.throws
                             }
                         ],
                         returns: new VoidType(),
                         blockOptions: {
-                            ...transformedMethod.blockOptions,
+                            ...newMethod.blockOptions,
                             inline: true,
                             previousStatement: true,
                             nextStatement: false
                         }
                     })
-                    Object.defineProperty(widget.prototype, `__slightning_coco_widget_throw__${key}`, {
-                        value: function (callData: callData, exception: unknown): void {
-                            const reject: ((reason: unknown) => void) | undefined = rejectMap.get(callData.reject)
-                            if (reject == null) {
-                                throw new Error("拒绝函数不存在")
-                            }
-                            reject(exception)
-                        },
-                        writable: true,
-                        enumerable: false,
-                        configurable: true
-                    })
                 }
-                if (type.returns != null) {
+                if (paramType.returns != null) {
+                    runtimeParam.returns = true
+                    const returnMethodKey = getReturnMethodKey(fullParamKey)
                     node.insertAfter({
                         space: 8
                     }, {
                         type: BlockType.METHOD,
-                        key: `__slightning_coco_widget_return__${key}`,
-                        label: `${label}返回`,
+                        key: returnMethodKey,
+                        label: `${fullParamLabel}返回`,
                         block: [
                             {
                                 key: "__slightning_coco_widget_call_data__",
-                                label,
+                                label: fullParamLabel,
                                 type: callDataType
-                            }, "返回", ...(type.returns.isVoid() ? [] : [{
+                            }, "返回", ...(paramType.returns.isVoid() ? [] : [{
                                 key: "returnValue",
                                 label: "返回值",
-                                type: type.returns
+                                type: paramType.returns
                             }])
                         ],
                         returns: new VoidType(),
                         blockOptions: {
-                            ...transformedMethod.blockOptions,
+                            ...newMethod.blockOptions,
                             inline: true,
                             previousStatement: true,
                             nextStatement: false
                         }
                     })
-                    Object.defineProperty(widget.prototype, `__slightning_coco_widget_return__${key}`, {
-                        value: function (callData: callData, returnValue: unknown): void {
-                            const resolve: ((value: unknown) => void) | undefined = resolveMap.get(callData.resolve)
-                            if (resolve == null) {
-                                throw new Error("解决函数不存在")
-                            }
-                            resolve(returnValue)
-                        },
-                        writable: true,
-                        enumerable: false,
-                        configurable: true
-                    })
                 }
                 node.insertAfter({
                     type: BlockType.EVENT,
-                    key,
-                    label: `${label}被调用`,
+                    key: fullParamKey,
+                    label: `${fullParamLabel}被调用`,
                     params: eventParams
                 })
+                runtimeParams.push(runtimeParam)
             }
-            Object.defineProperty(widget.prototype, transformedMethod.key, {
-                value: function (...args: unknown[]): unknown {
-                    const transformedArgs: unknown[] = []
-                    for (let i: number = 0; i < args.length; i++) {
-                        transformedArgs.push(argumentsTransformers[i]?.call(this, args[i]))
-                    }
-                    return this[node.value.key].apply(this, transformedArgs)
-                },
-                writable: true,
-                enumerable: false,
-                configurable: true
-            })
-            node.insertAfter(transformedMethod)
+            node.insertAfter(newMethod)
+            runtimeData.transform.push({ key: method.key, params: runtimeParams })
         }
     })
+    recordDecoratorOperation(widget, {
+        runtime: {
+            func: "runtimeAddTransformMethodsCallbackFunctionsToEvents",
+            data: runtimeData
+        }
+    })
+    runtimeAddTransformMethodsCallbackFunctionsToEvents(runtimeData, widget)
     return [types, widget]
 }

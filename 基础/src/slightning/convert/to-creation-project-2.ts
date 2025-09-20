@@ -1,5 +1,6 @@
 import * as CreationProject2 from "../../creation-project-2"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
+import { widgetToCreationProject2 } from "../runtime/convert/to-creation-project-2"
 import { IntegerType, MutatorType, NumberType } from "../type"
 import { Color, StandardEventParamTypes, MethodBlockParam, StandardTypes, StandardMethodBlockItem, PropertyComputeBlockOptions } from "../types"
 import { Widget } from "../widget"
@@ -8,7 +9,7 @@ export function convertToCreationProject2(
     types: StandardTypes,
     widget: Widget
 ): [CreationProject2.Types, new (props: Record<string, any>) => CreationProject2.widgetClass] {
-    return [typesToCreationProject2(types), widget as new (props: Record<string, any>) => CreationProject2.widgetClass]
+    return [typesToCreationProject2(types), widgetToCreationProject2(widget)]
 }
 
 export function typesToCreationProject2(types: StandardTypes): CreationProject2.Types {
@@ -275,3 +276,5 @@ export function typesToCreationProject2(types: StandardTypes): CreationProject2.
     })
     return result
 }
+
+export { widgetToCreationProject2 }

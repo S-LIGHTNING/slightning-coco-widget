@@ -4,7 +4,7 @@ sidebar_position: 1
 
 import useBaseUrl from "@docusaurus/useBaseUrl"
 
-# 打包优化
+# 通用打包优化
 
 :::caution 注意
 在阅读本文档之前，我们假定你已经知道如何利用 SCW 打包 CoCo 控件，如果你还不了解，详见 [打包 CoCo 控件](/docs/tutorial/fast-start/pack)。
@@ -12,6 +12,10 @@ import useBaseUrl from "@docusaurus/useBaseUrl"
 
 :::tip 提示
 本文档继续沿用 [打包 CoCo 控件](/docs/tutorial/fast-start/pack) 中的示例配置。
+:::
+
+:::tip 提示
+本文所述打包优化方式对没有使用 SCW 的控件同样适用。
 :::
 
 ## 优化打包速度

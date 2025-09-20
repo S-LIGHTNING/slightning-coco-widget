@@ -1,20 +1,19 @@
-import * as stringify from "@slightning/anything-to-string"
-
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
-import { betterToString } from "../../utils"
-import { ChildTypeInfo, Type } from "./type"
-import { TypeValidateError } from "./type-validate-error"
-import { typeToString, validate } from "./utils"
+import { RuntimeUnionType } from "../runtime/type/union-type"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
 
-export class UnionType<T> implements Type<T> {
+export class UnionType<T> extends RuntimeUnionType<T> implements Type<T> {
 
-    public readonly types: Type<T>[]
+    public readonly key: string = "UnionType"
+    public override readonly types: Type<T>[]
     public readonly defaultValue: string | number | boolean
 
     public constructor(...types: Type<T>[]) {
-        this.types = types
+        super({ types })
         for (const type of types) {
             if (
                 "defaultValue" in type &&
@@ -28,43 +27,23 @@ export class UnionType<T> implements Type<T> {
                 break
             }
         }
+        this.types = types
         this.defaultValue ??= ""
     }
 
-    public validate(this: this, value: unknown): value is T {
-        const errors: TypeValidateError<T>[] = []
-        for (const type of this.types) {
-            try {
-                validate(null, value, type)
-                return true
-            } catch (error) {
-                if (!(error instanceof TypeValidateError)) {
-                    throw error
-                }
-                errors.push(error)
-            }
-        }
-        throw new TypeValidateError(
-            `不能将 ${betterToString(value)} 分配给 ${typeToString(this)}\n` +
-            errors.map(
-                (error: TypeValidateError<T>): string =>
-                    error.message
-                        .split("\n")
-                        .map((line: string): string => `　${line}`)
-                        .join("\n")
-            ).join("\n"),
-            value,
-            this
-        )
+    public toJSON(this: this): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeUnionType", {
+            types: this.types.map((type): RuntimeTypeData => type.toJSON())
+        })
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         const result: ChildTypeInfo[] = []
         for (let i: number = 0; i < this.types.length; i++) {
-            const type: Type | undefined = this.types[i]
+            const type: Type | undefined = this.types[i] as any
             if (type != undefined) {
                 result.push({
-                    key: `__slightning_coco_widget_union_type_child__${i}_${Object.getPrototypeOf(type)?.constructor?.name ?? "unknown"}`,
+                    key: `__slightning_coco_widget_union_type_child__${i}_${type.key ?? "unknown"}`,
                     label: String(i),
                     type: type
                 })
@@ -78,43 +57,7 @@ export class UnionType<T> implements Type<T> {
     }
 
     public isVoid(this: this): boolean {
-        return this.types.every((type: Type): boolean => type.isVoid())
-    }
-
-    public typeToStringPrepare(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void {
-        for (const type of this.types) {
-            new stringify.AnythingRule().prepare(type, config, context)
-        }
-    }
-
-    public typeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string {
-        return this.types.length == 0 ? "空" : `(${this.types.map(
-            (type: Type): string => new stringify.AnythingRule().toString(type, config, context)
-        ).join(" | ")})`
-    }
-
-    public inlineTypeToStringPrepare(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void {
-        this.typeToStringPrepare(config, context)
-    }
-
-    public inlineTypeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string {
-        return this.typeToString(config, context)
+        return this.types.every((type: any): boolean => type.isVoid?.() ?? false)
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

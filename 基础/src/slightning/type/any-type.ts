@@ -1,28 +1,35 @@
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
 import { XMLEscape } from "../../utils"
-import { ChildTypeInfo, Type } from "./type"
+import { RuntimeAnyType } from "../runtime/type/any-type"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
 
-export class AnyType implements Type<any> {
+export class AnyType extends RuntimeAnyType implements Type<any> {
 
+    public readonly key: string = "AnyType"
     public readonly defaultValue: any
 
     public constructor(defaultValue: string | number | boolean)
     public constructor(props?: {
         defaultValue?: any | null | undefined
-    } | string | number | boolean)
-    public constructor(props: {
+    } | null | undefined)
+    public constructor(props?: {
         defaultValue?: any | null | undefined
-    } | string | number | boolean = {}) {
-        if (typeof props != "object") {
+    } | string | number | boolean | null | undefined) {
+        super()
+        if (props == null) {
+            props = {}
+        } else if (typeof props != "object") {
             props = { defaultValue: props }
         }
         this.defaultValue = props.defaultValue ?? ""
     }
 
-    public validate(this: this, __value: unknown): __value is any {
-        return true
+    public toJSON(this: this): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeAnyType", {})
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
@@ -35,14 +42,6 @@ export class AnyType implements Type<any> {
 
     public isVoid(this: this): boolean {
         return false
-    }
-
-    public typeToString(this: this): string {
-        return "任意"
-    }
-
-    public inlineTypeToString(this: this): string {
-        return this.typeToString()
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

@@ -1,3 +1,4 @@
+import { recordDecoratorOperation } from "./utils"
 import { MethodBlockParam, StandardTypes } from "../types"
 import { Widget } from "../widget"
 import { MethodTypesNode, traverseTypes } from "./utils"
@@ -15,5 +16,6 @@ export function addThisForMethods(types: StandardTypes, widget: Widget): [Standa
             }
         }
     })
+    recordDecoratorOperation(widget)
     return [types, widget]
 }

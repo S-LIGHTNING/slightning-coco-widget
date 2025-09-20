@@ -1,7 +1,4 @@
-import { StandardTypes } from "../types"
-import { Widget } from "../widget"
-
-export type Decorator = (types: StandardTypes, widget: Widget) => [StandardTypes, Widget]
+export * from "./types"
 
 export * from "./transform-methods-throws"
 export * from "./add-transform-methods-throws"

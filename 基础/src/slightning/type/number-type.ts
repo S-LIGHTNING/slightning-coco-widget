@@ -1,40 +1,40 @@
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
-import { betterToString, Range } from "../../utils"
-import { ChildTypeInfo, Type } from "./type"
-import { TypeValidateError } from "./type-validate-error"
-import { typeToString } from "./utils"
+import { RuntimeNumberTypeProps, RuntimeNumberType } from "../runtime/type/number-type"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
 
-export class NumberType implements Type<number> {
+export class NumberType extends RuntimeNumberType implements Type<number> {
 
+    public readonly key: string = "NumberType"
     public readonly defaultValue: number
-    public readonly range: Range | null | undefined
 
     public constructor(defaultValue: number)
     public constructor(props?: {
         defaultValue?: number | null | undefined
-        range?: Range | null | undefined
-    } | number)
-    public constructor(props: {
+    } & RuntimeNumberTypeProps | number | null | undefined)
+    public constructor(props?: {
         defaultValue?: number | null | undefined
-        range?: Range | null | undefined
-    } | number = {}) {
-        if (typeof props == "number") {
+    } & RuntimeNumberTypeProps | number | null | undefined) {
+        if (props == null) {
+            props = {}
+        } else if (typeof props == "number") {
             props = { defaultValue: props }
         }
+        super(props)
         this.defaultValue = props.defaultValue ?? 0
-        this.range = props.range
     }
 
-    public validate(this: this, value: unknown): value is number {
-        if (typeof value != "number") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
-        }
-        if (this.range != null && !this.range.includes(value)) {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}：数字超出范围`, value, this)
-        }
-        return true
+    public toJSON(this: this): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeNumberType", {
+            range: this.range == null ? null : {
+                __slightning_coco_widget_expression__: `new Range(${
+                    JSON.stringify(this.range.left)
+                }, ${JSON.stringify(this.range.right)})`
+            }
+        })
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
@@ -47,14 +47,6 @@ export class NumberType implements Type<number> {
 
     public isVoid(this: this): boolean {
         return false
-    }
-
-    public typeToString(this: this): string {
-        return "数字"
-    }
-
-    public inlineTypeToString(this: this): string {
-        return this.typeToString()
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

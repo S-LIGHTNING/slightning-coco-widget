@@ -1,6 +1,7 @@
 import * as CoCo from "../../coco"
 import { capitalize, splitArray } from "../../utils"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
+import { widgetToCoCo } from "../runtime/convert/to-coco"
 import { Color, StandardEventParamTypes, StandardEventSubType, StandardEventTypes, MethodBlockParam, MethodParamTypes, StandardTypes, StandardMethodBlock, StandardMethodParamTypes } from "../types"
 import { eventKeyMap } from "../utils"
 import { Widget } from "../widget"
@@ -9,21 +10,7 @@ export function convertToCoCo(
     types: StandardTypes,
     widget: Widget
 ): [CoCo.Types, new (props: Record<string, any>) => CoCo.Widget] {
-    return [typesToCoCo(types), new Proxy(widget, {
-        construct(target: Widget, argArray: [Record<string, any>], newTarget: Function): CoCo.Widget {
-            const [props] = argArray
-            const widgetInstance: CoCo.Widget = Reflect.construct(target, argArray, newTarget)
-            for (const [key, value] of Object.entries(props)) {
-                Object.defineProperty(widgetInstance, key, {
-                    value,
-                    writable: true,
-                    enumerable: true,
-                    configurable: true
-                })
-            }
-            return widgetInstance
-        }
-    }) as new (props: Record<string, any>) => CoCo.Widget]
+    return [typesToCoCo(types), widgetToCoCo(widget)]
 }
 
 export function typesToCoCo(types: StandardTypes): CoCo.Types {
@@ -389,3 +376,5 @@ function addEventSubTypesMap(
         )
     }
 }
+
+export { widgetToCoCo }

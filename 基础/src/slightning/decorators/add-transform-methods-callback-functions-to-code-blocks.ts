@@ -1,16 +1,59 @@
 import { capitalize } from "../../utils"
-import { FunctionType, InstanceOfClassType, ObjectType, StringEnumType, VoidType } from "../type"
+import { FunctionType, ObjectType, StringEnumType, VoidType } from "../type"
 import { BlockType, MethodBlockParam, MethodParamTypes, StandardMethodTypes, StandardTypes } from "../types"
 import { Widget } from "../widget"
-import { methodParamNeedsTransformToCodeBlocks, MethodTypesNode, traverseTypes } from "./utils"
+import { DecoratorAddMethodConfig, methodParamNeedsTransformToCodeBlocks, MethodTypesNode, recordDecoratorOperation, traverseTypes } from "./utils"
 
 export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
+    const addMethods: Record<string, DecoratorAddMethodConfig> = {}
     traverseTypes(types, {
         MethodTypes(node: MethodTypesNode): void {
             if (!node.value.block.some(methodParamNeedsTransformToCodeBlocks)) {
                 return
             }
-            let argumentsTransformers: ((arg: unknown) => unknown)[] = []
+            addMethods["__slightning_coco_widget_transformed_callback_function_to_code_blocks_transform_argument__"] = {
+                args: ["original", `
+                    if (typeof original != "function") {
+                        return original
+                    }
+                    return function (...args) {
+                        let promiseResolve = null
+                        let promiseReject = null
+                        const callData = Object.create({
+                            state: "undone",
+                            resolve(result) {
+                                if (callData.state == "undone") {
+                                    callData.state = "resolved"
+                                    callData.value = result
+                                    if (promiseResolve != null) {
+                                        promiseResolve(result)
+                                    }
+                                }
+                            },
+                            reject(reason) {
+                                if (callData.state == "undone") {
+                                    callData.state = "rejected"
+                                    callData.value = reason
+                                    if (promiseReject != null) {
+                                        promiseReject(reason)
+                                    }
+                                }
+                            }
+                        })
+                        original(callData, ...args)
+                        if (callData.state == "resolved") {
+                            return callData.value
+                        } else if (callData.state == "rejected") {
+                            throw callData.value
+                        }
+                        return new Promise((resolve, reject) => {
+                            promiseResolve = resolve
+                            promiseReject = reject
+                        })
+                    }
+                `]
+            }
+            let argsInfo: { argKey: string, needsTransform: boolean }[] = []
             const transformedMethod: StandardMethodTypes = {
                 ...node.value,
                 key: `__slightning_coco_widget_transformed_callback_function_to_code_blocks__${node.value.key}`,
@@ -25,7 +68,7 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                     continue
                 }
                 if (!methodParamNeedsTransformToCodeBlocks(part)) {
-                    argumentsTransformers.push((arg: unknown): unknown => arg)
+                    argsInfo.push({ argKey: part.key, needsTransform: false })
                     continue
                 }
                 const key = `${transformedMethod.key}${capitalize(part.key)}`
@@ -40,19 +83,11 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                     label: part.label,
                     type: newType
                 }
-                class ResolveRef {
-                    public readonly name: string = "解决函数引用"
-                }
-                class RejectRef {
-                    public readonly name: string = "拒绝函数引用"
-                }
-                const resolveMap: WeakMap<ResolveRef, (value: unknown) => void> = new WeakMap()
-                const rejectMap: WeakMap<RejectRef, (reason: unknown) => void> = new WeakMap()
                 type callData = {
                     state: "undone" | "resolved" | "rejected"
                     value?: unknown
-                    resolve: ResolveRef
-                    reject: RejectRef
+                    resolve(value: unknown): void
+                    reject(reason: unknown): void
                 }
                 const callDataType: ObjectType<callData> = new ObjectType<callData>({
                     propertiesType: {
@@ -61,11 +96,11 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                             ["已解决", "resolved" ],
                             ["已拒绝", "rejected" ]
                         ]),
-                        resolve: new InstanceOfClassType({
-                            theClass: ResolveRef
+                        resolve: new FunctionType({
+                            block: [["value", "值", type.returns ?? new VoidType()]]
                         }),
-                        reject: new InstanceOfClassType({
-                            theClass: RejectRef
+                        reject: new FunctionType({
+                            block: [["reason", "原因", type.throws ?? new VoidType()]]
                         })
                     },
                     defaultValue: label
@@ -75,51 +110,7 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                     label: part.label,
                     type: callDataType
                 })
-                argumentsTransformers.push(function (originalFunction: unknown): unknown {
-                    if (typeof originalFunction != "function") {
-                        return originalFunction
-                    }
-                    return function (...args: unknown[]): unknown {
-                        let promiseResolve: ((result: unknown) => void) | null = null
-                        let promiseReject: ((reason: unknown) => void) | null = null
-                        function resolve(result: unknown): void {
-                            if (callData.state == "undone") {
-                                callData.state = "resolved"
-                                callData.value = result
-                                promiseResolve?.(result)
-                            }
-                        }
-                        function reject(reason: unknown): void {
-                            if (callData.state == "undone") {
-                                callData.state = "rejected"
-                                callData.value = reason
-                                promiseReject?.(reason)
-                            }
-                        }
-                        const resolveRef: ResolveRef = new ResolveRef()
-                        const rejectRef: RejectRef = new RejectRef()
-                        resolveMap.set(resolveRef, resolve)
-                        rejectMap.set(rejectRef, reject)
-                        const callData: callData = {
-                            state: "undone",
-                            resolve: resolveRef,
-                            reject: rejectRef
-                        }
-                        originalFunction(callData, ...args)
-                        if (callData.state == "resolved") {
-                            return callData.value
-                        } else if (callData.state == "rejected") {
-                            throw callData.value
-                        }
-                        return new Promise((
-                            resolve: (value: unknown) => void,
-                            reject: (reason: unknown) => void
-                        ): void => {
-                            promiseResolve = resolve
-                            promiseReject = reject
-                        })
-                    }
-                })
+                argsInfo.push({ argKey: part.key, needsTransform: true })
                 if (type.throws != null && !(type.throws.isVoid())) {
                     node.insertAfter({
                         space: 8
@@ -133,7 +124,7 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                                 label: label,
                                 type: callDataType
                             }, "抛出", {
-                                key: "Exception",
+                                key: "exception",
                                 label: "异常",
                                 type: type.throws
                             }
@@ -146,18 +137,9 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                             nextStatement: false
                         }
                     })
-                    Object.defineProperty(widget.prototype, `__slightning_coco_widget_throw__${key}`, {
-                        value: function (callData: callData, exception: unknown): void {
-                            const reject: ((reason: unknown) => void) | undefined = rejectMap.get(callData.reject)
-                            if (reject == null) {
-                                throw new Error("拒绝函数不存在")
-                            }
-                            reject(exception)
-                        },
-                        writable: true,
-                        enumerable: false,
-                        configurable: true
-                    })
+                    addMethods[`__slightning_coco_widget_throw__${key}`] = {
+                        args: ["callData", "exception", "callData.reject(exception)"]
+                    }
                 }
                 if (type.returns != null) {
                     node.insertAfter({
@@ -185,34 +167,28 @@ export function addTransformMethodsCallbackFunctionsToCodeBlocks(types: Standard
                             nextStatement: false
                         }
                     })
-                    Object.defineProperty(widget.prototype, `__slightning_coco_widget_return__${key}`, {
-                        value: function (callData: callData, returnValue: unknown): void {
-                            const resolve: ((value: unknown) => void) | undefined = resolveMap.get(callData.resolve)
-                            if (resolve == null) {
-                                throw new Error("解决函数不存在")
-                            }
-                            resolve(returnValue)
-                        },
-                        writable: true,
-                        enumerable: false,
-                        configurable: true
-                    })
+                    addMethods[`__slightning_coco_widget_return__${key}`] = {
+                        args: ["callData", "returnValue", "callData.resolve(returnValue)"]
+                    }
                 }
             }
-            Object.defineProperty(widget.prototype, transformedMethod.key, {
-                value: function (...args: unknown[]): unknown {
-                    const transformedArgs: unknown[] = []
-                    for (let i: number = 0; i < args.length; i++) {
-                        transformedArgs.push(argumentsTransformers[i]?.call(this, args[i]))
-                    }
-                    return this[node.value.key].apply(this, transformedArgs)
-                },
-                writable: true,
-                enumerable: false,
-                configurable: true
-            })
+            addMethods[transformedMethod.key] = {
+                args: [
+                    ...argsInfo.map((info): string => `_${info.argKey}`),
+                    `return this.${node.value.key}(${
+                        argsInfo.map((info): string => {
+                            if (info.needsTransform) {
+                                return `this.__slightning_coco_widget_transformed_callback_function_to_codeblocks_transform_argument__(_${info.argKey})`
+                            } else {
+                                return `_${info.argKey}`
+                            }
+                        }).join(",")
+                    })`
+                ]
+            }
             node.insertAfter(transformedMethod)
         }
     })
+    recordDecoratorOperation(widget, { add: { methods: addMethods } })
     return [types, widget]
 }

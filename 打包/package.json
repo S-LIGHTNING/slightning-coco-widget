@@ -1,29 +1,50 @@
 {
   "name": "slightning-coco-widget--webpack",
-  "version": "2.4.1",
+  "version": "2.5.0-alpha.0",
   "exports": {
     ".": {
       "default": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js",
       "types": "./dist/types/index.d.ts"
     },
     "./config": {
       "default": "./dist/cjs/config.js",
-      "import": "./dist/esm/config.js",
       "types": "./dist/types/config.d.ts"
     },
     "./bypass": {
       "default": "./dist/cjs/bypass.js",
-      "import": "./dist/esm/bypass.js",
       "types": "./dist/types/bypass.d.ts"
     },
     "./loader/bypass-restrictions-loader": {
-      "default": "./dist/cjs/loader/bypass-restrictions-loader.js",
-      "types": "./dist/types/loader/bypass-restrictions-loader.d.ts"
+      "default": "./dist/cjs/loader/bypass-restrictions.js",
+      "types": "./dist/types/loader/bypass-restrictions.d.ts"
     },
     "./loader/external-import-loader": {
-      "default": "./dist/cjs/loader/external-import-loader.js",
-      "types": "./dist/types/loader/external-import-loader.d.ts"
+      "default": "./dist/cjs/loader/external-import.js",
+      "types": "./dist/types/loader/external-import.d.ts"
+    },
+    "./loader/bypass-restrictions": {
+      "default": "./dist/cjs/loader/bypass-restrictions.js",
+      "types": "./dist/types/loader/bypass-restrictions.d.ts"
+    },
+    "./loader/external-import": {
+      "default": "./dist/cjs/loader/external-import.js",
+      "types": "./dist/types/loader/external-import.d.ts"
+    },
+    "./loader/null": {
+      "default": "./dist/cjs/loader/null.js",
+      "types": "./dist/types/loader/null.d.ts"
+    },
+    "./loader/build-time-convert-record": {
+      "default": "./dist/cjs/loader/build-time-convert-record.js",
+      "types": "./dist/types/loader/build-time-convert-record.d.ts"
+    },
+    "./loader/build-time-convert-inject": {
+      "default": "./dist/cjs/loader/build-time-convert-inject.js",
+      "types": "./dist/types/loader/build-time-convert-inject.d.ts"
+    },
+    "./build-time-convert-environment": {
+      "default": "./dist/cjs/build-time-convert-environment/index.js",
+      "types": "./dist/types/build-time-convert-environment/index.js"
     },
     "./runtime/bypass/xml-http-request-upload": {
       "default": "./dist/runtime/esm/bypass/xml-http-request-upload.js",
@@ -61,6 +82,9 @@
       "types": "./dist/runtime/types/load-external-module.d.ts"
     }
   },
+  "bin": {
+    "scw-build": "./dist/cjs/bin/build.js"
+  },
   "files": [
     "dist",
     "package.json",
@@ -97,17 +121,21 @@
     "@babel/parser": "*",
     "@babel/template": "*",
     "@babel/traverse": "*",
-    "webpack": "*"
+    "webpack": "*",
+    "webpack-cli": "*"
   },
   "devDependencies": {
     "@babel/types": "^7.0.0",
     "@types/babel__generator": "^7.0.0",
     "@types/babel__template": "^7.0.0",
     "@types/babel__traverse": "^7.0.0",
-    "clean-dir": "^1.0.3",
+    "clean-dir": "^1.0.0",
     "typescript": "^5.0.0"
   },
   "engines": {
     "node": ">=14"
+  },
+  "dependencies": {
+    "browser-env": "^3.0.0"
   }
 }

@@ -1,29 +1,29 @@
 {
   "name": "slightning-coco-widget",
-  "version": "2.8.1",
-  "main": "dist/src/index.js",
-  "module": "dist/src/index.js",
-  "types": "dist/types/index.d.ts",
+  "version": "2.9.0-alpha.0",
+  "main": "./dist/src/src/index.js",
+  "module": "./dist/src/src/index.js",
+  "types": "./dist/types/src/index.d.ts",
   "exports": {
     ".": {
-      "default": "./dist/src/index.js",
-      "types": "./dist/types/index.d.ts"
+      "default": "./dist/src/src/index.js",
+      "types": "./dist/types/src/index.d.ts"
     },
     "./coco": {
-      "default": "./dist/src/coco/index.js",
-      "types": "./dist/types/coco/index.d.ts"
+      "default": "./dist/src/src/coco/index.js",
+      "types": "./dist/types/src/coco/index.d.ts"
     },
     "./creation-project": {
-      "default": "./dist/src/creation-project-1/index.js",
-      "types": "./dist/types/creation-project-1/index.d.ts"
+      "default": "./dist/src/src/creation-project-1/index.js",
+      "types": "./dist/types/src/creation-project-1/index.d.ts"
     },
     "./creation-project-1": {
-      "default": "./dist/src/creation-project-1/index.js",
-      "types": "./dist/types/creation-project-1/index.d.ts"
+      "default": "./dist/src/src/creation-project-1/index.js",
+      "types": "./dist/types/src/creation-project-1/index.d.ts"
     },
     "./creation-project-2": {
-      "default": "./dist/src/creation-project-2/index.js",
-      "types": "./dist/types/creation-project-2/index.d.ts"
+      "default": "./dist/src/src/creation-project-2/index.js",
+      "types": "./dist/types/src/creation-project-2/index.d.ts"
     }
   },
   "files": [
@@ -74,7 +74,5 @@
     "clean-dir": "^1.0.0",
     "typescript": "^5.0.0"
   },
-  "sideEffects": [
-    "./dist/src/slightning/index.js"
-  ]
+  "sideEffects": false
 }

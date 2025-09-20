@@ -2,7 +2,7 @@ import { capitalize, excludeBoolean } from "../../utils"
 import { VoidType } from "../type/void-type"
 import { BlockType, BUILD_IN_PROPERTIES, Color, MethodBlockParam, StandardMethodGroup, StandardTypes } from "../types"
 import { Widget } from "../widget"
-import { PropertyGroupNode, PropertyTypesNode, traverseTypes } from "./utils"
+import { DecoratorAddMethodConfig, PropertyGroupNode, PropertyTypesNode, recordDecoratorOperation, traverseTypes } from "./utils"
 
 export function generateBlockForProperties(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
 
@@ -26,6 +26,8 @@ export function generateBlockForProperties(types: StandardTypes, widget: Widget)
     let gettersGroupStack: StandardMethodGroup[] = []
     let currentSettersGroup: StandardMethodGroup = setterGroup
     let settersGroupStack: StandardMethodGroup[] = []
+
+    const addMethods: Record<string, DecoratorAddMethodConfig> = {}
 
     traverseTypes(types, {
         PropertyGroup: {
@@ -65,15 +67,9 @@ export function generateBlockForProperties(types: StandardTypes, widget: Widget)
                     returns: node.value.type,
                     blockOptions: excludeBoolean(node.value.blockOptions?.get)
                 })
-                if (widget.prototype[propertyGetBlockKey] == null) {
-                    Object.defineProperty(widget.prototype, propertyGetBlockKey, {
-                        value: function (): unknown {
-                            return this[node.value.key]
-                        },
-                        writable: true,
-                        enumerable: false,
-                        configurable: true
-                    })
+                addMethods[propertyGetBlockKey] = {
+                    overwrite: false,
+                    args: [`return this.${node.value.key}`]
                 }
             }
             if (node.blockOptions?.set != false) {
@@ -93,15 +89,9 @@ export function generateBlockForProperties(types: StandardTypes, widget: Widget)
                     returns: new VoidType(),
                     blockOptions: excludeBoolean(node.value.blockOptions?.set)
                 })
-                if (widget.prototype[propertySetBlockKey] == null) {
-                    Object.defineProperty(widget.prototype, propertySetBlockKey, {
-                        value: function (value: unknown): void {
-                            this[node.value.key] = value
-                        },
-                        writable: true,
-                        enumerable: false,
-                        configurable: true
-                    })
+                addMethods[propertySetBlockKey] = {
+                    overwrite: false,
+                    args: ["value", `this.${node.value.key} = value`]
                 }
             }
             node.value.blockOptions = {
@@ -112,6 +102,7 @@ export function generateBlockForProperties(types: StandardTypes, widget: Widget)
     })
 
     types.methods.push(propertyBlockGroup)
+    recordDecoratorOperation(widget, { add: { methods: addMethods } })
 
     return [types, widget]
 }

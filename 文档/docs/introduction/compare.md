@@ -56,8 +56,8 @@ sidebar_position: 3
 | :-: | :-: | :-: | :-: | :-: |
 | CoCo 原生 | ✅（无需生成） | ❌ | ❌（需要手动刷新编辑器） | ❌ |
 | Creation Project 原生 | ✅（无需生成） | ❌ | ✅（无需刷新） | ❌ |
-| **SCW** | ✅（通过 webpack 实时编译） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ❌ |
-| CoCoKit | ✅（通过 webpack 实时编译） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization#配置控件实时重载) 控件） | ❌ |
+| **SCW** | ✅（通过 webpack 实时编译） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization/common#配置控件实时重载) 控件） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization/common#配置控件实时重载) 控件） | ❌ |
+| CoCoKit | ✅（通过 webpack 实时编译） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization/common#配置控件实时重载) 控件） | ✅（通过 [控件实时重载](/docs/tutorial/guides/packaging-optimization/common#配置控件实时重载) 控件） | ❌ |
 | 魔盒CoCo框架 | ✅（无需生成） | ❌ | ❌ | ❌ |
 | CoCo Widget Live Server | | 未知 | 未知 | 未知 |
 

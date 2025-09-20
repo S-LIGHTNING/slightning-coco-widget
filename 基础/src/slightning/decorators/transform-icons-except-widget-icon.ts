@@ -1,4 +1,5 @@
 import { excludeBoolean } from "../../utils"
+import { recordDecoratorOperation } from "./utils"
 import { StandardTypes } from "../types"
 import { Widget } from "../widget"
 import { EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, transformIcon, traverseTypes } from "./utils"
@@ -23,5 +24,6 @@ export function transformIconsExceptWidgetIcon(types: StandardTypes, widget: Wid
             transformIcon(node.value.blockOptions)
         }
     })
+    recordDecoratorOperation(widget)
     return [types, widget]
 }

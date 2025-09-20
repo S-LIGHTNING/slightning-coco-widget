@@ -1,8 +1,15 @@
-import { Adapter, getDefaultAdapter } from "./adapters/adapter"
-import { standardizeTypes } from "./convert/standardize-types"
+import { crossPlatform } from "./runtime/cross-platform"
 import { Decorator } from "./decorators"
 import { StandardTypes, Types } from "./types"
 import { Widget } from "./widget"
+import { convertToCoCo, convertToCreationProject1, standardizeTypes, typesToCoCo, typesToCreationProject1, widgetToCoCo, widgetToCreationProject1 } from "./convert"
+import * as CoCo from "../coco"
+import * as CreationProject1 from "../creation-project-1"
+import * as CreationProject2 from "../creation-project-2"
+import { convertToCreationProject2, typesToCreationProject2, widgetToCreationProject2 } from "./convert/to-creation-project-2"
+import { buildTimeRecordData } from "./build-time-convert"
+import { RuntimeExportWidgetData } from "./runtime/export"
+import { clone, UseDefaultClone } from "../utils"
 
 type Platform = "CoCo" | "CreationProject" | "CreationProject1" | "CreationProject2" | "NodeJS"
 
@@ -91,6 +98,81 @@ export function exportWidget(
     widget: Widget,
     config?: ExportConfig | null | undefined
 ): void {
-    const adapter: Adapter = getDefaultAdapter()
-    adapter.exportWidget(standardizeTypes(types), widget, config)
+    let standardTypes = standardizeTypes(types)
+    if (global.__slightning_coco_widget_record_mode__) {
+        const platform = global.__slightning_coco_widget_platform__
+        if (platform != null && platform != "All") {
+            const [types] = decorate(standardTypes, widget, config, {
+                CoCo: ["CoCo"],
+                CreationProject1: ["CreationProject", "CreationProject2"],
+                CreationProject2: ["CreationProject", "CreationProject2"]
+            }[platform] as Platform[])
+            buildTimeRecordData({
+                types: {
+                    [platform]: {
+                        CoCo: typesToCoCo,
+                        CreationProject1: typesToCreationProject1,
+                        CreationProject2: typesToCreationProject2
+                    }[platform]!(types)
+                }
+            })
+            ;(({ CoCo, CreationProject1, CreationProject2 })[platform] as any).widgetExports.widget = {
+                CoCo: widgetToCoCo,
+                CreationProject1: widgetToCreationProject1,
+                CreationProject2: widgetToCreationProject2
+            }[platform]!(widget)
+        } else {
+            const [CoCoTypes] = decorate(cloneTypes(standardTypes), widget, config, ["CoCo"])
+            const [CreationProject1Types] = decorate(cloneTypes(standardTypes), widget, config, ["CreationProject", "CreationProject2"])
+            const [CreationProject2Types] = decorate(cloneTypes(standardTypes), widget, config, ["CreationProject", "CreationProject2"])
+            buildTimeRecordData({
+                types: {
+                    CoCo: typesToCoCo(CoCoTypes),
+                    CreationProject1: typesToCreationProject1(CreationProject1Types),
+                    CreationProject2: typesToCreationProject2(CreationProject2Types)
+                }
+            } satisfies RuntimeExportWidgetData)
+            CoCo.widgetExports.widget = widgetToCoCo(widget)
+            CreationProject1.widgetExports.widget = widgetToCreationProject1(widget)
+            CreationProject2.widgetExports.widget = widgetToCreationProject2(widget)
+        }
+    } else {
+        crossPlatform({
+            CoCo(): void {
+                [standardTypes, widget] = decorate(standardTypes, widget, config, ["CoCo"])
+                CoCo.exportWidget(...convertToCoCo(standardTypes, widget))
+            },
+            CreationProject1(): void {
+                [standardTypes, widget] = decorate(standardTypes, widget, config, ["CreationProject", "CreationProject2"])
+                CreationProject1.exportWidget(...convertToCreationProject1(standardTypes, widget))
+            },
+            CreationProject2(): void {
+                [standardTypes, widget] = decorate(standardTypes, widget, config, ["CreationProject", "CreationProject2"])
+                CreationProject2.exportWidget(...convertToCreationProject2(standardTypes, widget))
+            },
+            NodeJS(): void {
+                [standardTypes, widget] = decorate(standardTypes, widget, config, ["NodeJS"])
+                NodeJSExport[standardTypes.type] = { types: standardTypes, widget }
+            }
+        })()
+    }
 }
+
+function cloneTypes<T extends Types>(types: T): T {
+    return clone(types, (data: unknown): unknown => {
+        if (
+            Array.isArray(data) || (
+                data != null && typeof data == "object" &&
+                Object.getPrototypeOf(data) == Object.prototype
+            )
+        ) {
+            throw new UseDefaultClone()
+        }
+        return data
+    })
+}
+
+export const NodeJSExport: Record<string, {
+    types: StandardTypes,
+    widget: Widget
+}> = {}

@@ -1,5 +1,6 @@
 import * as CreationProject1 from "../../creation-project-1"
 import { BlockBoxOptionsNode, EventTypesNode, MethodGroupNode, MethodTypesNode, PropertyGroupNode, PropertyTypesNode, traverseTypes } from "../decorators"
+import { widgetToCreationProject1 } from "../runtime/convert/to-creation-project-1"
 import { IntegerType, MutatorType, NumberType } from "../type"
 import { Color, StandardEventParamTypes, MethodBlockParam, StandardTypes, StandardMethodBlockItem } from "../types"
 import { Widget } from "../widget"
@@ -8,7 +9,7 @@ export function convertToCreationProject1(
     types: StandardTypes,
     widget: Widget
 ): [CreationProject1.Types, new (props: Record<string, any>) => CreationProject1.widgetClass] {
-    return [typesToCreationProject1(types), widget as new (props: Record<string, any>) => CreationProject1.widgetClass]
+    return [typesToCreationProject1(types), widgetToCreationProject1(widget)]
 }
 
 export function typesToCreationProject1(types: StandardTypes): CreationProject1.Types {
@@ -92,13 +93,14 @@ export function typesToCreationProject1(types: StandardTypes): CreationProject1.
                 throw new Error(`无法将方法 ${method.label} 的抛出类型转为 Creation Project 类型`)
             }
             const deprecated: boolean | string = method.deprecated ?? node.blockOptions.deprecated ?? false
+            const { previousStatement, nextStatement } = node.blockOptions
             const transformed: CreationProject1.MethodTypes = {
                 key: method.key,
                 tipBefore: "",
                 tipAfter: "",
                 params: [],
-                noPs: !(node.blockOptions.previousStatement ?? true),
-                noNs: !(node.blockOptions.nextStatement ?? true),
+                noPs: previousStatement == false ? true : undefined,
+                noNs: nextStatement == false ? true : undefined,
                 ...method.returns?.toCreationProject1MethodValueTypes(),
                 tooltip: method.tooltip ?? undefined,
                 color: deprecated ? Color.GREY : node.blockOptions.color ?? undefined,
@@ -257,3 +259,5 @@ export function typesToCreationProject1(types: StandardTypes): CreationProject1.
     })
     return result
 }
+
+export { widgetToCreationProject1 }

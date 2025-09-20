@@ -1,8 +1,7 @@
-import * as stringify from "@slightning/anything-to-string"
-
-import * as CoCo from "../../coco"
-import * as CreationProject1 from "../../creation-project-1"
-import * as CreationProject2 from "../../creation-project-2"
+import type { RuntimeType } from "../runtime"
+import type * as CoCo from "../../coco"
+import type * as CreationProject1 from "../../creation-project-1"
+import type * as CreationProject2 from "../../creation-project-2"
 
 export interface ChildTypeInfo {
     key: string
@@ -10,35 +9,25 @@ export interface ChildTypeInfo {
     type: Type
 }
 
-export interface Type<T = unknown> {
+export interface RuntimeTypeData {
+    __slightning_coco_widget_object__: true
+    func: {
+        source: string
+        name: string
+    }
+    data: unknown
+}
 
-    validate(this: this, value: unknown): value is T
+export interface Type<T = unknown> extends RuntimeType<T> {
+
+    key: string
+
+    toJSON(): RuntimeTypeData
 
     getSameDirectionChildren(this: this): ChildTypeInfo[]
     getReverseDirectionChildren(this: this): ChildTypeInfo[]
 
     isVoid(this: this): boolean
-
-    typeToStringPrepare?(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void
-    typeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string
-    inlineTypeToStringPrepare?(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void
-    inlineTypeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string
 
     toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes
     toCoCoMethodParamValueTypes(this: this): CoCo.MethodParamValueTypes

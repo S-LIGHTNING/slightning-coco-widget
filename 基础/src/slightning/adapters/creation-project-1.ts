@@ -1,9 +1,6 @@
 import * as CreationProject1 from "../../creation-project-1"
-import { convertToCreationProject1 } from "../convert/to-creation-project-1"
-import { PropertiesTypes, StandardTypes, Types } from "../types"
-import { Widget } from "../widget"
-import { Adapter, LoggerAdapter } from "./adapter"
-import { decorate, ExportConfig } from "../export"
+import { Adapter } from "./adapter"
+import type { crossPlatform } from "../runtime/cross-platform"
 
 function isEditorWindow(window: Window): boolean {
     return /^https:\/\/cp\.cocotais\.cn\/(#|\?.*)?$/.test(window.location.href)
@@ -40,102 +37,10 @@ function editorIsRunningWork(): boolean {
     return /^[\s]*停[\s]*止[\s]*$/.test(getEditorRunButton()?.textContent ?? "")
 }
 
+/**
+ * @deprecated 适配器模式已弃用，请使用 {@link crossPlatform} 替代。
+ */
 export const CreationProject1Adapter: Adapter = {
-    getSuperWidget(types: Types) {
-        const propertiesSet: Set<string> = new Set()
-        function addProperties(properties: PropertiesTypes): void {
-            for (const property of properties) {
-                if ("contents" in property) {
-                    addProperties(property.contents)
-                    continue
-                }
-                propertiesSet.add(Array.isArray(property) ? property[0] : property.key)
-            }
-        }
-        addProperties(types.properties)
-        return class extends CreationProject1.widgetClass {
-            public constructor() {
-                super()
-                return new Proxy(this, {
-                    defineProperty(target: CreationProject1.widgetClass, property: string | symbol, attributes: PropertyDescriptor): boolean {
-                        if (typeof property == "string" && propertiesSet.has(property)) {
-                            return Reflect.defineProperty(target.props, property, attributes)
-                        }
-                        return Reflect.defineProperty(target, property, attributes)
-                    },
-                    deleteProperty(target: CreationProject1.widgetClass, p: string | symbol): boolean {
-                        if (typeof p == "string" && propertiesSet.has(p)) {
-                            return Reflect.deleteProperty(target.props, p)
-                        }
-                        return Reflect.deleteProperty(target, p)
-                    },
-                    get(target: CreationProject1.widgetClass, p: string | symbol, receiver: any): any {
-                        if (typeof p == "string" && propertiesSet.has(p)) {
-                            return Reflect.get(target.props, p, receiver)
-                        }
-                        return Reflect.get(target, p, receiver)
-                    },
-                    getOwnPropertyDescriptor(target: CreationProject1.widgetClass, p: string | symbol): TypedPropertyDescriptor<any> | undefined {
-                        if (typeof p == "string" && propertiesSet.has(p)) {
-                            return Reflect.getOwnPropertyDescriptor(target.props, p)
-                        }
-                        return Reflect.getOwnPropertyDescriptor(target, p)
-                    },
-                    has(target: CreationProject1.widgetClass, p: string | symbol): boolean {
-                        if (typeof p == "string" && propertiesSet.has(p)) {
-                            return Reflect.has(target.props, p)
-                        }
-                        return Reflect.has(target, p)
-                    },
-                    ownKeys(target: CreationProject1.widgetClass): (string | symbol)[] {
-                        return Reflect.ownKeys(target).concat(Reflect.ownKeys(target.props))
-                    },
-                    set(target: CreationProject1.widgetClass, p: string | symbol, newValue: any, receiver: any): boolean {
-                        if (typeof p == "string" && propertiesSet.has(p)) {
-                            if (types.options.visible) {
-                                CreationProject1.widgetClass.prototype.setProp.call(receiver, p, newValue)
-                                return true
-                            } else {
-                                return Reflect.set(target.props, p, newValue, receiver)
-                            }
-                        }
-                        return Reflect.set(target, p, newValue, receiver)
-                    }
-                })
-            }
-        }
-    },
-    exportWidget(types: StandardTypes, widget: Widget, config?: ExportConfig | null | undefined): void {
-        [types, widget] = decorate(types, widget, config, ["CreationProject", "CreationProject2"])
-        CreationProject1.exportWidget(...convertToCreationProject1(types, widget))
-    },
-    Logger: class CreationProject1Logger implements LoggerAdapter {
-
-        private readonly widget: any
-
-        public constructor(__types: Types, widget: any) {
-            this.widget = widget
-        }
-
-        public log(messages: string): void {
-            CreationProject1.widgetClass.prototype.widgetLog.call(this.widget, messages)
-        }
-
-        public info(messages: string): void {
-            CreationProject1.widgetClass.prototype.widgetInfo.call(this.widget, messages)
-        }
-
-        public warn(messages: string): void {
-            CreationProject1.widgetClass.prototype.widgetWarn.call(this.widget, messages)
-        }
-
-        public error(messages: string): void {
-            CreationProject1.widgetClass.prototype.widgetError.call(this.widget, messages)
-        }
-    },
-    emit(this: any, key: string, ...args: unknown[]): void {
-        CreationProject1.widgetClass.prototype.emit.call(this, key, ...args)
-    },
     utils: {
         inNative(): boolean {
             return CreationProject1.widgetRequire("cp_utils")?.native ?? false

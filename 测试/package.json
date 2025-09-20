@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget--test",
-  "version": "2.8.1",
+  "version": "2.9.0-alpha.0",
   "private": true,
   "file": [
     "dist",
@@ -27,7 +27,6 @@
     "@types/lodash": "^4.0.0",
     "@types/react": "^19.0.0",
     "axios": "^1.0.0",
-    "fork-ts-checker-webpack-plugin": "^9.0.0",
     "slightning-coco-widget": "file:../基础",
     "slightning-coco-widget--webpack": "file:../打包",
     "terser-webpack-plugin": "^5.0.0",

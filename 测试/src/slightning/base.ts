@@ -1,4 +1,4 @@
-import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, CoCo, Color, ColorType, CreationProject, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator, StringInputType, Logger } from "slightning-coco-widget"
+import { addCheck, addThisForMethods, AnyType, ArrayType, AudioType, CoCo, Color, ColorType, emit, exportWidget, FunctionType, generateBlockForProperties, getSuperWidget, ImageType, IntegerType, MethodBlockParam, ObjectType, StringEnumType, StringType, transformIcons, transformIconsExceptWidgetIcon, Types, UnionType, VideoType, flattenEventSubTypes, generateMethodForFunctions, transformMethodsCallbackFunctionsToCodeBlocks, transformMethodsCallbackFunctionsToEvents, transformMethodsThrows, InstanceOfClassType, MutatorType, transformMutator, StringInputType, Logger, CreationProject1, CreationProject2, crossPlatform } from "slightning-coco-widget"
 import _ from "lodash"
 
 import packageInfo from "../../package.json"
@@ -220,14 +220,8 @@ const types: Types = {
         ["onCustomKeyCustomSet", "自定义键自定义设置", []],
         ["onTestEvent", "测试事件", []],
         ["onTestEventSubTypes", "测试事件子类型", [
-            ["subType0", [
-                [ "测试1", "test1" ],
-                [ "测试2", "test2" ]
-            ]],
-            ["subType1", [
-                [ "测试3", "test3" ],
-                [ "测试4", "test4" ]
-            ]]
+            ["subType0", [["测试1", "test1"], ["测试2", "test2"]]],
+            ["subType1", [["测试3", "test3"], ["测试4", "test4"]]]
         ], []],
         ["onEfferentFunctionCalled", "传出函数被调用", []],
         ["onTestEventEfferentFunction", "测试事件传出函数", [
@@ -236,7 +230,7 @@ const types: Types = {
     ]
 }
 
-let exportedWidgetTypes: CoCo.Types | CreationProject.Types | undefined
+let exportedWidgetTypes: CoCo.Types | CreationProject1.Types | CreationProject2.Types | undefined
 
 class TestBaseWidget extends getSuperWidget(types) {
 
@@ -322,7 +316,7 @@ class TestBaseWidget extends getSuperWidget(types) {
         this.logger[type](message)
     }
 
-    public exportedWidgetTypes(): CoCo.Types | CreationProject.Types {
+    public exportedWidgetTypes(): NonNullable<typeof exportedWidgetTypes> {
         if (exportedWidgetTypes == undefined) {
             throw new Error("找不到导出的控件类型定义")
         }
@@ -356,10 +350,11 @@ exportWidget(types, TestBaseWidget, {
     ]
 })
 
-exportedWidgetTypes = (structuredClone ?? _?.cloneDeep)(
-    CoCo.widgetExports.types ??
-    CreationProject.widgetExports.type ??
-    undefined
-)
+exportedWidgetTypes = (structuredClone ?? _?.cloneDeep)(crossPlatform<typeof exportedWidgetTypes>({
+    CoCo: CoCo.widgetExports.types,
+    CreationProject1: CreationProject1.widgetExports.type,
+    CreationProject2: CreationProject2.widgetExports.type,
+    NodeJS: undefined
+}))
 
 console.log("导出的控件类型定义：", exportedWidgetTypes)

@@ -1,15 +1,12 @@
-// @ts-nocheck
-
 const fs = require("fs")
 const path = require("path")
 const webpack = require("webpack")
 const { merge } = require("webpack-merge")
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
 const VisualizerPlugin2 = require("webpack-visualizer-plugin2")
 
 const SCW = require("slightning-coco-widget--webpack")
 
-module.exports = merge(SCW.config, {
+module.exports = merge(/** @type {webpack.Configuration} */(SCW.config), {
     mode: "development",
     stats: "minimal",
     entry() {
@@ -65,11 +62,11 @@ module.exports = merge(SCW.config, {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                exclude: /node_modules/,
+                test: /\.(j|t)sx?$/,
                 use: {
                     loader: SCW.Loaders.ExternalImportLoader,
                     options: {
+                        "@slightning/anything-to-string": "https://unpkg.com/@slightning/anything-to-string@1/dist/cjs/bundle.min.js",
                         axios: "https://unpkg.com/axios@1/dist/axios.min.js"
                     }
                 }
@@ -85,6 +82,9 @@ module.exports = merge(SCW.config, {
             }
         ]
     },
+    optimization: {
+        minimizer: []
+    },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".jsx"]
     },
@@ -93,13 +93,12 @@ module.exports = merge(SCW.config, {
         lodash: "lodash"
     },
     plugins: [
-        new ForkTsCheckerWebpackPlugin(),
         new webpack.ProgressPlugin(),
         new webpack.IgnorePlugin({
             resourceRegExp: /webpack-dev-server/,
         }),
-        new VisualizerPlugin2({
-            filename: "./stats.html"
-        })
+        /** @type {webpack.WebpackPluginInstance} */(/** @type {unknown} */(
+            new VisualizerPlugin2({ filename: "./stats.html" })
+        ))
     ]
 })

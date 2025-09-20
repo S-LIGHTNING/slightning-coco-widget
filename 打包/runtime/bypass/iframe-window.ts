@@ -7,7 +7,7 @@ declare global {
 export function getIFrameWindow(): typeof window {
     if (window.__slightning_coco_widget_iframe_window__ == null) {
         var iframeElement: HTMLIFrameElement = document.createElement("iframe")
-        iframeElement.sandbox.add("allow-same-origin")
+        iframeElement.sandbox?.add("allow-same-origin")
         iframeElement.src = location.href
         iframeElement.style.display = "none"
         document.body.appendChild(iframeElement)

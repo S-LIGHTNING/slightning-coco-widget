@@ -2,11 +2,12 @@ import * as CreationProject1 from "../../creation-project-1/type"
 import * as CreationProject2 from "../../creation-project-2"
 import { standardizeMethodBlock } from "../convert/standardize-types"
 import { MethodBlock, MethodBlockParam, StandardMethodBlock, StandardMethodBlockItem } from "../types"
-import { ArrayType } from "./array-type"
 import { ObjectType } from "./object-type"
+import { ArrayType } from "./array-type"
 
 export class MutatorType<T extends {} = Record<string, unknown>> extends ArrayType<T> {
 
+    public override readonly key: string = "MutatorType"
     public readonly block: StandardMethodBlock
     public readonly separators: (MethodBlockParam | string)[]
     /**

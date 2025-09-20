@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "ES2017",
         "jsx": "react",
-        "lib": ["ESNext", "DOM"],
+        "lib": ["ES2017", "DOM"],
         "skipLibCheck": true,
         "module": "preserve",
         "moduleResolution": "bundler",

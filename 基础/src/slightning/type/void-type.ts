@@ -1,13 +1,18 @@
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
-import { ChildTypeInfo, Type } from "./type"
-import { typeToString } from "./utils"
+import { typeToString } from "../runtime/type/utils"
+import { RuntimeVoidType } from "../runtime/type/void-type"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
 
-export class VoidType implements Type<void> {
+export class VoidType extends RuntimeVoidType implements Type<void> {
 
-    public validate(this: this, __value: unknown): __value is void {
-        return true
+    public readonly key: string = "VoidType"
+
+    public toJSON(this: this): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeVoidType", {})
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
@@ -20,14 +25,6 @@ export class VoidType implements Type<void> {
 
     public isVoid(this: this): boolean {
         return true
-    }
-
-    public typeToString(this: this): string {
-        return "空"
-    }
-
-    public inlineTypeToString(this: this): string {
-        return this.typeToString()
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

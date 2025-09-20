@@ -1,10 +1,10 @@
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
-import { betterToString } from "../../utils"
-import { ChildTypeInfo, Type } from "./type"
-import { TypeValidateError } from "./type-validate-error"
-import { typeToString } from "./utils"
+import { RuntimeStringEnumType, RuntimeStringEnumTypeProps } from "../runtime/type/string-enum-type"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
 
 export enum StringEnumInputType {
     DROPDOWN = "INLINE",
@@ -15,12 +15,11 @@ type StandardEntry<T extends string> = { label: string, value: T }
 
 type Entry<T extends string> = ({ label: string, value: T } | [string, T] | T)
 
-export class StringEnumType<T extends string> implements Type<T> {
+export class StringEnumType<T extends string> extends RuntimeStringEnumType<T> implements Type<T> {
 
+    public readonly key: string = "StringEnumType"
     public readonly entries: StandardEntry<T>[]
     public readonly inputType: StringEnumInputType
-    public readonly valueToLabelMap: Record<T, string>
-    public readonly values: T[]
 
     public constructor(entries: Entry<T>[])
     public constructor(props: {
@@ -34,7 +33,7 @@ export class StringEnumType<T extends string> implements Type<T> {
         if (Array.isArray(props)) {
             props = { entries: props }
         }
-        this.entries = props.entries.map((entry: Entry<T>): StandardEntry<T> => {
+        const entries = props.entries.map((entry: Entry<T>): StandardEntry<T> => {
             if (typeof entry == "string") {
                 return { label: entry, value: entry }
             } else if (Array.isArray(entry)) {
@@ -43,21 +42,19 @@ export class StringEnumType<T extends string> implements Type<T> {
                 return entry
             }
         })
-        this.inputType = props.inputType ?? StringEnumInputType.DROPDOWN
-        // @ts-ignore
-        this.valueToLabelMap = {}
-        for (const entry of this.entries) {
-            this.valueToLabelMap[entry.value] = entry.label
+        const valueToLabelMap = {} as Record<T, string>
+        for (const entry of entries) {
+            valueToLabelMap[entry.value] = entry.label
         }
-        this.values = this.entries.map((entry: StandardEntry<T>): T => entry.value)
+        super({ valueToLabelMap })
+        this.entries = entries
+        this.inputType = props.inputType ?? StringEnumInputType.DROPDOWN
     }
 
-    public validate(this: this, value: unknown): value is T {
-        // @ts-ignore
-        if (typeof value != "string" || !this.values.includes(value)) {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
-        }
-        return true
+    public toJSON(): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeStringEnumType", {
+            valueToLabelMap: this.valueToLabelMap
+        } satisfies RuntimeStringEnumTypeProps<T>)
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
@@ -69,17 +66,7 @@ export class StringEnumType<T extends string> implements Type<T> {
     }
 
     public isVoid(this: this): boolean {
-        return this.entries.length != 0
-    }
-
-    public typeToString(this: this): string {
-        return this.values.length == 0 ? "空" : `(${this.values.map(
-            (value: string): string => JSON.stringify(value)
-        ).join(" | ")})`
-    }
-
-    public inlineTypeToString(this: this): string {
-        return this.typeToString()
+        return this.entries.length == 0
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

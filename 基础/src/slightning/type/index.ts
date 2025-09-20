@@ -1,7 +1,6 @@
 export * from "./type"
 
-export * from "./utils"
-export * from "./type-validate-error"
+export * from "../runtime/type"
 
 export * from "./void-type"
 export * from "./string-type"

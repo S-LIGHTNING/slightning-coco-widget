@@ -1,21 +1,22 @@
-import * as stringify from "@slightning/anything-to-string"
 
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
-import { betterToString, XMLEscape } from "../../utils"
+import { requireStringify, XMLEscape } from "../../utils"
 import { standardizeMethodBlock } from "../convert/standardize-types"
 import { MethodBlock, StandardMethodBlock } from "../types"
-import { ChildTypeInfo, Type } from "./type"
-import { TypeValidateError } from "./type-validate-error"
-import { inlineTypeToString, typeToString } from "./utils"
-import { VoidType } from "./void-type"
+import { RuntimeFunctionType } from "../runtime/type/function-type"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
+import { inlineTypeToString, RuntimeType } from "../runtime"
 
-export class FunctionType<A extends unknown[], R> implements Type<(...args: A) => R> {
+export class FunctionType<A extends unknown[], R> extends RuntimeFunctionType<A, R> implements Type<(...args: A) => R> {
 
+    public readonly key: string = "FunctionType"
     public readonly block: StandardMethodBlock
-    public readonly returns?: Type<R> | null | undefined
-    public readonly throws?: Type | null | undefined
+    public override readonly returns?: Type<R> | null | undefined
+    public override readonly throws?: Type | null | undefined
     public readonly defaultValue?: string | null | undefined
     public readonly raw: boolean
 
@@ -34,18 +35,28 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
         defaultValue?: string | null | undefined
         raw?: boolean | null | undefined
     }) {
-        this.block = standardizeMethodBlock(block)
+        const standardBlock = standardizeMethodBlock(block)
+        super({
+            params: standardBlock.filter(param => typeof param == "object").map((param): {
+                label: string
+                type: RuntimeType<any>
+            } => ({
+                label: param.label,
+                type: param.type
+            })),
+            returns,
+            throws
+        })
+        requireStringify()
+        this.block = standardBlock
         this.returns = returns
         this.throws = throws
         this.defaultValue = defaultValue
         this.raw = raw ?? false
     }
 
-    public validate(this: this, value: unknown): value is (...args: A) => R {
-        if (typeof value != "function") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
-        }
-        return true
+    public toJSON(this: this): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeFunctionType", {})
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
@@ -92,68 +103,6 @@ export class FunctionType<A extends unknown[], R> implements Type<(...args: A) =
 
     public isVoid(this: this): boolean {
         return false
-    }
-
-    public typeToStringPrepare(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void {
-        if (this.block != null) {
-            for (const part of this.block) {
-                if (typeof part != "object") {
-                    continue
-                }
-                new stringify.AnythingRule().prepare(part.type, config, context)
-            }
-        }
-        if (this.returns != null) {
-            new stringify.AnythingRule().prepare(this.returns, config, context)
-        }
-        if (this.throws != null) {
-            new stringify.AnythingRule().prepare(this.throws, config, context)
-        }
-    }
-
-    public typeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string {
-        let result: string = "("
-        let isFirst: boolean = true
-        for (const part of this.block) {
-            if (typeof part != "object") {
-                continue
-            }
-            if (isFirst) {
-                isFirst = false
-            } else {
-                result += ", "
-            }
-            result += `${part.label}: ${new stringify.AnythingRule().toString(part.type, config, context)}`
-        }
-        result += `) => ${new stringify.AnythingRule().toString(this.returns ?? new VoidType(), config, context)}`
-        if (this.throws != null) {
-            result += ` 抛出 ${new stringify.AnythingRule().toString(this.throws, config, context)}`
-        }
-        return result
-    }
-
-    public inlineTypeToStringPrepare(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void {
-        this.typeToStringPrepare(config, context)
-    }
-
-    public inlineTypeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string {
-        return this.typeToString(config, context)
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

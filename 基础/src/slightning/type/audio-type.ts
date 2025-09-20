@@ -1,33 +1,35 @@
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
-import { betterToString, XMLEscape } from "../../utils"
-import { ChildTypeInfo, Type } from "./type"
-import { TypeValidateError } from "./type-validate-error"
-import { typeToString } from "./utils"
+import { XMLEscape } from "../../utils"
+import { RuntimeAudioType } from "../runtime/type/audio-type"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
 
-export class AudioType implements Type<string> {
+export class AudioType extends RuntimeAudioType implements Type<string> {
 
+    public readonly key: string = "AudioType"
     public readonly defaultValue: string
 
     public constructor(defaultValue: string)
     public constructor(props?: {
         defaultValue?: string | null | undefined
-    } | string)
-    public constructor(props: {
+    } | string | null | undefined)
+    public constructor(props?: {
         defaultValue?: string | null | undefined
-    } | string = {}) {
-        if (typeof props == "string") {
+    } | string | null | undefined) {
+        super()
+        if (props == null) {
+            props = {}
+        } else if (typeof props == "string") {
             props = { defaultValue: props }
         }
         this.defaultValue = props.defaultValue ?? "?"
     }
 
-    public validate(this: this, value: unknown): value is string {
-        if (typeof value != "string") {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
-        }
-        return true
+    public toJSON(this: this): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeAudioType", {})
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
@@ -40,14 +42,6 @@ export class AudioType implements Type<string> {
 
     public isVoid(this: this): boolean {
         return false
-    }
-
-    public typeToString(this: this): string {
-        return "音频"
-    }
-
-    public inlineTypeToString(this: this): string {
-        return this.typeToString()
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {

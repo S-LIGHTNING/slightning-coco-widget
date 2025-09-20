@@ -1,67 +1,39 @@
-import * as stringify from "@slightning/anything-to-string"
-
+import packageInfo from "../../../package.json"
 import * as CoCo from "../../coco"
 import * as CreationProject1 from "../../creation-project-1"
 import * as CreationProject2 from "../../creation-project-2"
-import { betterToString, XMLEscape } from "../../utils"
-import { ChildTypeInfo, Type } from "./type"
-import { TypeValidateError } from "./type-validate-error"
-import { inlineTypeToString, typeToString, validate } from "./utils"
+import { requireStringify, XMLEscape } from "../../utils"
+import { ChildTypeInfo, RuntimeTypeData, Type } from "./type"
+import { typeGenerateRuntimeData } from "./utils"
+import { RuntimeArrayType } from "../runtime/type/array-type"
+import { inlineTypeToString } from "../runtime/type/utils"
 
-export class ArrayType<T> implements Type<T[]> {
+export class ArrayType<T> extends RuntimeArrayType<T> implements Type<T[]> {
 
-    public readonly itemType: Type<T> | null | undefined
-    public readonly defaultValue: T[] | string
+    public readonly key: string = "ArrayType"
+    public override readonly itemType: Type<T> | null | undefined
+    public readonly defaultValue?: T[] | string
 
-    public constructor({
-        itemType, defaultValue
-    }: {
+    public constructor(props?: {
         itemType?: Type<T> | null | undefined
         defaultValue?: T[] | string | null | undefined
-    } = {}) {
-        this.itemType = itemType
-        this.defaultValue = defaultValue ?? inlineTypeToString(this)
+    } | null | undefined) {
+        super(props ?? {})
+        requireStringify()
+        this.defaultValue = props?.defaultValue ?? inlineTypeToString(this)
     }
 
-    public validate(this: this, value: unknown): value is T[] {
-        if (!Array.isArray(value)) {
-            throw new TypeValidateError(`不能将 ${betterToString(value)} 分配给 ${typeToString(this)}`, value, this)
-        }
-        if (this.itemType != null) {
-            const errors: TypeValidateError<T[]>[] = []
-            for (const [index, item] of Object.entries(errors)) {
-                try {
-                    validate(`第 ${index} 项`, item, this.itemType)
-                } catch (error) {
-                    if (!(error instanceof TypeValidateError)) {
-                        throw error
-                    }
-                    errors.push(error)
-                }
-            }
-            if (errors.length != 0) {
-                throw new TypeValidateError(
-                    `不能将 ${betterToString(value)} 分配给 ${typeToString(this)}：\n` +
-                    errors.map(
-                        (error: TypeValidateError<T[]>): string =>
-                            error.message
-                                .split("\n")
-                                .map((line: string): string => `　${line}`)
-                                .join("\n")
-                    ).join("\n"),
-                    value,
-                    this
-                )
-            }
-        }
-        return true
+    public toJSON(this: this): RuntimeTypeData {
+        return typeGenerateRuntimeData(packageInfo.name, "RuntimeArrayType", {
+            itemType: this.itemType?.toJSON()
+        })
     }
 
     public getSameDirectionChildren(this: this): ChildTypeInfo[] {
         return this.itemType == null ? [] : [{
             key: "__slightning_coco_widget_array_item__",
             label: "数组项",
-            type: this.itemType
+            type: this.itemType as Type<T>
         }]
     }
 
@@ -71,44 +43,6 @@ export class ArrayType<T> implements Type<T[]> {
 
     public isVoid(this: this): boolean {
         return false
-    }
-
-    public typeToStringPrepare(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void {
-        if (this.itemType != null) {
-            new stringify.AnythingRule().prepare(this.itemType, config, context)
-        }
-    }
-
-    public typeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string {
-        let result: string = "列表"
-        if (this.itemType != null) {
-            result += `<${new stringify.AnythingRule().toString(this.itemType, config, context)}>`
-        }
-        return result
-    }
-
-    public inlineTypeToStringPrepare(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.PrepareContext
-    ): void {
-        this.typeToStringPrepare(config, context)
-    }
-
-    public inlineTypeToString(
-        this: this,
-        config: stringify.RequiredConfig,
-        context: stringify.ToStringContext
-    ): string {
-        return this.typeToString(config, context)
     }
 
     public toCoCoPropertyValueTypes(this: this): CoCo.PropertyValueTypes {
