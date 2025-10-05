@@ -61,17 +61,17 @@ export function addTransformMutator(types: StandardTypes, widget: Widget): [Stan
                     }
                     transformedMethod.block.splice(paramIndex, 1, ...transformedBlockItems)
                     node.insertAfter({ space: 8 }, transformedMethod)
-                    runtimeData.methods.push({
-                        key: method.key,
-                        mutator: {
-                            key: param.key,
-                            keys: param.type.block.filter(item => typeof item == "object").map(item => item.key),
-                            index: methodParamsCount,
-                            min: transformMin,
-                            max: transformMax
-                        }
-                    })
                 }
+                runtimeData.methods.push({
+                    key: method.key,
+                    mutator: {
+                        key: param.key,
+                        keys: param.type.block.filter(item => typeof item == "object").map(item => item.key),
+                        index: methodParamsCount,
+                        min: transformMin,
+                        max: transformMax
+                    }
+                })
                 break
             }
         }
