@@ -19,7 +19,7 @@ export function getPlatform(): StandardPlatform {
             platform = "CreationProject1"
         } else if (
             [CreationProject2.widgetClass, CreationProject2.widgetRequire].every(isFunction) &&
-            hasPackages(CreationProject2.widgetRequire as (id: string) => unknown, "@ant-design/icons-vue")
+            !hasPackages(CreationProject2.widgetRequire as (id: string) => unknown, "@ant-design/icons-vue")
         ) {
             platform = "CreationProject2"
         } else if ([CoCo.InvisibleWidget, CoCo.VisibleWidget].every(isFunction)) {

@@ -32,6 +32,24 @@ sidebar_position: 1
 
 会在编辑器显示。
 
+#### Types.info.instanceTitle?
+
+2.10 版本新增。
+
+类型：`string | object`
+
+描述：控件实例名称。
+
+默认与控件名称一致。
+
+**仅在 CoCo 中生效，Creation Project 不支持该特性。**
+
+#### Types.info.instanceTitle?.followProperty
+
+类型：`string`
+
+描述：指定控件实例名称跟随指定属性的值。
+
 #### Types.info.icon
 
 类型：`string`

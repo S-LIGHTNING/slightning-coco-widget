@@ -1,71 +1,62 @@
+import { getNewMethodKey, runtimeAddTransformMethodsThrows, RuntimeData } from "../runtime/decorators/add-transform-methods-throws"
 import { FunctionType } from "../type"
 import { MethodBlockParam, MethodParamTypes, StandardMethodTypes, StandardTypes } from "../types"
 import { Widget } from "../widget"
-import { MethodTypesNode, traverseTypes } from "./utils"
+import { MethodTypesNode, recordDecoratorOperation, traverseTypes } from "./utils"
 
 export function addTransformMethodsThrows(types: StandardTypes, widget: Widget): [StandardTypes, Widget] {
+    const runtimeData: RuntimeData = { methods: [] }
     traverseTypes(types, {
         MethodTypes(node: MethodTypesNode): void {
-            if (node.value.throws == null || node.value.throws.isVoid()) {
+            const { value: method } = node
+            if (method.throws == null || method.throws.isVoid()) {
                 return
             }
-            const transformedMethod: StandardMethodTypes = {
-                ...node.value,
-                key: `__slightning_coco_widget_transformed_throws__${node.value.key}`,
-                block: [...node.value.block],
+            const newMethod: StandardMethodTypes = {
+                ...method,
+                key: getNewMethodKey(method.key),
+                block: [...method.block],
                 returns: null,
                 throws: null
             }
-            const successIndex: number = transformedMethod.block.filter(
+            const successIndex: number = newMethod.block.filter(
                 (part: string | MethodBlockParam | MethodParamTypes): boolean => typeof part == "object"
             ).length
-            transformedMethod.block.push("成功则", {
+            newMethod.block.push("成功则", {
                 key: "__slightning_coco_widget_success_callback__",
                 label: "成功回调",
                 type: new FunctionType({
-                    block: node.value.returns == null || node.value.returns.isVoid()? [] : [{
+                    block: method.returns == null || method.returns.isVoid()? [] : [{
                         key: "value",
                         label: "值",
-                        type: node.value.returns
+                        type: method.returns
                     }]
                 })
             })
-            const errorIndex: number = transformedMethod.block.filter(
+            const errorIndex: number = newMethod.block.filter(
                 (part: string | MethodBlockParam | MethodParamTypes): boolean => typeof part == "object"
             ).length
-            transformedMethod.block.push("失败则", {
+            newMethod.block.push("失败则", {
                 key: "__slightning_coco_widget_error_callback__",
                 label: "失败回调",
                 type: new FunctionType({
                     block: [{
                         key: "error",
                         label: "错误",
-                        type: node.value.throws
+                        type: method.throws
                     }]
                 })
             })
-            node.insertAfter(transformedMethod)
-            Object.defineProperty(widget.prototype, transformedMethod.key, {
-                value: function (...args: unknown[]): void | Promise<void> {
-                    const errorCallback: (error: unknown) => void = args.splice(errorIndex, 1)[0] as (error: unknown) => void
-                    const successCallback: (...args: unknown[]) => void = args.splice(successIndex, 1)[0] as (...args: unknown[]) => void
-                    try {
-                        const result: unknown = this[node.value.key].apply(this, args)
-                        if (result instanceof Promise) {
-                            result.then(successCallback)
-                            result.catch(errorCallback)
-                        } else {
-                            successCallback(result)
-                        }
-                    } catch (error) {
-                        errorCallback(error)
-                    }
-                },
-                writable: true,
-                enumerable: false,
-                configurable: true
-            })
+            node.insertAfter(newMethod)
+            runtimeData.methods.push({ key: method.key, successIndex, errorIndex })
         }
     })
+    recordDecoratorOperation(widget, {
+        runtime: {
+            func: "runtimeAddTransformMethodsThrows",
+            data: runtimeData
+        }
+    })
+    runtimeAddTransformMethodsThrows(runtimeData, widget)
     return [types, widget]
 }

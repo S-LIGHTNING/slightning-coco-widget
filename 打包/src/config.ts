@@ -10,9 +10,6 @@ export const config: webpack.Configuration = {
             type: "commonjs"
         }
     },
-    optimization: {
-        splitChunks: false
-    },
     module: {
         rules: [
             {

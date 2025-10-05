@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget",
-  "version": "2.9.0-alpha.0",
+  "version": "2.10.0",
   "main": "./dist/src/src/index.js",
   "module": "./dist/src/src/index.js",
   "types": "./dist/types/src/index.d.ts",

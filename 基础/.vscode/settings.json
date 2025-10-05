@@ -16,5 +16,10 @@
         "tabledata",
         "vika",
         "vikadata"
-    ]
+    ],
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "tsconfig.json": "tsconfig.*.json",
+        "package.json": "package-lock.json"
+    }
 }

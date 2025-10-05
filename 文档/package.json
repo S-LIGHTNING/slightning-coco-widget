@@ -1,6 +1,6 @@
 {
   "name": "slightning-coco-widget--document",
-  "version": "2.9.0-alpha.0",
+  "version": "2.10.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -16,8 +16,8 @@
   },
   "license": "CC-BY-NC",
   "dependencies": {
-    "@docusaurus/core": "^3.8.1",
-    "@docusaurus/preset-classic": "^3.8.1",
+    "@docusaurus/core": "^3.9.1",
+    "@docusaurus/preset-classic": "^3.9.1",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
     "lodash": "^4.0.0",
@@ -29,9 +29,9 @@
     "slightning-coco-widget--webpack": "^2.0.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.8.1",
-    "@docusaurus/tsconfig": "^3.8.1",
-    "@docusaurus/types": "^3.8.1",
+    "@docusaurus/module-type-aliases": "^3.9.1",
+    "@docusaurus/tsconfig": "^3.9.1",
+    "@docusaurus/types": "^3.9.1",
     "@types/lodash": "^4.0.0",
     "slightning-coco-widget": "^2.0.0",
     "typescript": "~5.6.0"

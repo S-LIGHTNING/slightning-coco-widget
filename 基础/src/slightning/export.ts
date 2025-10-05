@@ -10,6 +10,7 @@ import { convertToCreationProject2, typesToCreationProject2, widgetToCreationPro
 import { buildTimeRecordData } from "./build-time-convert"
 import { RuntimeExportWidgetData } from "./runtime/export"
 import { clone, UseDefaultClone } from "../utils"
+import { eventKeyMap } from "./runtime/utils/emit"
 
 type Platform = "CoCo" | "CreationProject" | "CreationProject1" | "CreationProject2" | "NodeJS"
 
@@ -104,10 +105,11 @@ export function exportWidget(
         if (platform != null && platform != "All") {
             const [types] = decorate(standardTypes, widget, config, {
                 CoCo: ["CoCo"],
-                CreationProject1: ["CreationProject", "CreationProject2"],
+                CreationProject1: ["CreationProject", "CreationProject1"],
                 CreationProject2: ["CreationProject", "CreationProject2"]
             }[platform] as Platform[])
             buildTimeRecordData({
+                eventKeyMap,
                 types: {
                     [platform]: {
                         CoCo: typesToCoCo,
@@ -115,7 +117,7 @@ export function exportWidget(
                         CreationProject2: typesToCreationProject2
                     }[platform]!(types)
                 }
-            })
+            } satisfies RuntimeExportWidgetData)
             ;(({ CoCo, CreationProject1, CreationProject2 })[platform] as any).widgetExports.widget = {
                 CoCo: widgetToCoCo,
                 CreationProject1: widgetToCreationProject1,
@@ -126,6 +128,7 @@ export function exportWidget(
             const [CreationProject1Types] = decorate(cloneTypes(standardTypes), widget, config, ["CreationProject", "CreationProject2"])
             const [CreationProject2Types] = decorate(cloneTypes(standardTypes), widget, config, ["CreationProject", "CreationProject2"])
             buildTimeRecordData({
+                eventKeyMap,
                 types: {
                     CoCo: typesToCoCo(CoCoTypes),
                     CreationProject1: typesToCreationProject1(CreationProject1Types),

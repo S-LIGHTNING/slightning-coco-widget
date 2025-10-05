@@ -7,6 +7,7 @@ const types: Types = {
     type: "SLIGHTNING_TEST_BASE_WIDGET",
     info: {
         title: "测试基础功能",
+        instanceTitle: "测试基础功能1",
         icon: "https://s-lightning.github.io/slightning-coco-widget/img/logo.png",
         category: "测试 SCW",
         version: packageInfo.version,

@@ -31,6 +31,20 @@ export function typesToCoCo(types: StandardTypes): CoCo.Types {
         methods: [],
         events: []
     }
+    const { instanceTitle } = types.info
+    if (typeof instanceTitle == "string") {
+        result.contentTextField = "__slightning_coco_widget_instance_title__"
+        result.properties.push({
+            key: result.contentTextField,
+            label: "控件实例名称",
+            valueType: "string",
+            defaultValue: instanceTitle,
+            hidePropertyEditor: true,
+            blockOptions: { generateBlock: false }
+        })
+    } else if (instanceTitle != null && typeof instanceTitle == "object") {
+        result.contentTextField = instanceTitle.followProperty
+    }
     const labels: string[] = []
     let showLine: boolean | string = false
     let addSpace: boolean = false

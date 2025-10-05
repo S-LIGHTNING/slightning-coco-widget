@@ -6,7 +6,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'SLIGHTNING CoCo 控件框架',
-  tagline: '工程化 CoCo 自定义控件开发解决方案',
+  tagline: '工程化 CoCo 自定义控件开发的一些尝试',
   favicon: 'img/logo.png',
 
   // Set the production url of your site here

@@ -27,7 +27,7 @@ export function runtimeAddTransformMutator(data: RuntimeData, widget: Widget): W
                     }
                     transformedMutatorArgs.push(transformedMutatorArg)
                 }
-                args.splice(keys.length, 0, transformedMutatorArgs)
+                args.splice(index, 0, transformedMutatorArgs)
                 return this[key](...args)
             })
         }

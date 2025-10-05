@@ -5,7 +5,7 @@ export function setStringify(value: typeof stringify): void {
 }
 
 export function loadStringify() {
-    return import("@slightning/anything-to-string").then(setStringify)
+    return import(/* webpackMode: "inline" */ "@slightning/anything-to-string").then(setStringify)
 }
 
 export function betterToString(data: unknown): string {

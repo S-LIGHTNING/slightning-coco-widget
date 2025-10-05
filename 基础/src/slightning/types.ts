@@ -27,6 +27,19 @@ interface BasicTypes {
          */
         title: string
         /**
+         * 控件实例名称。
+         *
+         * 默认与控件名称一致。
+         *
+         * **仅在 CoCo 中生效，Creation Project 不支持该特性。**
+         */
+        instanceTitle?: string | {
+            /**
+             * 指定控件实例名称跟随指定属性的值。
+             */
+            followProperty: string
+        } | null | undefined
+        /**
          * 控件图标链接。
          *
          * 控件图标会在 CoCo 编辑器显示。
