@@ -47,7 +47,7 @@ export class StringType extends RuntimeStringType implements Type<string> {
     public constructor(props?: {
         defaultValue?: string | null | undefined
         inputType?: StringInputType | null | undefined
-    } | null | undefined)
+    } | string | null | undefined)
     public constructor(props?: {
         defaultValue?: string | null | undefined
         inputType?: StringInputType | null | undefined

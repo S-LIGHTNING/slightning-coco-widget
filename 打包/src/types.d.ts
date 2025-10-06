@@ -1,3 +1,3 @@
 declare module "browser-env" {
-    export = function browserEnv(): void {}
+    export = function browserEnv(config?: import("jsdom").ConstructorOptions): void {}
 }

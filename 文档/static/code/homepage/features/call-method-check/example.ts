@@ -16,7 +16,11 @@ const types: Types = {
 
 class ThrowErrorWidget extends getSuperWidget(types) {
     throwError(): void {
-        /** 看 CoCo 再吞个试试。 */
+        /**
+         * 在控件方法中产生的异常可以被 SCW 捕获并输出。
+         *
+         * 利用这一特性，可以通过抛出异常的方式轻松实现出错中断。
+         */
         throw new Error("出错啦出错啦！")
     }
 }
@@ -24,6 +28,7 @@ class ThrowErrorWidget extends getSuperWidget(types) {
 exportWidget(types, ThrowErrorWidget, {
     decorators: [
         addThisForMethods,
+        /** 添加检查功能。 */
         addCheck,
         { CreationProject: transformIcons }
     ]

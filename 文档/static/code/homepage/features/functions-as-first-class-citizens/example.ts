@@ -12,7 +12,7 @@ const types: Types = {
             "按", {
                 key: "condition",
                 label: "条件",
-                /** 懂不懂 FunctionType 的含金量？ */
+                /** SCW 包含对函数类型的表示支持，可以在控件类型定义中表示函数。*/
                 type: new FunctionType({
                     block: [
                         {
@@ -48,7 +48,7 @@ const types: Types = {
 
 class ArrayFilterWidget extends getSuperWidget(types) {
     async arrayFilter(
-        /** 在控件实体中直接就是函数类型，不需要任何额外的转换，用真是太爽啦！ */
+        /** 在控件实体中直接就是函数类型，不需要任何额外的转换。*/
         condition: (item: unknown, index: number, array: unknown[]) => boolean | Promise<boolean>,
         array: unknown[]
     ): Promise<unknown[]> {
@@ -69,6 +69,7 @@ class ArrayFilterWidget extends getSuperWidget(types) {
 
 exportWidget(types, ArrayFilterWidget, {
     decorators: [
+        /** 将回调函数转换为编辑器支持的形式。*/
         {
             CoCo: transformMethodsCallbackFunctionsToEvents,
             CreationProject: transformMethodsCallbackFunctionsToCodeBlocks

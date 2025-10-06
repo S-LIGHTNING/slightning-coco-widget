@@ -15,7 +15,7 @@ export class AnyType extends RuntimeAnyType implements Type<any> {
     public constructor(defaultValue: string | number | boolean)
     public constructor(props?: {
         defaultValue?: any | null | undefined
-    } | null | undefined)
+    } | string | number | boolean | null | undefined)
     public constructor(props?: {
         defaultValue?: any | null | undefined
     } | string | number | boolean | null | undefined) {

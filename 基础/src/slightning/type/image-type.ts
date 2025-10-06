@@ -15,8 +15,8 @@ export class ImageType extends RuntimeImageType implements Type<string> {
     public constructor(defaultValue: string)
     public constructor(props?: {
         defaultValue?: string | null | undefined
-    } | string)
-    public constructor(props: {
+    } | string | null | undefined)
+    public constructor(props?: {
         defaultValue?: string | null | undefined
     } | string | null | undefined) {
         super()

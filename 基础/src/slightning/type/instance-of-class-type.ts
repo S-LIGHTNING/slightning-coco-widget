@@ -15,7 +15,7 @@ export class InstanceOfClassType<T> extends RuntimeInstanceOfClassType<T> implem
     public constructor(theClass: new (...args: any[]) => T)
     public constructor(props: {
         defaultValue?: string | null | undefined
-    } & RuntimeInstanceOfClassTypeProps<T>)
+    } & RuntimeInstanceOfClassTypeProps<T> | (new (...args: any[]) => T))
     public constructor(props: {
         defaultValue?: string | null | undefined
     } & RuntimeInstanceOfClassTypeProps<T> | (new (...args: any[]) => T)) {

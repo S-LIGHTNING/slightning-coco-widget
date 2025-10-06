@@ -15,7 +15,7 @@ export class VideoType extends RuntimeVideoType implements Type<string> {
     public constructor(defaultValue: string)
     public constructor(props?: {
         defaultValue?: string | null | undefined
-    } | null | undefined)
+    } | string | null | undefined)
     public constructor(props?: {
         defaultValue?: string | null | undefined
     } | string | null | undefined) {

@@ -22,8 +22,7 @@ const types: Types = {
                     block: [MethodBlockParam.METHOD]
                 }
             ]
-        },
-        {
+        }, {
             label: "组2",
             blockOptions: {
                 color: Color.PURPLE
